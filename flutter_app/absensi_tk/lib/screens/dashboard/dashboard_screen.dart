@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../widgets/custom_appbar.dart';
 
+import '../guru/absen_guru_screen.dart';
+import '../siswa/absen_siswa_screen.dart';
+
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
@@ -21,13 +24,17 @@ class DashboardScreen extends StatelessWidget {
           children: [
 
             menuCard(
+              context,
               "Absen Guru",
               Icons.badge,
+              const AbsenGuruScreen(),
             ),
 
             menuCard(
+              context,
               "Absen Murid",
               Icons.school,
+              const AbsenSiswaScreen(),
             ),
 
           ],
@@ -36,28 +43,48 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget menuCard(String title, IconData icon) {
-    return Card(
-      elevation: 3,
+  Widget menuCard(
+      BuildContext context,
+      String title,
+      IconData icon,
+      Widget page,
+      ) {
+    return GestureDetector(
 
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => page,
+          ),
+        );
+      },
 
-        children: [
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
 
-          Icon(icon, size: 50),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
 
-          const SizedBox(height: 10),
+          children: [
 
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          )
+            Icon(icon, size: 50, color: Colors.blue),
 
-        ],
+            const SizedBox(height: 10),
+
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+
+          ],
+        ),
       ),
     );
   }

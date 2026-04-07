@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'package:absensi_tk/widgets/bottom_navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import '../dashboard/dashboard_screen.dart';
-import '../../widgets/bottom_navbar.dart';
+import '../admin/admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,7 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isPasswordHidden = true;
 
-  void login() {
+  Future<void> login() async {
+
     String username = usernameController.text;
     String password = passwordController.text;
 
@@ -24,19 +29,79 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Username dan Password wajib diisi")),
       );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const BottomNavbar()),
-      );
+      return;
     }
+
+    try {
+
+      final response = await http.post(
+        Uri.parse("http://10.0.2.2:8080/api/login"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "username": username,
+          "password": password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+
+        final data = jsonDecode(response.body);
+
+        if (data["status"] == true) {
+
+          String role = data["role"].toString().toLowerCase();
+
+          if (role == "admin") {
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AdminDashboard(),
+              ),
+            );
+
+          } else if (role == "guru") {
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BottomNavbar(),
+              ),
+            );
+
+          }
+
+        } else {
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data["message"])),
+          );
+
+        }
+
+      } else {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Server error")),
+        );
+
+      }
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tidak dapat terhubung ke server")),
+      );
+
+    }
+
   }
 
   void loginWithGmail() {
-    // sementara hanya masuk ke dashboard
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const BottomNavbar()),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Login Gmail belum diaktifkan")),
     );
   }
 

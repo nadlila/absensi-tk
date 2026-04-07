@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../screens/dashboard/dashboard_screen.dart';
-import '../screens/guru/absen_guru_menu.dart';
-import '../screens/siswa/absen_siswa_menu.dart';
+import '../screens/guru/absen_guru_screen.dart';
+import '../screens/siswa/absen_siswa_screen.dart';
 import '../screens/profil/profil_screen.dart';
 
 class BottomNavbar extends StatefulWidget {
@@ -17,8 +17,8 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   final List<Widget> pages = [
     const DashboardScreen(),
-    const AbsenGuruMenu(),
-    const AbsenSiswaMenu(),
+    const AbsenGuruScreen(),
+    const AbsenSiswaScreen(),
     const ProfilScreen(),
   ];
 

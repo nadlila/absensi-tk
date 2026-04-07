@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AbsenGuruMenu extends StatelessWidget {
-  const AbsenGuruMenu({super.key});
+class AbsenGuruScreen extends StatelessWidget {
+  const AbsenGuruScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

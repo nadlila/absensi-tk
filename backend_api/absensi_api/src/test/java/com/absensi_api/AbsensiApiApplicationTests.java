@@ -1,4 +1,4 @@
-package com.absensi.absensi_api;
+package com.absensi_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
