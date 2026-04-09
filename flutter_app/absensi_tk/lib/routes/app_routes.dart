@@ -4,12 +4,25 @@ class AppRoutes {
   static const String dashboard = "/dashboard";
 
   // ADMIN
-  static const String adminDashboard = "/admin-dashboard";
-  static const String dataGuru = "/data-guru";
-  static const String dataSiswa = "/data-siswa";
-  static const String dataKelas = "/data-kelas";
-  static const String rekapAbsensi = "/rekap-absensi";
-  static const String kelolaUser = "/kelola-user";
+static const String adminDashboard = "/admin/dashboard";
+
+// ADMIN - GURU
+static const String dataGuru = "/admin/guru";
+static const String tambahGuru = "/admin/guru/tambah-guru";
+static const String detailGuru = "/admin/guru/detail-guru";
+static const String editGuru = "/admin/guru/edit";
+
+// ADMIN - SISWA
+static const String dataSiswa = "/admin/siswa";
+
+// ADMIN - KELAS
+static const String dataKelas = "/admin/kelas";
+
+// ADMIN - REKAP
+static const String rekapAbsensi = "/admin/rekap";
+
+// ADMIN - USER
+static const String kelolaUser = "/admin/user";
 
   // GURU
   static const String absenGuru = "/absen-guru";

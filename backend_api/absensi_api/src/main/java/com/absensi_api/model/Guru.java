@@ -6,17 +6,31 @@ import jakarta.persistence.*;
 @Table(name = "guru")
 public class Guru {
 
-    @Id
+     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_guru")
     private Long idGuru;
 
+    @Column(name = "nama_guru")
     private String namaGuru;
 
-    private String nip;
+    @Column(name = "nuptk")
+    private String nuptk;
 
-    @OneToOne
-    @JoinColumn(name = "id_user")
-    private User user;
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "tempat_lahir")
+    private String tempatLahir;
+
+    @Column(name = "tanggal_lahir")
+    private String tanggalLahir;
+
+    @Column(name = "alamat")
+    private String alamat;
+
+    @Column(name = "id_user")
+    private Long idUser;
 
     public Long getIdGuru() {
         return idGuru;
@@ -34,19 +48,51 @@ public class Guru {
         this.namaGuru = namaGuru;
     }
 
-    public String getNip() {
-        return nip;
+    public String getNuptk() {
+        return nuptk;
     }
 
-    public void setNip(String nip) {
-        this.nip = nip;
+    public void setNuptk(String nuptk) {
+        this.nuptk = nuptk;
     }
 
-    public User getUser() {
-        return user;
+    public String getStatus() {
+        return status;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getTempatLahir() {
+        return tempatLahir;
+    }
+
+    public void setTempatLahir(String tempatLahir) {
+        this.tempatLahir = tempatLahir;
+    }
+
+    public String getTanggalLahir() {
+        return tanggalLahir;
+    }
+
+    public void setTanggalLahir(String tanggalLahir) {
+        this.tanggalLahir = tanggalLahir;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
     }
 }

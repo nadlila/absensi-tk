@@ -16,7 +16,7 @@ public class LoginResponse {
 
     public Boolean getStatus() {
         return status;
-    }
+    } 
 
     public String getMessage() {
         return message;

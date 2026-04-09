@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 07, 2026 at 05:34 PM
+-- Generation Time: Apr 09, 2026 at 11:54 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.25
 
@@ -73,33 +73,32 @@ CREATE TABLE `detail_absensi_siswa` (
 CREATE TABLE `guru` (
   `id_guru` int NOT NULL,
   `nama_guru` varchar(255) DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
-  `nuptk` varchar(50) DEFAULT NULL,
-  `status` enum('GTY','GTT') NOT NULL,
-  `tempat_lahir` varchar(50) DEFAULT NULL,
-  `tanggal_lahir` date DEFAULT NULL,
-  `alamat` text,
-  `username` varchar(50) DEFAULT NULL,
+  `nuptk` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `tempat_lahir` varchar(255) DEFAULT NULL,
+  `tanggal_lahir` varchar(255) DEFAULT NULL,
+  `alamat` varchar(255) DEFAULT NULL,
   `id_user` bigint DEFAULT NULL,
-  `nip` varchar(255) DEFAULT NULL
+  `nip` varchar(255) DEFAULT NULL,
+  `no_hp` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `guru`
 --
 
-INSERT INTO `guru` (`id_guru`, `nama_guru`, `password`, `nuptk`, `status`, `tempat_lahir`, `tanggal_lahir`, `alamat`, `username`, `id_user`, `nip`) VALUES
-(1, 'SUSIANI, S.Pd.', '12345', '4543752654300033', 'GTY', 'Lumajang', '1971-06-01', 'Kedungrejo', NULL, 2, NULL),
-(2, 'IKE RETNALYANINGTYAS, S.Pd.', '12345', '6655763664300042', 'GTY', 'Lumajang', '1985-03-23', 'Kedungrejo', NULL, NULL, NULL),
-(3, 'KHUSNUL AZIZAH', '12345', '9261744647300043', 'GTY', 'Lumajang', '1966-09-29', 'Kedungrejo', NULL, NULL, NULL),
-(4, 'MARSINAH', '12345', '1353748651300033', 'GTY', 'Lumajang', '1970-07-21', 'Kedungrejo', NULL, NULL, NULL),
-(5, 'WIYANI, A.Md.', '12345', '6039748651300073', 'GTY', 'Lumajang', '1970-07-07', 'Kedungrejo', NULL, NULL, NULL),
-(6, 'ALFA FAUZIYAH, S.Pd.', '12345', '8537767668230283', 'GTY', 'Jember', '1989-12-05', 'Kedungrejo', NULL, NULL, NULL),
-(7, 'NAFISATUL FAUZIYAH, S.Pd.', '12345', '3762769670230362', 'GTY', 'Pasuruan', '1991-04-30', 'Kedungrejo', NULL, NULL, NULL),
-(8, 'DWI PUJI LESTARI, S.Pd.', '12345', '948772673230402', 'GTY', 'Jember', '1994-06-16', 'Kedungrejo', NULL, NULL, NULL),
-(9, 'NURIL HIDAYAH LAILLIA ARI, S.Ak.', '12345', NULL, 'GTY', 'Lumajang', '2001-07-29', 'Kedungrejo', NULL, NULL, NULL),
-(10, 'LAILATUL ZULFA', '12345', NULL, 'GTY', 'Lumajang', '2002-05-24', 'Kedungrejo', NULL, NULL, NULL),
-(11, 'LAILATUL MUBASYIROH', '12345', NULL, 'GTY', 'Lumajang', '2001-08-27', 'Kedungrejo', NULL, NULL, NULL);
+INSERT INTO `guru` (`id_guru`, `nama_guru`, `nuptk`, `status`, `tempat_lahir`, `tanggal_lahir`, `alamat`, `id_user`, `nip`, `no_hp`) VALUES
+(1, 'SUSIANI, S.Pd.', '4543752654300033', 'GTY', 'Lumajang', '1971-06-01', 'Kedungrejo', 2, NULL, NULL),
+(2, 'IKE RETNALYANINGTYAS, S.Pd.', '6655763664300042', 'GTY', 'Lumajang', '1985-03-23', 'Kedungrejo', NULL, NULL, NULL),
+(3, 'KHUSNUL AZIZAH', '9261744647300043', 'GTY', 'Lumajang', '1966-09-29', 'Kedungrejo', NULL, NULL, NULL),
+(4, 'MARSINAH', '1353748651300033', 'GTY', 'Lumajang', '1970-07-21', 'Kedungrejo', NULL, NULL, NULL),
+(5, 'WIYANI, A.Md.', '6039748651300073', 'GTY', 'Lumajang', '1970-07-07', 'Kedungrejo', NULL, NULL, NULL),
+(6, 'ALFA FAUZIYAH, S.Pd.', '8537767668230283', 'GTY', 'Jember', '1989-12-05', 'Kedungrejo', NULL, NULL, NULL),
+(7, 'NAFISATUL FAUZIYAH, S.Pd.', '3762769670230362', 'GTY', 'Pasuruan', '1991-04-30', 'Kedungrejo', NULL, NULL, NULL),
+(8, 'DWI PUJI LESTARI, S.Pd.', '948772673230402', 'GTY', 'Jember', '1994-06-16', 'Kedungrejo', NULL, NULL, NULL),
+(9, 'NURIL HIDAYAH LAILLIA ARI, S.Ak.', NULL, 'GTY', 'Lumajang', '2001-07-29', 'Kedungrejo', NULL, NULL, NULL),
+(10, 'LAILATUL ZULFA', NULL, 'GTY', 'Lumajang', '2002-05-24', 'Kedungrejo', NULL, NULL, NULL),
+(11, 'LAILATUL MUBASYIROH', NULL, 'GTY', 'Lumajang', '2001-08-27', 'Kedungrejo', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -278,16 +277,18 @@ CREATE TABLE `users` (
   `id_user` bigint NOT NULL,
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role` varchar(255) DEFAULT NULL
+  `role` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id_user`, `username`, `password`, `role`) VALUES
-(1, 'admin', '123', 'admin'),
-(2, 'Susiani', '123', 'guru');
+INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `email`) VALUES
+(1, 'admin', '123', 'admin', 'admin@gmail.com'),
+(2, 'Susiani', '123', 'guru', 'Susiani@gmail.com'),
+(3, 'budi', '123', 'guru', 'budi@gmail.com');
 
 --
 -- Indexes for dumped tables
@@ -382,7 +383,7 @@ ALTER TABLE `detail_absensi_siswa`
 -- AUTO_INCREMENT for table `guru`
 --
 ALTER TABLE `guru`
-  MODIFY `id_guru` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_guru` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `siswa`
@@ -406,7 +407,7 @@ ALTER TABLE `tahun_ajaran`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_user` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables

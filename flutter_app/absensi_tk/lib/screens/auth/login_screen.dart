@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'package:absensi_tk/widgets/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../dashboard/dashboard_screen.dart';
+import '../../widgets/bottom_navbar.dart';
 import '../admin/admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,13 +16,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   bool isPasswordHidden = true;
 
   Future<void> login() async {
 
-    String username = usernameController.text;
-    String password = passwordController.text;
+    String username = usernameController.text.trim();
+    String password = passwordController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(

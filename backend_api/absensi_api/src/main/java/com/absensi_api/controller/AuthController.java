@@ -43,4 +43,30 @@ public class AuthController {
 
         return response;
     }
-}
+
+    @PostMapping("/login-email")
+    public Map<String, Object> loginEmail(@RequestBody Map<String, String> request){
+
+        Map<String, Object> response = new HashMap<>();
+
+        String email = request.get("email");
+
+        User user = userRepository.findByEmail(email);
+
+        if(user != null){
+
+            response.put("status", true);
+            response.put("message", "Login berhasil");
+            response.put("role", user.getRole());
+            response.put("username", user.getUsername());
+
+        } else {
+
+            response.put("status", false);
+            response.put("message", "Email tidak ditemukan");
+
+        }
+
+        return response;
+    }
+} 

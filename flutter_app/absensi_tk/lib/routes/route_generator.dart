@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 
+import '../models/guru_model.dart';
+
 import '../screens/auth/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 
 import '../screens/admin/admin_dashboard.dart';
-import '../screens/admin/data_guru_screen.dart';
-import '../screens/admin/data_siswa_screen.dart';
-import '../screens/admin/data_kelas_screen.dart';
-import '../screens/admin/rekap_absensi_screen.dart';
-import '../screens/admin/kelola_user_screen.dart';
+
+//Admin - Guru
+import '../screens/admin/guru/data_guru_screen.dart';
+import '../screens/admin/guru/tambah_guru_screen.dart';
+import '../screens/admin/guru/detail_guru_screen.dart';
+import '../screens/admin/guru/edit_guru_screen.dart';
+
+//Admin - Siswa
+import '../screens/admin/siswa/data_siswa_screen.dart';
+
+//Admin - Kelas
+import '../screens/admin/kelas/data_kelas_screen.dart';
+
+//Admin - Rekap
+import '../screens/admin/rekap/rekap_absensi_screen.dart';
+
+//Admin - User
+import '../screens/admin/user/kelola_user_screen.dart';
 
 import '../screens/guru/absen_guru_screen.dart';
 import '../screens/guru/rekap_absen_guru_screen.dart';
@@ -38,6 +53,28 @@ class RouteGenerator {
 
       case AppRoutes.dataGuru:
         return MaterialPageRoute(builder: (_) => const DataGuruScreen());
+
+      case AppRoutes.tambahGuru:
+        return MaterialPageRoute(builder: (_) => const TambahGuruScreen());
+
+      case AppRoutes.detailGuru:
+
+        final args = settings.arguments;
+
+        if (args is Guru) {
+         return MaterialPageRoute(
+            builder: (_) => DetailGuruScreen(guru: args),
+          );
+        }
+
+        return MaterialPageRoute(
+         builder: (_) => const Scaffold(
+            body: Center(child: Text("Data guru tidak ditemukan")),
+          ),
+        );
+
+      case AppRoutes.editGuru:
+        return MaterialPageRoute(builder: (_) => const EditGuruScreen());
 
       case AppRoutes.dataSiswa:
         return MaterialPageRoute(builder: (_) => const DataSiswaScreen());
