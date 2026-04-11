@@ -15,9 +15,21 @@ import '../screens/admin/guru/edit_guru_screen.dart';
 
 //Admin - Siswa
 import '../screens/admin/siswa/data_siswa_screen.dart';
+import '../models/siswa_detail_model.dart';
+import '../screens/admin/siswa/detail_siswa_screen.dart';
+import '../screens/admin/siswa/tambah_siswa_screen.dart';
+import '../screens/admin/siswa/edit_siswa_screen.dart';
+import '../screens/admin/siswa/mutasi_siswa_screen.dart';
 
 //Admin - Kelas
 import '../screens/admin/kelas/data_kelas_screen.dart';
+import '../screens/admin/kelas/detail_kelas_screen.dart';
+import '../screens/admin/kelas/edit_wali_kelas_screen.dart';
+import '../models/kelas_detail_model.dart';
+
+// Admin - Tahun Ajaran
+import '../screens/admin/tahun_ajaran/tahun_ajaran_screen.dart';
+import '../screens/admin/tahun_ajaran/tambah_tahun_ajaran_screen.dart';
 
 //Admin - Rekap
 import '../screens/admin/rekap/rekap_absensi_screen.dart';
@@ -48,9 +60,11 @@ class RouteGenerator {
       case AppRoutes.dashboard:
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
 
+//Admin
       case AppRoutes.adminDashboard:
         return MaterialPageRoute(builder: (_) => const AdminDashboard());
 
+//Admin - Guru
       case AppRoutes.dataGuru:
         return MaterialPageRoute(builder: (_) => const DataGuruScreen());
 
@@ -74,13 +88,78 @@ class RouteGenerator {
         );
 
       case AppRoutes.editGuru:
-        return MaterialPageRoute(builder: (_) => const EditGuruScreen());
 
+        final guru = settings.arguments as Guru;
+
+        return MaterialPageRoute(
+          builder: (_) => EditGuruScreen(guru: guru),
+        );
+
+//Admin - Siswa
       case AppRoutes.dataSiswa:
-        return MaterialPageRoute(builder: (_) => const DataSiswaScreen());
+        return MaterialPageRoute(
+          builder: (_) => const DataSiswaScreen(),
+      );
 
+      case AppRoutes.detailSiswa:
+
+        final siswa = settings.arguments as SiswaDetail;
+
+        return MaterialPageRoute(
+        builder: (_) => DetailSiswaScreen(siswa: siswa),
+      );
+
+      case AppRoutes.tambahSiswa:
+        return MaterialPageRoute(
+        builder: (_) => const TambahSiswaScreen(),
+      );
+
+      case AppRoutes.editSiswa:
+
+        final siswa = settings.arguments as SiswaDetail;
+
+        return MaterialPageRoute(
+          builder: (_) => EditSiswaScreen(siswa: siswa),
+      );
+
+      case AppRoutes.mutasiSiswa:
+
+        final siswa = settings.arguments as SiswaDetail;
+
+        return MaterialPageRoute(
+          builder: (_) => MutasiSiswaScreen(siswa: siswa),
+      );
+
+// Admin - Kelas
       case AppRoutes.dataKelas:
         return MaterialPageRoute(builder: (_) => const DataKelasScreen());
+
+      case AppRoutes.detailKelas:
+
+        final kelas = settings.arguments as KelasDetail;
+
+        return MaterialPageRoute(
+          builder: (_) => DetailKelasScreen(kelas: kelas),
+      );
+
+      case AppRoutes.editWaliKelas:
+
+        final kelas = settings.arguments as KelasDetail;
+
+        return MaterialPageRoute(
+          builder: (_) => EditWaliKelasScreen(kelas: kelas),
+      );
+
+// Admin - Tahun Ajaran
+      case AppRoutes.tahunAjaran:
+        return MaterialPageRoute(
+        builder: (_) => const TahunAjaranScreen(),
+      );
+
+      case AppRoutes.tambahTahunAjaran:
+        return MaterialPageRoute(
+        builder: (_) => const TambahTahunAjaranScreen(),
+      );
 
       case AppRoutes.rekapAbsensi:
         return MaterialPageRoute(builder: (_) => const RekapAbsensiScreen());

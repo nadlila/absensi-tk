@@ -14,9 +14,11 @@ public class Siswa {
 
     private String nisn;
 
-    @ManyToOne
-    @JoinColumn(name = "id_kelas")
-    private Kelas kelas;
+    private String tempatLahir;
+
+    private String tanggalLahir;
+
+    private String alamat;
 
     public Long getIdSiswa() {
         return idSiswa;
@@ -42,11 +44,27 @@ public class Siswa {
         this.nisn = nisn;
     }
 
-    public Kelas getKelas() {
-        return kelas;
+    public String getTempatLahir() {
+        return tempatLahir;
     }
 
-    public void setKelas(Kelas kelas) {
-        this.kelas = kelas;
+    public void setTempatLahir(String tempatLahir) {
+        this.tempatLahir = tempatLahir;
+    }
+
+    public String getTanggalLahir() {
+        return tanggalLahir;
+    }
+
+    public void setTanggalLahir(String tanggalLahir) {
+        this.tanggalLahir = tanggalLahir;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
     }
 }

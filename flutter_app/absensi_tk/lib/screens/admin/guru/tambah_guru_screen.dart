@@ -17,11 +17,55 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
   final tempatLahirController = TextEditingController();
   final tanggalLahirController = TextEditingController();
   final alamatController = TextEditingController();
-  final idUserController = TextEditingController();
+
+  List users = [];
+  int? selectedUserId;
 
   bool isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+  }
+
+  // ambil data user
+  Future<void> fetchUsers() async {
+
+    try {
+
+      final response = await http.get(
+        Uri.parse("http://10.0.2.2:8080/api/users"),
+      );
+
+      if (response.statusCode == 200) {
+
+        setState(() {
+          users = jsonDecode(response.body);
+        });
+
+      }
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal mengambil data user")),
+      );
+
+    }
+
+  }
+
   Future<void> tambahGuru() async {
+
+    if (selectedUserId == null) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Pilih user terlebih dahulu")),
+      );
+
+      return;
+    }
 
     setState(() {
       isLoading = true;
@@ -33,13 +77,15 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
         "Content-Type": "application/json"
       },
       body: jsonEncode({
+
         "namaGuru": namaController.text,
         "nuptk": nuptkController.text,
         "status": statusController.text,
         "tempatLahir": tempatLahirController.text,
         "tanggalLahir": tanggalLahirController.text,
         "alamat": alamatController.text,
-        "idUser": int.tryParse(idUserController.text)
+        "idUser": selectedUserId
+
       }),
     );
 
@@ -53,7 +99,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
         const SnackBar(content: Text("Guru berhasil ditambahkan")),
       );
 
-      Navigator.pop(context); // kembali ke DataGuruScreen
+      Navigator.pop(context);
 
     } else {
 
@@ -67,6 +113,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       appBar: AppBar(
@@ -74,6 +121,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
       ),
 
       body: SingleChildScrollView(
+
         padding: const EdgeInsets.all(20),
 
         child: Column(
@@ -124,8 +172,8 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
               controller: tanggalLahirController,
               decoration: const InputDecoration(
                 labelText: "Tanggal Lahir",
-                border: OutlineInputBorder(),
                 hintText: "YYYY-MM-DD",
+                border: OutlineInputBorder(),
               ),
             ),
 
@@ -141,13 +189,33 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
 
             const SizedBox(height: 15),
 
-            TextField(
-              controller: idUserController,
+            // DROPDOWN USER
+            DropdownButtonFormField<int>(
+
+              value: selectedUserId,
+
+              items: users.map<DropdownMenuItem<int>>((user) {
+
+                return DropdownMenuItem<int>(
+                  value: user["idUser"],
+                  child: Text(user["username"]),
+                );
+
+              }).toList(),
+
+              onChanged: (value) {
+
+                setState(() {
+                  selectedUserId = value;
+                });
+
+              },
+
               decoration: const InputDecoration(
-                labelText: "ID User",
+                labelText: "Pilih User",
                 border: OutlineInputBorder(),
               ),
-              keyboardType: TextInputType.number,
+
             ),
 
             const SizedBox(height: 30),
@@ -157,17 +225,24 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
               height: 50,
 
               child: ElevatedButton(
+
                 onPressed: isLoading ? null : tambahGuru,
+
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text("SIMPAN"),
+
               ),
+
             )
 
           ],
+
         ),
+
       ),
 
     );
+
   }
 }

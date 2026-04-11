@@ -5,7 +5,13 @@ import 'package:http/http.dart' as http;
 import '../../../models/guru_model.dart';
 
 class EditGuruScreen extends StatefulWidget {
-  const EditGuruScreen({super.key});
+
+  final Guru guru;
+
+  const EditGuruScreen({
+    super.key,
+    required this.guru,
+  });
 
   @override
   State<EditGuruScreen> createState() => _EditGuruScreenState();
@@ -13,49 +19,95 @@ class EditGuruScreen extends StatefulWidget {
 
 class _EditGuruScreenState extends State<EditGuruScreen> {
 
-  final TextEditingController namaController = TextEditingController();
-  final TextEditingController nuptkController = TextEditingController();
-  final TextEditingController statusController = TextEditingController();
-  final TextEditingController tempatLahirController = TextEditingController();
-  final TextEditingController tanggalLahirController = TextEditingController();
-  final TextEditingController alamatController = TextEditingController();
+  final namaController = TextEditingController();
+  final nuptkController = TextEditingController();
+  final statusController = TextEditingController();
+  final tempatLahirController = TextEditingController();
+  final tanggalLahirController = TextEditingController();
+  final alamatController = TextEditingController();
 
-  late Guru guru;
+  List users = [];
+  int? selectedUserId;
+
+  bool isLoading = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    guru = ModalRoute.of(context)!.settings.arguments as Guru;
+    namaController.text = widget.guru.namaGuru;
+    nuptkController.text = widget.guru.nuptk;
+    statusController.text = widget.guru.status;
+    tempatLahirController.text = widget.guru.tempatLahir;
+    tanggalLahirController.text = widget.guru.tanggalLahir;
+    alamatController.text = widget.guru.alamat;
 
-    namaController.text = guru.namaGuru;
-    nuptkController.text = guru.nuptk;
-    statusController.text = guru.status;
-    tempatLahirController.text = guru.tempatLahir;
-    tanggalLahirController.text = guru.tanggalLahir;
-    alamatController.text = guru.alamat;
+    selectedUserId = widget.guru.idUser;
+
+    fetchUsers();
+  }
+
+  Future<void> fetchUsers() async {
+
+    try {
+
+      final response = await http.get(
+        Uri.parse("http://10.0.2.2:8080/api/users"),
+      );
+
+      if (response.statusCode == 200) {
+
+        setState(() {
+          users = jsonDecode(response.body);
+        });
+
+      }
+
+    } catch (e) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal mengambil data user")),
+      );
+
+    }
+
   }
 
   Future<void> updateGuru() async {
 
+    setState(() {
+      isLoading = true;
+    });
+
     final response = await http.put(
-      Uri.parse("http://10.0.2.2:8080/api/guru/${guru.idGuru}"),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse("http://10.0.2.2:8080/api/guru/${widget.guru.idGuru}"),
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
       body: jsonEncode({
+
         "namaGuru": namaController.text,
         "nuptk": nuptkController.text,
         "status": statusController.text,
         "tempatLahir": tempatLahirController.text,
         "tanggalLahir": tanggalLahirController.text,
         "alamat": alamatController.text,
-        "idUser": guru.idUser
+        "idUser": selectedUserId
+
       }),
+
     );
+
+    setState(() {
+      isLoading = false;
+    });
 
     if (response.statusCode == 200) {
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Data guru berhasil diupdate")),
+        const SnackBar(content: Text("Data berhasil diupdate")),
       );
 
       Navigator.pop(context);
@@ -63,10 +115,28 @@ class _EditGuruScreenState extends State<EditGuruScreen> {
     } else {
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Gagal update data")),
+        const SnackBar(content: Text("Update gagal")),
       );
 
     }
+
+  }
+
+  Widget field(String label, TextEditingController controller) {
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+
+      child: TextField(
+        controller: controller,
+
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+
+      ),
+    );
 
   }
 
@@ -86,69 +156,58 @@ class _EditGuruScreenState extends State<EditGuruScreen> {
 
           children: [
 
-            TextField(
-              controller: namaController,
-              decoration: const InputDecoration(
-                labelText: "Nama Guru",
-              ),
-            ),
+            field("Nama Guru", namaController),
+            field("NUPTK", nuptkController),
+            field("Status", statusController),
+            field("Tempat Lahir", tempatLahirController),
+            field("Tanggal Lahir", tanggalLahirController),
+            field("Alamat", alamatController),
 
             const SizedBox(height: 15),
 
-            TextField(
-              controller: nuptkController,
+            DropdownButtonFormField<int>(
+
+              value: selectedUserId,
+
+              items: users.map<DropdownMenuItem<int>>((user) {
+
+                return DropdownMenuItem<int>(
+                  value: user["idUser"],
+                  child: Text(user["username"]),
+                );
+
+              }).toList(),
+
+              onChanged: (value) {
+
+                setState(() {
+                  selectedUserId = value;
+                });
+
+              },
+
               decoration: const InputDecoration(
-                labelText: "NUPTK",
+                labelText: "Pilih User",
+                border: OutlineInputBorder(),
               ),
+
             ),
 
-            const SizedBox(height: 15),
-
-            TextField(
-              controller: statusController,
-              decoration: const InputDecoration(
-                labelText: "Status",
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            TextField(
-              controller: tempatLahirController,
-              decoration: const InputDecoration(
-                labelText: "Tempat Lahir",
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            TextField(
-              controller: tanggalLahirController,
-              decoration: const InputDecoration(
-                labelText: "Tanggal Lahir",
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            TextField(
-              controller: alamatController,
-              decoration: const InputDecoration(
-                labelText: "Alamat",
-              ),
-            ),
-
-            const SizedBox(height: 30),
+            const SizedBox(height: 25),
 
             ElevatedButton(
-              onPressed: updateGuru,
-              child: const Text("Update Guru"),
+
+              onPressed: isLoading ? null : updateGuru,
+
+              child: isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text("Update"),
+
             )
 
           ],
 
         ),
-
       ),
 
     );

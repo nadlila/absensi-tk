@@ -3,7 +3,8 @@ package com.absensi_api.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "guru")
+@Table(name = "guru", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "id_user")})
 public class Guru {
 
      @Id
@@ -29,7 +30,7 @@ public class Guru {
     @Column(name = "alamat")
     private String alamat;
 
-    @Column(name = "id_user")
+    @Column(name = "id_user", unique = true)
     private Long idUser;
 
     public Long getIdGuru() {

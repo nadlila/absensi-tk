@@ -58,6 +58,13 @@ class AdminDashboard extends StatelessWidget {
               route: AppRoutes.kelolaUser,
             ),
 
+            _menuCard(
+              context,
+              icon: Icons.calendar_month,
+              title: "Tahun Ajaran",
+              route: AppRoutes.tahunAjaran,
+            ),
+
           ],
         ),
       ),

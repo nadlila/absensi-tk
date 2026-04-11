@@ -27,6 +27,10 @@ class _DataGuruScreenState extends State<DataGuruScreen> {
 
     try {
 
+      setState(() {
+        isLoading = true;
+      });
+
       final response = await http.get(
         Uri.parse("http://10.0.2.2:8080/api/guru"),
       );
@@ -40,12 +44,20 @@ class _DataGuruScreenState extends State<DataGuruScreen> {
           isLoading = false;
         });
 
+      } else {
+
+        setState(() {
+          isLoading = false;
+        });
+
       }
 
     } catch (e) {
+
       setState(() {
         isLoading = false;
       });
+
     }
 
   }
@@ -59,61 +71,97 @@ class _DataGuruScreenState extends State<DataGuruScreen> {
         title: const Text("Data Guru"),
       ),
 
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : listGuru.isEmpty
-              ? const Center(
-                  child: Text("Belum ada data guru"),
-                )
-              : ListView.builder(
-                  itemCount: listGuru.length,
-                  itemBuilder: (context, index) {
+      body: SafeArea(
+        child: RefreshIndicator(
 
-                    final guru = listGuru[index];
+          onRefresh: fetchGuru,
 
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 8,
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : listGuru.isEmpty
+                  ? const Center(child: Text("Belum ada data guru"))
+                  : ListView.builder(
+      
+                      physics: const AlwaysScrollableScrollPhysics(),
+
+                      padding: const EdgeInsets.only(
+                        bottom: 100,
+                        top: 10,
                       ),
 
-                      child: ListTile(
+                      itemCount: listGuru.length,
 
-                        leading: const CircleAvatar(
-                          child: Icon(Icons.person),
-                        ),
+                      itemBuilder: (context, index) {
 
-                        title: Text(guru.namaGuru),
+                        final guru = listGuru[index];
 
-                        subtitle: Text("NUPTK: ${guru.nuptk}"),
+                        return Card(
 
-                        trailing: const Icon(Icons.arrow_forward_ios),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 8,
+                          ),
 
-                        onTap: () {
+                          child: ListTile(
 
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.detailGuru,
-                            arguments: guru,
-                          );
+                            leading: const CircleAvatar(
+                              child: Icon(Icons.person),
+                            ),
 
-                        },
+                            title: Text(guru.namaGuru),
 
-                      ),
-                    );
-                  },
-                ),
+                            subtitle: Text(
+                              "NUPTK: ${guru.nuptk}",
+                            ),
+
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                            ),
+
+                            onTap: () {
+
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.detailGuru,
+                                arguments: guru,
+                              ).then((_) {
+
+                                // refresh setelah kembali
+                                fetchGuru();
+
+                              });
+
+                            },
+
+                          ),
+
+                        );
+
+                      },
+
+                    ),
+        ),
+      ),
 
       floatingActionButton: FloatingActionButton(
+
         onPressed: () {
 
           Navigator.pushNamed(
             context,
             AppRoutes.tambahGuru,
-          );
+          ).then((_) {
+
+            // refresh setelah tambah guru
+            fetchGuru();
+
+          });
 
         },
+
         child: const Icon(Icons.add),
+
       ),
 
     );

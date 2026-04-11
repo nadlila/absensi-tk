@@ -14,15 +14,25 @@ static const String editGuru = "/admin/guru/edit";
 
 // ADMIN - SISWA
 static const String dataSiswa = "/admin/siswa";
+static const String detailSiswa = "/admin/siswa/detail";
+static const String tambahSiswa = "/admin/siswa/tambah";
+static const String editSiswa = "/admin/siswa/edit";
+static const String mutasiSiswa = "/admin/siswa/mutasi";
 
 // ADMIN - KELAS
 static const String dataKelas = "/admin/kelas";
+static const String detailKelas = "/admin/kelas/detail";
+static const String editWaliKelas = "/admin/kelas/edit-wali";
 
 // ADMIN - REKAP
 static const String rekapAbsensi = "/admin/rekap";
 
 // ADMIN - USER
 static const String kelolaUser = "/admin/user";
+
+// ADMIN - TAHUN AJARAN
+static const String tahunAjaran = "/admin/tahun-ajaran";
+static const String tambahTahunAjaran ="/admin/tahun-ajaran/tambah";
 
   // GURU
   static const String absenGuru = "/absen-guru";
