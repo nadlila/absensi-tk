@@ -30,6 +30,7 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
     loadData();
   }
 
+  // 🔥 LOAD SEMUA DATA
   Future<void> loadData() async {
 
     setState(() {
@@ -39,7 +40,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
     await fetchTahunAktif();
     await fetchKelas();
     await fetchSiswa();
-
   }
 
   Future<void> fetchTahunAktif() async {
@@ -49,11 +49,8 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
     );
 
     if(response.statusCode == 200){
-
       final data = jsonDecode(response.body);
-
       tahunAktif = TahunAjaran.fromJson(data);
-
     }
 
   }
@@ -70,8 +67,11 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
 
       listKelas = data.map((e) => Kelas.fromJson(e)).toList();
 
+      // 🔥 SORT KELAS A-Z
+      listKelas.sort((a, b) => a.namaKelas.compareTo(b.namaKelas));
+
       if(listKelas.isNotEmpty){
-        selectedKelas = listKelas.first.idKelas;
+        selectedKelas ??= listKelas.first.idKelas;
       }
 
     }
@@ -95,18 +95,25 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
       setState(() {
 
         listSiswa = data.map((e) => SiswaDetail.fromJson(e)).toList();
+
+        // 🔥 OPTIONAL: SORT NAMA SISWA
+        listSiswa.sort((a, b) => a.namaSiswa.compareTo(b.namaSiswa));
+
         isLoading = false;
 
       });
 
     } else {
-
       setState(() {
         isLoading = false;
       });
-
     }
 
+  }
+
+  // 🔥 REFRESH (pull & auto)
+  Future<void> refreshData() async {
+    await loadData();
   }
 
   @override
@@ -118,134 +125,148 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
         title: const Text("Data Siswa"),
       ),
 
-      body: Column(
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
 
-        children: [
+              onRefresh: refreshData,
 
-          if(tahunAktif != null)
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              child: Column(
 
-                Text(
-                  "Tahun : ${tahunAktif!.tahun}",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                children: [
 
-                Text(
-                  "Semester : ${tahunAktif!.semester}",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                )
+                  if(tahunAktif != null)
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
 
-              ],
-            ),
-          ),
+                        Text(
+                          "Tahun : ${tahunAktif!.tahun}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
+                        Text(
+                          "Semester : ${tahunAktif!.semester}",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        )
 
-            child: DropdownButtonFormField<String>(
+                      ],
+                    ),
+                  ),
 
-              value: selectedKelas,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
 
-              items: listKelas.map((kelas) {
+                    child: DropdownButtonFormField<String>(
 
-                return DropdownMenuItem<String>(
-                  value: kelas.idKelas,
-                  child: Text(kelas.namaKelas),
-                );
+                      value: selectedKelas,
 
-              }).toList(),
+                      items: listKelas.map((kelas) {
+                        return DropdownMenuItem<String>(
+                          value: kelas.idKelas,
+                          child: Text(kelas.namaKelas),
+                        );
+                      }).toList(),
 
-              onChanged: (value){
+                      onChanged: (value){
 
-                setState(() {
-                  selectedKelas = value;
-                });
+                        setState(() {
+                          selectedKelas = value;
+                          isLoading = true;
+                        });
 
-                fetchSiswa();
+                        fetchSiswa();
 
-              },
+                      },
 
-              decoration: const InputDecoration(
-                labelText: "Pilih Kelas",
-                border: OutlineInputBorder(),
+                      decoration: const InputDecoration(
+                        labelText: "Pilih Kelas",
+                        border: OutlineInputBorder(),
+                      ),
+
+                    ),
+
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Expanded(
+
+                    child: listSiswa.isEmpty
+                        ? const Center(child: Text("Tidak ada siswa"))
+                        : ListView.builder(
+
+                            itemCount: listSiswa.length,
+
+                            itemBuilder: (context, index){
+
+                              final siswa = listSiswa[index];
+
+                              return Card(
+
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 8,
+                                ),
+
+                                child: ListTile(
+
+                                  leading: const CircleAvatar(
+                                    child: Icon(Icons.school),
+                                  ),
+
+                                  title: Text(siswa.namaSiswa),
+
+                                  subtitle: Text("NISN : ${siswa.nisn}"),
+
+                                  trailing: const Icon(Icons.arrow_forward_ios),
+
+                                  onTap: () async {
+
+                                    final result = await Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.detailSiswa,
+                                      arguments: siswa,
+                                    );
+
+                                    // 🔥 AUTO REFRESH setelah balik
+                                    if(result == true){
+                                      refreshData();
+                                    }
+
+                                  },
+
+                                ),
+
+                              );
+
+                            },
+
+                          ),
+
+                  )
+
+                ],
+
               ),
 
             ),
 
-          ),
-
-          const SizedBox(height: 10),
-
-          Expanded(
-
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : listSiswa.isEmpty
-                    ? const Center(child: Text("Tidak ada siswa"))
-                    : RefreshIndicator(
-
-                        onRefresh: fetchSiswa,
-
-                        child: ListView.builder(
-
-                          itemCount: listSiswa.length,
-
-                          itemBuilder: (context, index){
-
-                            final siswa = listSiswa[index];
-
-                            return Card(
-
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 8,
-                              ),
-
-                              child: ListTile(
-
-                                leading: const CircleAvatar(
-                                  child: Icon(Icons.school),
-                                ),
-
-                                title: Text(siswa.namaSiswa),
-
-                                subtitle: Text("NISN : ${siswa.nisn}"),
-
-                                trailing: const Icon(Icons.arrow_forward_ios),
-
-                                onTap: (){
-
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppRoutes.detailSiswa,
-                                    arguments: siswa,
-                                  );
-
-                                },
-
-                              ),
-
-                            );
-
-                          },
-
-                        ),
-
-                      ),
-
-          )
-
-        ],
-
-      ),
-
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.tambahSiswa);
+        onPressed: () async {
+
+          final result = await Navigator.pushNamed(
+            context,
+            AppRoutes.tambahSiswa,
+          );
+
+          // 🔥 AUTO REFRESH setelah tambah
+          if(result == true){
+            refreshData();
+          }
+
         },
         child: const Icon(Icons.add),
       ),

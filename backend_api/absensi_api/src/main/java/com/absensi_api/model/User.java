@@ -18,6 +18,10 @@ public class User {
 
     private String role;
 
+    @Column(name = "id_guru")
+private Long idGuru;
+
+
     public Long getIdUser() {
         return idUser;
     }
@@ -57,4 +61,12 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public Long getIdGuru() {
+    return idGuru;
+}
+
+public void setIdGuru(Long idGuru) {
+    this.idGuru = idGuru;
+}
 }

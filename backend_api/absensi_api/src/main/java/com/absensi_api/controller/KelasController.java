@@ -22,6 +22,10 @@ public class KelasController {
 
     @PostMapping
     public Kelas create(@RequestBody Kelas kelas) {
+
+        if(kelasRepository.existsByIdKelas(kelas.getIdKelas())){
+        throw new RuntimeException("Kelas sudah ada");   }
+        
         return kelasRepository.save(kelas);
     }
 

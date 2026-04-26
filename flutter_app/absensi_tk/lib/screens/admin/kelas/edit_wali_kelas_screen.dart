@@ -21,9 +21,7 @@ class EditWaliKelasScreen extends StatefulWidget {
 class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
 
   List<Guru> listGuru = [];
-
   int? selectedGuru;
-
   bool isLoading = true;
 
   @override
@@ -47,9 +45,8 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
         listGuru =
             data.map((e) => Guru.fromJson(e)).toList();
 
-        if(listGuru.isNotEmpty){
-          selectedGuru = listGuru.first.idGuru;
-        }
+        // ✅ default wali kelas sekarang
+        selectedGuru = widget.kelas.idGuru;
 
         isLoading = false;
 
@@ -61,9 +58,9 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
 
   Future<void> updateWaliKelas() async {
 
-    final response = await http.post(
+    final response = await http.put(
 
-      Uri.parse("http://10.0.2.2:8080/api/kelas-guru"),
+      Uri.parse("http://10.0.2.2:8080/api/kelas-guru/${widget.kelas.id}"),
 
       headers: {
         "Content-Type":"application/json"
@@ -79,7 +76,7 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
 
     );
 
-    if(response.statusCode == 200 || response.statusCode == 201){
+    if(response.statusCode == 200){
 
       if(context.mounted){
 
@@ -87,7 +84,7 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
           const SnackBar(content: Text("Wali kelas berhasil diubah")),
         );
 
-        Navigator.pop(context);
+        Navigator.pop(context, true); // 🔥 kirim signal refresh
 
       }
 
@@ -95,6 +92,7 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
 
   }
 
+  // 🔥 WAJIB ADA (ini yang bikin error kamu hilang)
   @override
   Widget build(BuildContext context) {
 
@@ -181,5 +179,4 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
     );
 
   }
-
 }

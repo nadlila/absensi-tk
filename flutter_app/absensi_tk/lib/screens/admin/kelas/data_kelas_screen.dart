@@ -25,25 +25,45 @@ class _DataKelasScreenState extends State<DataKelasScreen> {
 
   Future<void> fetchKelas() async {
 
-    final response = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/kelas-guru/detail"),
-    );
+    setState(() {
+      isLoading = true;
+    });
 
-    if(response.statusCode == 200){
+    try {
+      final response = await http.get(
+        Uri.parse("http://10.0.2.2:8080/api/kelas-guru/detail"),
+      );
 
-      List data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
 
+        List data = jsonDecode(response.body);
+
+        setState(() {
+          listKelas =
+              data.map((e) => KelasDetail.fromJson(e)).toList();
+
+          // 🔥 SORT A-Z
+          listKelas.sort((a, b) => a.namaKelas.compareTo(b.namaKelas));
+
+          isLoading = false;
+        });
+
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-
-        listKelas =
-            data.map((e) => KelasDetail.fromJson(e)).toList();
-
         isLoading = false;
-
       });
-
     }
 
+  }
+
+  // 🔥 Pull to refresh
+  Future<void> refreshData() async {
+    await fetchKelas();
   }
 
   @override
@@ -57,55 +77,107 @@ class _DataKelasScreenState extends State<DataKelasScreen> {
 
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : RefreshIndicator(
 
-              itemCount: listKelas.length,
+              onRefresh: refreshData,
 
-              itemBuilder: (context,index){
+              child: listKelas.isEmpty
+                  ? const Center(child: Text("Tidak ada data"))
+                  : ListView.builder(
 
-                final kelas = listKelas[index];
+                      itemCount: listKelas.length,
 
-                return Card(
+                      itemBuilder: (context, index) {
 
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 8,
-                  ),
+                        final kelas = listKelas[index];
 
-                  child: ListTile(
+                        return Card(
 
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.class_),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 8,
+                          ),
+
+                          child: ListTile(
+
+                            leading: const CircleAvatar(
+                              child: Icon(Icons.class_),
+                            ),
+
+                            title: Text(kelas.namaKelas),
+
+                            subtitle: Text(
+                              "Wali Kelas : ${kelas.waliKelas}",
+                            ),
+
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                            ),
+
+                            onTap: () async {
+
+                              final result = await Navigator.pushNamed(
+                                context,
+                                AppRoutes.detailKelas,
+                                arguments: kelas,
+                              );
+
+                              if (result == true) {
+                                fetchKelas();
+                              }
+
+                            },
+
+                          ),
+
+                        );
+
+                      },
+
                     ),
-
-                    title: Text(kelas.namaKelas),
-
-                    subtitle: Text(
-                      "Wali Kelas : ${kelas.waliKelas}",
-                    ),
-
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                    ),
-
-                    onTap: (){
-
-                      Navigator.pushNamed(
-                        context,
-                        AppRoutes.detailKelas,
-                        arguments: kelas,
-                      );
-
-                    },
-
-                  ),
-
-                );
-
-              },
 
             ),
+
+      // ✅ FIX: gabungkan 2 FAB
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+
+          FloatingActionButton(
+            heroTag: "setupKelas",
+            onPressed: () async {
+              final result = await Navigator.pushNamed(
+                context,
+                AppRoutes.setupKelasTahun,
+              );
+
+              if (result == true) {
+                fetchKelas();
+              }
+            },
+            child: const Icon(Icons.settings),
+          ),
+
+          const SizedBox(height: 10),
+
+          FloatingActionButton(
+            heroTag: "tambahKelas",
+            onPressed: () async {
+              final result = await Navigator.pushNamed(
+                context,
+                AppRoutes.tambahKelas,
+              );
+
+              if (result == true) {
+                fetchKelas(); // refresh
+              }
+            },
+            child: const Icon(Icons.add),
+          ),
+
+        ],
+      ),
 
     );
 

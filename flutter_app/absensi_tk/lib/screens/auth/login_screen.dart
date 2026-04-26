@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../widgets/bottom_navbar.dart';
 import '../admin/admin_dashboard.dart';
+import '../../models/kelas_detail_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,7 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
 
   bool isPasswordHidden = true;
 
@@ -45,6 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
         }),
       );
 
+      print("LOGIN STATUS: ${response.statusCode}");
+      print("LOGIN BODY: ${response.body}");
+
       if (response.statusCode == 200) {
 
         final data = jsonDecode(response.body);
@@ -53,7 +56,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
           String role = data["role"].toString().toLowerCase();
 
-          if (role == "admin") {
+          // ================= ADMIN =================
+          if (role.contains("admin")) {
 
             Navigator.pushReplacement(
               context,
@@ -62,13 +66,57 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
 
-          } else if (role == "guru") {
+          }
 
+          // ================= GURU =================
+          else if (role.contains("guru")) {
+
+            int? idGuru = data["idGuru"];
+
+            // 🔥 kalau tidak ada idGuru → tetap masuk (tanpa kelas)
+            if (idGuru == null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BottomNavbar(
+                    kelas: null,
+                  ),
+                ),
+              );
+              return;
+            }
+
+            final kelasRes = await http.get(
+              Uri.parse("http://10.0.2.2:8080/api/kelas-guru/guru/$idGuru/detail-aktif"),
+            );
+
+            print("STATUS KELAS: ${kelasRes.statusCode}");
+            print("BODY KELAS: ${kelasRes.body}");
+
+            KelasDetail? kelas;
+
+            if (kelasRes.statusCode == 200 && kelasRes.body != "null") {
+              final kelasData = jsonDecode(kelasRes.body);
+              kelas = KelasDetail.fromJson(kelasData);
+            }
+
+            // 🔥 SELALU MASUK (walaupun kelas null)
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => const BottomNavbar(),
+                builder: (context) => BottomNavbar(
+                  kelas: kelas,
+                ),
               ),
+            );
+
+          }
+
+          // ================= ROLE TIDAK DIKENALI =================
+          else {
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Role tidak dikenali")),
             );
 
           }
@@ -91,12 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     } catch (e) {
 
+      print("ERROR LOGIN: $e");
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tidak dapat terhubung ke server")),
       );
 
     }
-
   }
 
   void loginWithGmail() {

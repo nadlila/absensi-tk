@@ -10,10 +10,13 @@ public class KelasGuru {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "id_kelas")
     private String idKelas;
 
+    @Column(name = "id_guru")
     private Long idGuru;
 
+    @Column(name = "id_tahun_ajaran")
     private Long idTahunAjaran;
 
     public Long getId() {

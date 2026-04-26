@@ -5,4 +5,6 @@ import com.absensi_api.model.Guru;
 
 public interface GuruRepository extends JpaRepository<Guru, Long> {
 
+    Guru findByIdUser(Long idUser);
+
 }

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../models/siswa_detail_model.dart';
 import '../../../routes/app_routes.dart';
+import 'dart:convert';
 
 class DetailSiswaScreen extends StatelessWidget {
 
@@ -14,7 +15,6 @@ class DetailSiswaScreen extends StatelessWidget {
   });
 
   Widget item(String title, String value){
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
 
@@ -34,7 +34,6 @@ class DetailSiswaScreen extends StatelessWidget {
           const SizedBox(height: 5),
 
           Container(
-
             width: double.infinity,
             padding: const EdgeInsets.all(12),
 
@@ -44,16 +43,44 @@ class DetailSiswaScreen extends StatelessWidget {
             ),
 
             child: Text(value),
-
           )
 
         ],
       ),
-
     );
-
   }
 
+  // 🔥 KONFIRMASI HAPUS
+  void confirmHapus(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Konfirmasi"),
+        content: const Text("Yakin ingin menghapus siswa ini?"),
+        actions: [
+
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+
+          TextButton(
+            onPressed: (){
+              Navigator.pop(context);
+              hapusSiswa(context);
+            },
+            child: const Text(
+              "Hapus",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+
+        ],
+      ),
+    );
+  }
+
+  // 🔥 HAPUS SISWA
   Future<void> hapusSiswa(BuildContext context) async {
 
     final response = await http.delete(
@@ -68,8 +95,8 @@ class DetailSiswaScreen extends StatelessWidget {
           const SnackBar(content: Text("Siswa berhasil dihapus")),
         );
 
-        Navigator.pop(context); // keluar detail
-        Navigator.pop(context); // kembali ke data siswa
+        // 🔥 KIRIM SIGNAL KE HALAMAN SEBELUMNYA
+        Navigator.pop(context, true);
 
       }
 
@@ -82,6 +109,156 @@ class DetailSiswaScreen extends StatelessWidget {
     }
 
   }
+
+  // pindah kelas
+  Future<List<dynamic>> fetchTahun() async {
+
+  final response = await http.get(
+    Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran"),
+  );
+
+  if(response.statusCode == 200){
+    return jsonDecode(response.body);
+  }
+
+  return [];
+}
+
+void showNaikKelasDialog(BuildContext context) async {
+
+  String? selectedKelas;
+  int? selectedTahun;
+
+  final listTahun = await fetchTahun();
+
+  if(!context.mounted) return;
+
+  showDialog(
+    context: context,
+    builder: (_) => StatefulBuilder(
+      builder: (context, setStateDialog){
+
+        return AlertDialog(
+
+          title: const Text("Naik Kelas"),
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              /// 🔽 PILIH KELAS (KHUSUS TK B)
+              DropdownButtonFormField<String>(
+
+                items: ["B1","B2","B3","B4"].map((k){
+                  return DropdownMenuItem(
+                    value: k,
+                    child: Text(k),
+                  );
+                }).toList(),
+
+                onChanged: (value){
+                  setStateDialog(() {
+                    selectedKelas = value;
+                  });
+                },
+
+                decoration: const InputDecoration(
+                  labelText: "Pilih Kelas Baru",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
+              /// 🔽 PILIH TAHUN
+              DropdownButtonFormField<int>(
+
+                items: listTahun.map<DropdownMenuItem<int>>((t){
+                  return DropdownMenuItem(
+                    value: t["idTahunAjaran"],
+                    child: Text("${t["tahun"]} - ${t["semester"]}"),
+                  );
+                }).toList(),
+
+                onChanged: (value){
+                  setStateDialog(() {
+                    selectedTahun = value;
+                  });
+                },
+
+                decoration: const InputDecoration(
+                  labelText: "Pilih Tahun Ajaran",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+            ],
+          ),
+
+          actions: [
+
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+
+            TextButton(
+              onPressed: () async {
+
+                if(selectedKelas == null || selectedTahun == null){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Lengkapi data")),
+                  );
+                  return;
+                }
+
+                await naikKelas(context, selectedKelas!, selectedTahun!);
+
+                Navigator.pop(context, true);
+
+              },
+              child: const Text("Naikkan"),
+            ),
+
+          ],
+
+        );
+
+      },
+    ),
+  );
+}
+
+Future<void> naikKelas(
+  BuildContext context,
+  String kelasBaru,
+  int tahunBaru
+) async {
+
+  final response = await http.post(
+    Uri.parse("http://10.0.2.2:8080/api/siswa-kelas/naik-kelas-siswa"),
+    headers: {"Content-Type": "application/json"},
+    body: jsonEncode({
+      "idSiswa": siswa.idSiswa,
+      "idKelas": kelasBaru,
+      "idTahunAjaran": tahunBaru
+    }),
+  );
+
+  if(response.statusCode == 200){
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(response.body)),
+    );
+
+  } else {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Gagal naik kelas")),
+    );
+
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -110,15 +287,23 @@ class DetailSiswaScreen extends StatelessWidget {
             Row(
               children: [
 
+                // 🔵 EDIT
                 Expanded(
                   child: ElevatedButton.icon(
 
-                    onPressed: (){
-                      Navigator.pushNamed(
+                    onPressed: () async {
+
+                      final result = await Navigator.pushNamed(
                         context,
                         AppRoutes.editSiswa,
                         arguments: siswa,
                       );
+
+                      // 🔥 AUTO REFRESH SETELAH EDIT
+                      if(result == true){
+                        Navigator.pop(context, true);
+                      }
+
                     },
 
                     icon: const Icon(Icons.edit),
@@ -129,6 +314,7 @@ class DetailSiswaScreen extends StatelessWidget {
 
                 const SizedBox(width: 10),
 
+                // 🔴 HAPUS
                 Expanded(
                   child: ElevatedButton.icon(
 
@@ -137,7 +323,7 @@ class DetailSiswaScreen extends StatelessWidget {
                     ),
 
                     onPressed: (){
-                      hapusSiswa(context);
+                      confirmHapus(context);
                     },
 
                     icon: const Icon(Icons.delete),
@@ -148,6 +334,7 @@ class DetailSiswaScreen extends StatelessWidget {
 
                 const SizedBox(width: 10),
 
+                // 🟠 MUTASI
                 Expanded(
                   child: ElevatedButton.icon(
 
@@ -155,19 +342,48 @@ class DetailSiswaScreen extends StatelessWidget {
                       backgroundColor: Colors.orange,
                     ),
 
-                    onPressed: (){
-                      Navigator.pushNamed(
-                      context,
-                      AppRoutes.mutasiSiswa,
-                      arguments: siswa,
+                    onPressed: () async {
+
+                      final result = await Navigator.pushNamed(
+                        context,
+                        AppRoutes.mutasiSiswa,
+                        arguments: siswa,
                       );
+
+                      // 🔥 AUTO REFRESH SETELAH MUTASI
+                      if(result == true){
+                        Navigator.pop(context, true);
+                      }
+
                     },
 
                     icon: const Icon(Icons.swap_horiz),
                     label: const Text("Mutasi"),
 
                   ),
+                  
                 ),
+
+                const SizedBox(width: 10),
+
+// 🟢 NAIK KELAS
+Expanded(
+  child: ElevatedButton.icon(
+
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.green,
+    ),
+
+    onPressed: (){
+      showNaikKelasDialog(context);
+    },
+
+    icon: const Icon(Icons.trending_up),
+    label: const Text("Naik"),
+
+  ),
+),
+
               ],
             )
 

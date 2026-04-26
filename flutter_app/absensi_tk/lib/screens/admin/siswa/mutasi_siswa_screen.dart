@@ -72,42 +72,47 @@ class _MutasiSiswaScreenState extends State<MutasiSiswaScreen> {
 
   Future<void> mutasiSiswa() async {
 
-    if(selectedKelas == null || tahunAktif == null) return;
+  if(selectedKelas == null || tahunAktif == null) return;
 
-    final response = await http.post(
+  final response = await http.put(
 
-      Uri.parse("http://10.0.2.2:8080/api/siswa-kelas"),
+    Uri.parse("http://10.0.2.2:8080/api/siswa-kelas/mutasi"),
 
-      headers: {
-        "Content-Type":"application/json"
-      },
+    headers: {
+      "Content-Type":"application/json"
+    },
 
-      body: jsonEncode({
+    body: jsonEncode({
 
-        "idSiswa": widget.siswa.idSiswa,
-        "idKelas": selectedKelas,
-        "idTahunAjaran": tahunAktif!.idTahunAjaran
+      "idSiswa": widget.siswa.idSiswa,
+      "idKelas": selectedKelas,
+      "idTahunAjaran": tahunAktif!.idTahunAjaran
 
-      }),
+    }),
 
-    );
+  );
 
-    if(response.statusCode == 200 || response.statusCode == 201){
+  if(response.statusCode == 200){
 
-      if(context.mounted){
+    if(context.mounted){
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Mutasi siswa berhasil")),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Mutasi siswa berhasil")),
+      );
 
-        Navigator.pop(context);
-
-      }
+      Navigator.pop(context, true); // 🔥 biar auto refresh
 
     }
 
+  } else {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Gagal mutasi")),
+    );
+
   }
 
+}
   @override
   Widget build(BuildContext context) {
 

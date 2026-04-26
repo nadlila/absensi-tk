@@ -25,6 +25,8 @@ import '../screens/admin/siswa/mutasi_siswa_screen.dart';
 import '../screens/admin/kelas/data_kelas_screen.dart';
 import '../screens/admin/kelas/detail_kelas_screen.dart';
 import '../screens/admin/kelas/edit_wali_kelas_screen.dart';
+import '../screens/admin/kelas/SetupKelasTahunScreen.dart';
+import '../screens/admin/kelas/TambahKelasScreen.dart';
 import '../models/kelas_detail_model.dart';
 
 // Admin - Tahun Ajaran
@@ -56,9 +58,12 @@ class RouteGenerator {
 
       case AppRoutes.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
-
+// dashboard guru
       case AppRoutes.dashboard:
-        return MaterialPageRoute(builder: (_) => const DashboardScreen());
+        final kelas = settings.arguments as KelasDetail;
+          return MaterialPageRoute(
+        builder: (_) => DashboardScreen(kelas: kelas),
+      );
 
 //Admin
       case AppRoutes.adminDashboard:
@@ -149,6 +154,14 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => EditWaliKelasScreen(kelas: kelas),
       );
+      case AppRoutes.setupKelasTahun:
+            return MaterialPageRoute(
+        builder: (_) => const SetupKelasTahunScreen(),
+      );
+      case AppRoutes.tambahKelas:
+            return MaterialPageRoute(
+         builder: (_) => const TambahKelasScreen(),
+      );
 
 // Admin - Tahun Ajaran
       case AppRoutes.tahunAjaran:
@@ -161,20 +174,32 @@ class RouteGenerator {
         builder: (_) => const TambahTahunAjaranScreen(),
       );
 
+// rekap
       case AppRoutes.rekapAbsensi:
         return MaterialPageRoute(builder: (_) => const RekapAbsensiScreen());
 
+// user
       case AppRoutes.kelolaUser:
         return MaterialPageRoute(builder: (_) => const KelolaUserScreen());
 
+// absen guru
       case AppRoutes.absenGuru:
-        return MaterialPageRoute(builder: (_) => const AbsenGuruScreen());
+
+        final kelas = settings.arguments as KelasDetail;
+
+        return MaterialPageRoute(
+      builder: (_) => AbsenGuruScreen(kelas: kelas),
+    );
 
       case AppRoutes.rekapAbsenGuru:
         return MaterialPageRoute(builder: (_) => const RekapAbsenGuruScreen());
 
+// absen siswa
       case AppRoutes.absenSiswa:
-        return MaterialPageRoute(builder: (_) => const AbsenSiswaScreen());
+  final kelas = settings.arguments as KelasDetail;
+  return MaterialPageRoute(
+    builder: (_) => AbsenSiswaScreen(kelas: kelas),
+  );
 
       case AppRoutes.rekapAbsenSiswa:
         return MaterialPageRoute(builder: (_) => const RekapAbsenSiswaScreen());

@@ -1,6 +1,8 @@
 package com.absensi_api.controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.absensi_api.model.Siswa;
+import com.absensi_api.repository.SiswaKelasRepository;
 import com.absensi_api.repository.SiswaRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,10 @@ public class SiswaController {
         return siswaRepository.findAll();
     }
 
+//     @GetMapping("/kelas/{idKelas}")
+// public List<Siswa> getByKelas(@PathVariable String idKelas) {
+//     return siswaRepository.findByIdKelas(idKelas);
+//}
     @PostMapping
     public Siswa create(@RequestBody Siswa siswa) {
         return siswaRepository.save(siswa);
@@ -39,8 +45,23 @@ public class SiswaController {
         return siswaRepository.save(existing);
     }
 
+    @Autowired
+        private SiswaKelasRepository siswaKelasRepository;
+    @Transactional
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        siswaRepository.deleteById(id);
-    }
+
+    // 🔥 hapus relasi dulu
+    siswaKelasRepository.deleteByIdSiswa(id);
+
+    // 🔥 baru hapus siswa
+    siswaRepository.deleteById(id);
+}
+@GetMapping("/kelas/{idKelas}")
+public List<?> getSiswaByKelas(
+        @PathVariable String idKelas,
+        @RequestParam Long idTahunAjaran
+){
+    return siswaKelasRepository.getByKelasDanTahun(idKelas, idTahunAjaran);
+}
 }

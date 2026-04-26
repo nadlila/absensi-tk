@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 public class Kelas {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String idKelas;
 
     private String namaKelas;

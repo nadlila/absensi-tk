@@ -3,7 +3,12 @@ package com.absensi_api.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "siswa_kelas")
+@Table(
+    name = "siswa_kelas",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"idSiswa", "idTahunAjaran"})
+    }
+)
 public class SiswaKelas {
 
     @Id
@@ -11,9 +16,7 @@ public class SiswaKelas {
     private Long idSiswaKelas;
 
     private Long idSiswa;
-
     private String idKelas;
-
     private Long idTahunAjaran;
 
     public Long getIdSiswaKelas() {
@@ -47,5 +50,4 @@ public class SiswaKelas {
     public void setIdTahunAjaran(Long idTahunAjaran) {
         this.idTahunAjaran = idTahunAjaran;
     }
-    
 }

@@ -28,10 +28,16 @@ public class KelasGuruController {
         return kelasGuruRepository.findByIdKelas(idKelas);
     }
 
-    // GET berdasarkan guru
+    // GET berdasarkan guru (semua data)
     @GetMapping("/guru/{idGuru}")
     public List<KelasGuru> getByGuru(@PathVariable Long idGuru) {
         return kelasGuruRepository.findByIdGuru(idGuru);
+    }
+
+    // GET kelas guru yang aktif
+    @GetMapping("/guru/{idGuru}/aktif")
+    public KelasGuru getKelasGuru(@PathVariable Long idGuru){
+        return kelasGuruRepository.getKelasGuruAktif(idGuru);
     }
 
     @GetMapping("/detail")
@@ -39,17 +45,22 @@ public class KelasGuruController {
         return kelasGuruRepository.getDetailKelasAktif();
     }
 
-    @GetMapping("/guru/{idGuru}")
-    public KelasGuru getKelasGuru(@PathVariable Long idGuru){
-
-        return kelasGuruRepository.getKelasGuruAktif(idGuru);
-
-    }
 
     // POST tambah wali kelas
     @PostMapping
-    public KelasGuru create(@RequestBody KelasGuru kelasGuru) {
-        return kelasGuruRepository.save(kelasGuru);
+        public KelasGuru create(@RequestBody KelasGuru kelasGuru) {
+
+    boolean exists = kelasGuruRepository
+        .existsByIdKelasAndIdTahunAjaran(
+            kelasGuru.getIdKelas(),
+            kelasGuru.getIdTahunAjaran()
+        );
+
+    if(exists){
+        throw new RuntimeException("Kelas sudah di-set untuk tahun ini");
+    }
+
+    return kelasGuruRepository.save(kelasGuru);
     }
 
     // PUT update
@@ -68,8 +79,25 @@ public class KelasGuruController {
     }
 
     // DELETE
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        kelasGuruRepository.deleteById(id);
+    @DeleteMapping("/by-kelas")
+    public void deleteByKelas(
+        @RequestParam String idKelas,
+        @RequestParam Long idTahunAjaran
+    ){
+        kelasGuruRepository.deleteByIdKelasAndIdTahunAjaran(idKelas, idTahunAjaran);
     }
+    @DeleteMapping("/{id}")
+public void delete(@PathVariable Long id) {
+
+    if(!kelasGuruRepository.existsById(id)){
+        throw new RuntimeException("Data tidak ditemukan");
+    }
+
+    kelasGuruRepository.deleteById(id);
+}
+
+@GetMapping("/guru/{idGuru}/detail-aktif")
+public KelasDetailDTO getDetailKelasGuru(@PathVariable Long idGuru){
+    return kelasGuruRepository.getDetailKelasGuruAktif(idGuru);
+}
 }

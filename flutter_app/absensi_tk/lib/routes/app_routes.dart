@@ -23,6 +23,8 @@ static const String mutasiSiswa = "/admin/siswa/mutasi";
 static const String dataKelas = "/admin/kelas";
 static const String detailKelas = "/admin/kelas/detail";
 static const String editWaliKelas = "/admin/kelas/edit-wali";
+static const String setupKelasTahun = '/setup-kelas-tahun';
+static const String tambahKelas = "/admin/kelas/tambah";
 
 // ADMIN - REKAP
 static const String rekapAbsensi = "/admin/rekap";

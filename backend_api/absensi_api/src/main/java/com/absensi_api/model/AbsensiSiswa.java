@@ -60,4 +60,12 @@ public class AbsensiSiswa {
     public void setKeterangan(String keterangan) {
         this.keterangan = keterangan;
     }
+    public Long getIdSiswa() {
+    return siswa != null ? siswa.getIdSiswa() : null;
+}
+
+public void setIdSiswa(Long idSiswa) {
+    this.siswa = new Siswa();
+    this.siswa.setIdSiswa(idSiswa);
+}
 }
