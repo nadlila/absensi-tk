@@ -4,8 +4,11 @@ import com.absensi_api.dto.LoginRequest;
 import com.absensi_api.dto.LoginResponse;
 import com.absensi_api.model.User;
 import com.absensi_api.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -15,17 +18,21 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest request){
 
-        User user = userRepository.findByUsername(request.getUsername());
+        Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
 
-        if(user != null && user.getPassword().equals(request.getPassword())){
+        if(userOpt.isPresent()){
 
-            return new LoginResponse(
-                    true,
-                    "Login berhasil",
-                    user.getRole(),
-                    user.getUsername()
-            );
+            User user = userOpt.get();
 
+            if(user.getPassword().equals(request.getPassword())){
+
+                return new LoginResponse(
+                        true,
+                        "Login berhasil",
+                        user.getRole(),
+                        user.getUsername()
+                );
+            }
         }
 
         return new LoginResponse(
@@ -35,5 +42,4 @@ public class AuthService {
                 null
         );
     }
-
-}  
+}

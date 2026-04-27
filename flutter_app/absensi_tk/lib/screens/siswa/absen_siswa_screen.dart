@@ -49,7 +49,7 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
 
     print("URL: $url");
 
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(url)); 
 
     print("STATUS: ${response.statusCode}");
     print("BODY: ${response.body}");

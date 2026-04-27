@@ -12,14 +12,28 @@ import java.util.List;
 
 public interface KelasGuruRepository extends JpaRepository<KelasGuru, Long> {
 
+    // =========================
+    // BASIC QUERY METHODS
+    // =========================
     boolean existsByIdKelasAndIdTahunAjaran(String idKelas, Long idTahunAjaran);
+
     void deleteByIdKelasAndIdTahunAjaran(String idKelas, Long idTahunAjaran);
 
     List<KelasGuru> findByIdKelas(String idKelas);
+
     List<KelasGuru> findByIdGuru(Long idGuru);
+
     List<KelasGuru> findByIdTahunAjaran(Long idTahunAjaran);
 
-    // 🔥 SEMUA DATA
+    // =========================
+    // AMBIL TAHUN AJARAN AKTIF
+    // =========================
+    @Query("SELECT t FROM TahunAjaran t WHERE t.status = 'aktif'")
+    TahunAjaran getTahunAktif();
+
+    // =========================
+    // DETAIL SEMUA KELAS AKTIF
+    // =========================
     @Query("""
     SELECT new com.absensi_api.dto.KelasDetailDTO(
         kg.id,
@@ -38,10 +52,10 @@ public interface KelasGuruRepository extends JpaRepository<KelasGuru, Long> {
     WHERE t.status = 'aktif'
     """)
     List<KelasDetailDTO> getDetailKelasAktif();
-    @Query("SELECT t FROM TahunAjaran t WHERE t.status = 'aktif'")
-        TahunAjaran getTahunAktif();
 
-    // 🔥 DATA PER GURU
+    // =========================
+    // DETAIL PER GURU
+    // =========================
     @Query("""
     SELECT new com.absensi_api.dto.KelasDetailDTO(
         kg.id,
@@ -61,5 +75,17 @@ public interface KelasGuruRepository extends JpaRepository<KelasGuru, Long> {
     AND t.status = 'aktif'
     """)
     KelasDetailDTO getDetailKelasGuruAktif(@Param("idGuru") Long idGuru);
+
+    // =========================
+    // KELAS GURU AKTIF (FIXED)
+    // =========================
+    @Query("""
+    SELECT kg
+    FROM KelasGuru kg
+    JOIN TahunAjaran t ON kg.idTahunAjaran = t.idTahunAjaran
+    WHERE kg.idGuru = :idGuru
+    AND t.status = 'aktif'
+    """)
+    List<KelasGuru> getKelasGuruAktif(@Param("idGuru") Long idGuru);
 
 }

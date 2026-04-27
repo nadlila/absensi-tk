@@ -36,8 +36,8 @@ public class KelasGuruController {
 
     // GET kelas guru yang aktif
     @GetMapping("/guru/{idGuru}/aktif")
-    public KelasGuru getKelasGuru(@PathVariable Long idGuru){
-        return kelasGuruRepository.getKelasGuruAktif(idGuru);
+    public List<KelasGuru> getKelasGuru(@PathVariable Long idGuru){
+    return kelasGuruRepository.getKelasGuruAktif(idGuru);
     }
 
     @GetMapping("/detail")

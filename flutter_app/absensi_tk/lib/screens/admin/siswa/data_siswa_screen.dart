@@ -227,7 +227,7 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
 
                                     final result = await Navigator.pushNamed(
                                       context,
-                                      AppRoutes.detailSiswa,
+                                      AppRoutes.detailSiswaAdmin,
                                       arguments: siswa,
                                     );
 

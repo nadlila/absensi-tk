@@ -277,10 +277,10 @@ Future<void> naikKelas(
           children: [
 
             item("Nama Siswa", siswa.namaSiswa),
-            item("NISN", siswa.nisn),
-            item("Kelas", siswa.kelas),
-            item("Tahun Ajaran", siswa.tahun),
-            item("Semester", siswa.semester),
+            item("NISN", siswa.nisn ?? "-") ,
+            item("Kelas", siswa.namaKelas ?? "-"),
+            item("Tahun Ajaran", siswa.tahun ?? "-"),
+            item("Semester", siswa.semester ?? "-"),
 
             const SizedBox(height: 20),
 

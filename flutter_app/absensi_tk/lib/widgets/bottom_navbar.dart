@@ -3,7 +3,7 @@ import '../models/kelas_detail_model.dart';
 
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/guru/absen_guru_screen.dart';
-import '../screens/siswa/absen_siswa_screen.dart';
+import '../screens/siswa/menu_absensi_siswa_screen.dart';
 import '../screens/profil/profil_screen.dart';
 
 class BottomNavbar extends StatefulWidget {
@@ -27,7 +27,9 @@ class _BottomNavbarState extends State<BottomNavbar> {
     pages = [
       DashboardScreen(kelas: widget.kelas),
       AbsenGuruScreen(kelas: widget.kelas),
-      AbsenSiswaScreen(kelas: widget.kelas),
+      widget.kelas != null
+          ? MenuAbsensiSiswaScreen(kelas: widget.kelas!)
+          : const Center(child: Text("Tidak ada kelas")),
       const ProfilScreen(),
     ];
   }
@@ -39,14 +41,13 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
+        type: BottomNavigationBarType.fixed,
 
         onTap: (index) {
           setState(() {
             currentIndex = index;
           });
         },
-
-        type: BottomNavigationBarType.fixed,
 
         items: const [
           BottomNavigationBarItem(

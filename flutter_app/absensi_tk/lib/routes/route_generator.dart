@@ -27,7 +27,7 @@ import '../screens/admin/kelas/detail_kelas_screen.dart';
 import '../screens/admin/kelas/edit_wali_kelas_screen.dart';
 import '../screens/admin/kelas/SetupKelasTahunScreen.dart';
 import '../screens/admin/kelas/TambahKelasScreen.dart';
-import '../models/kelas_detail_model.dart';
+
 
 // Admin - Tahun Ajaran
 import '../screens/admin/tahun_ajaran/tahun_ajaran_screen.dart';
@@ -39,20 +39,31 @@ import '../screens/admin/rekap/rekap_absensi_screen.dart';
 //Admin - User
 import '../screens/admin/user/kelola_user_screen.dart';
 
+// Guru
 import '../screens/guru/absen_guru_screen.dart';
 import '../screens/guru/rekap_absen_guru_screen.dart';
 
+// Siswa
+import '../screens/siswa/menu_absensi_siswa_screen.dart';
 import '../screens/siswa/absen_siswa_screen.dart';
 import '../screens/siswa/rekap_absen_siswa_screen.dart';
+import '../screens/siswa/data_siswa_guru_screen.dart';
+import '../screens/siswa/detail_absensi_siswa_screen.dart';
+import '../screens/siswa/detail_data_siswa_screen.dart';
+import '../models/kelas_detail_model.dart';
 
+// Profil
 import '../screens/profil/profil_screen.dart';
 import '../screens/notifikasi/notifikasi_screen.dart';
+
 
 import 'app_routes.dart';
 
 class RouteGenerator {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
+
+    final args = settings.arguments;
 
     switch (settings.name) {
 
@@ -101,12 +112,12 @@ class RouteGenerator {
         );
 
 //Admin - Siswa
-      case AppRoutes.dataSiswa:
+      case AppRoutes.dataSiswaAdmin:
         return MaterialPageRoute(
           builder: (_) => const DataSiswaScreen(),
       );
 
-      case AppRoutes.detailSiswa:
+      case AppRoutes.detailSiswaAdmin:
 
         final siswa = settings.arguments as SiswaDetail;
 
@@ -194,16 +205,62 @@ class RouteGenerator {
       case AppRoutes.rekapAbsenGuru:
         return MaterialPageRoute(builder: (_) => const RekapAbsenGuruScreen());
 
-// absen siswa
-      case AppRoutes.absenSiswa:
-  final kelas = settings.arguments as KelasDetail;
+// Siswa
+     
+// ================= SISWA =================
+
+// MENU
+case AppRoutes.menuSiswa:
   return MaterialPageRoute(
-    builder: (_) => AbsenSiswaScreen(kelas: kelas),
+    builder: (_) => MenuAbsensiSiswaScreen(
+      kelas: args as KelasDetail,
+    ),
   );
 
-      case AppRoutes.rekapAbsenSiswa:
-        return MaterialPageRoute(builder: (_) => const RekapAbsenSiswaScreen());
+// ABSEN
+case AppRoutes.absenSiswa:
+  return MaterialPageRoute(
+    builder: (_) => AbsenSiswaScreen(
+      kelas: args as KelasDetail,
+    ),
+  );
 
+// REKAP
+case AppRoutes.rekapSiswa:
+  return MaterialPageRoute(
+    builder: (_) => RekapAbsenSiswaScreen(
+      kelas: args as KelasDetail,
+    ),
+  );
+
+// 🔥 HISTORI ABSENSI (PER SISWA)
+case AppRoutes.detailAbsensiSiswa:
+  final map = args as Map;
+
+  return MaterialPageRoute(
+    builder: (_) => DetailAbsenSiswaScreen(
+      siswa: map["siswa"],
+      kelas: map["kelas"],
+    ),
+  );
+
+// 🔥 DATA SISWA (LIST)
+case AppRoutes.dataSiswaGuru:
+  return MaterialPageRoute(
+    builder: (_) => DataSiswaGuruScreen(
+      kelas: args as KelasDetail,
+    ),
+  );
+
+// 🔥 DETAIL BIODATA SISWA
+case AppRoutes.detailDataSiswa:
+  return MaterialPageRoute(
+    builder: (_) => DetailDataSiswaScreen(
+      siswa: args as SiswaDetail,
+    ),
+  );
+
+// Profil
       case AppRoutes.profil:
         return MaterialPageRoute(builder: (_) => const ProfilScreen());
 

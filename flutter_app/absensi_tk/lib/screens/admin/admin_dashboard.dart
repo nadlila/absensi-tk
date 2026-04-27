@@ -49,7 +49,7 @@ class AdminDashboard extends StatelessWidget {
               context,
               icon: Icons.school,
               title: "Data Siswa",
-              route: AppRoutes.dataSiswa,
+              route: AppRoutes.dataSiswaAdmin,
             ),
 
             _menuCard(

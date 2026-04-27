@@ -144,7 +144,7 @@ class _MutasiSiswaScreenState extends State<MutasiSiswaScreen> {
 
                   const SizedBox(height:5),
 
-                  Text("Kelas sekarang : ${widget.siswa.kelas}"),
+                  Text("Kelas sekarang : ${widget.siswa.namaKelas ?? "-"}"),
 
                   const SizedBox(height:20),
 

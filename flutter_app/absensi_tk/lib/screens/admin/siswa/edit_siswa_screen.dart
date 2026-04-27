@@ -30,7 +30,7 @@ class _EditSiswaScreenState extends State<EditSiswaScreen> {
     super.initState();
 
     namaController.text = widget.siswa.namaSiswa;
-    nisnController.text = widget.siswa.nisn;
+    nisnController.text = widget.siswa.nisn ?? "-";
   }
 
   Future<void> updateSiswa() async {

@@ -17,9 +17,18 @@ public class AbsensiSiswa {
 
     private LocalDate tanggal;
 
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "id_status")
+    private StatusAbsensi status;
 
     private String keterangan;
+
+    @Column(name = "id_kelas")
+    private String idKelas;
+
+    @ManyToOne
+    @JoinColumn(name = "id_tahun_ajaran")
+    private TahunAjaran tahunAjaran;
 
     public Long getIdAbsensi() {
         return idAbsensi;
@@ -45,14 +54,14 @@ public class AbsensiSiswa {
         this.tanggal = tanggal;
     }
 
-    public String getStatus() {
+    public StatusAbsensi getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusAbsensi status) {
         this.status = status;
     }
-
+ 
     public String getKeterangan() {
         return keterangan;
     }
@@ -62,10 +71,27 @@ public class AbsensiSiswa {
     }
     public Long getIdSiswa() {
     return siswa != null ? siswa.getIdSiswa() : null;
+    }
+
+    public void setIdSiswa(Long idSiswa) {
+        this.siswa = new Siswa();
+        this.siswa.setIdSiswa(idSiswa);
+    }
+
+    public String getIdKelas() {
+    return idKelas;
+    }
+
+    public void setIdKelas(String idKelas) {
+        this.idKelas = idKelas;
+    }
+
+    public Long getIdTahunAjaran() {
+    return tahunAjaran != null ? tahunAjaran.getIdTahunAjaran() : null;
 }
 
-public void setIdSiswa(Long idSiswa) {
-    this.siswa = new Siswa();
-    this.siswa.setIdSiswa(idSiswa);
+public void setIdTahunAjaran(Long idTahunAjaran) {
+    this.tahunAjaran = new TahunAjaran();
+    this.tahunAjaran.setIdTahunAjaran(idTahunAjaran);
 }
 }

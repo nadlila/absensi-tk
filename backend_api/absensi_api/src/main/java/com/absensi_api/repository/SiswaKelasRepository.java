@@ -34,6 +34,9 @@ public interface SiswaKelasRepository extends JpaRepository<SiswaKelas, Long> {
     s.idSiswa,
     s.namaSiswa,
     s.nisn,
+    s.tempatLahir,
+    s.tanggalLahir,
+    s.alamat,
     k.namaKelas,
     t.tahun,
     t.semester
@@ -50,6 +53,9 @@ public interface SiswaKelasRepository extends JpaRepository<SiswaKelas, Long> {
     s.idSiswa,
     s.namaSiswa,
     s.nisn,
+    s.tempatLahir,
+    s.tanggalLahir,
+    s.alamat,
     k.namaKelas,
     t.tahun,
     t.semester
