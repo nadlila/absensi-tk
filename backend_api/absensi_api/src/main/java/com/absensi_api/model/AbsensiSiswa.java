@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "absensi_siswa")
+@Table(name = "absensi_siswa") 
 public class AbsensiSiswa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_absensi_siswa") 
     private Long idAbsensi;
-
     @ManyToOne
     @JoinColumn(name = "id_siswa")
     private Siswa siswa;
@@ -87,11 +87,21 @@ public class AbsensiSiswa {
     }
 
     public Long getIdTahunAjaran() {
-    return tahunAjaran != null ? tahunAjaran.getIdTahunAjaran() : null;
-}
+        return tahunAjaran != null ? tahunAjaran.getIdTahunAjaran() : null;
+    }
 
-public void setIdTahunAjaran(Long idTahunAjaran) {
-    this.tahunAjaran = new TahunAjaran();
-    this.tahunAjaran.setIdTahunAjaran(idTahunAjaran);
-}
+    public void setIdTahunAjaran(Long idTahunAjaran) {
+        this.tahunAjaran = new TahunAjaran();
+        this.tahunAjaran.setIdTahunAjaran(idTahunAjaran);
+    }
+
+    // 🔥 TAMBAHAN WAJIB
+    public Long getIdStatus() {
+        return status != null ? status.getIdStatus() : null;
+    }
+
+    public void setIdStatus(Long idStatus) {
+        this.status = new StatusAbsensi();
+        this.status.setIdStatus(idStatus);
+    }
 }

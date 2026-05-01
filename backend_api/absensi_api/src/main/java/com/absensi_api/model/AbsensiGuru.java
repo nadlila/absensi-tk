@@ -9,7 +9,7 @@ public class AbsensiGuru {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAbsensi;
+    private Long idAbsensiGuru;
 
     @ManyToOne
     @JoinColumn(name = "id_guru")
@@ -20,11 +20,11 @@ public class AbsensiGuru {
     private String status;
 
     public Long getIdAbsensi() {
-        return idAbsensi;
+        return idAbsensiGuru;
     }
 
     public void setIdAbsensi(Long idAbsensi) {
-        this.idAbsensi = idAbsensi;
+        this.idAbsensiGuru = idAbsensiGuru;
     }
 
     public Guru getGuru() {

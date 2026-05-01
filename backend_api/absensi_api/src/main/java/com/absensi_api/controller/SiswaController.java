@@ -1,6 +1,7 @@
 package com.absensi_api.controller;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.absensi_api.dto.SiswaDetailDTO;
 import com.absensi_api.model.Siswa;
 import com.absensi_api.repository.SiswaKelasRepository;
 import com.absensi_api.repository.SiswaRepository;
@@ -17,9 +18,10 @@ public class SiswaController {
     @Autowired
     private SiswaRepository siswaRepository;
 
-    @GetMapping
-    public List<Siswa> getAll() {
-        return siswaRepository.findAll();
+    @GetMapping("/detail/{id}")
+    public SiswaDetailDTO getDetail(@PathVariable Long id){
+        System.out.println("🔥 HIT API DETAIL SISWA: " + id);
+        return siswaRepository.getDetailById(id);
     }
 
 //     @GetMapping("/kelas/{idKelas}")

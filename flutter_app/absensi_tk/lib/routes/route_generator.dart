@@ -50,6 +50,7 @@ import '../screens/siswa/rekap_absen_siswa_screen.dart';
 import '../screens/siswa/data_siswa_guru_screen.dart';
 import '../screens/siswa/detail_absensi_siswa_screen.dart';
 import '../screens/siswa/detail_data_siswa_screen.dart';
+import '../screens/siswa/detail_rekap_siswa_screen.dart';
 import '../models/kelas_detail_model.dart';
 
 // Profil
@@ -256,7 +257,19 @@ case AppRoutes.dataSiswaGuru:
 case AppRoutes.detailDataSiswa:
   return MaterialPageRoute(
     builder: (_) => DetailDataSiswaScreen(
-      siswa: args as SiswaDetail,
+      idSiswa: args as int,
+    ),
+  );
+
+// DETAIL REKAP SISWA
+  case AppRoutes.detailRekapSiswa:
+  final map = args as Map;
+  return MaterialPageRoute(
+    builder: (_) => DetailRekapSiswaScreen(
+      siswaId: map["idSiswa"],
+      namaSiswa: map["namaSiswa"],
+      startDate: map["startDate"],
+      endDate: map["endDate"],
     ),
   );
 

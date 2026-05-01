@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../routes/app_routes.dart';
 
 import '../../models/kelas_detail_model.dart';
 import '../../models/siswa_detail_model.dart';
@@ -64,8 +65,8 @@ class _DataSiswaGuruScreenState
                     onTap: () {
                       Navigator.pushNamed(
                         context,
-                        "/detailDataSiswa",
-                        arguments: s,
+                        AppRoutes.detailDataSiswa,
+                        arguments: s.idSiswa,
                       );
                     },
                   ),
@@ -74,4 +75,4 @@ class _DataSiswaGuruScreenState
             ),
     );
   }
-}
+} 

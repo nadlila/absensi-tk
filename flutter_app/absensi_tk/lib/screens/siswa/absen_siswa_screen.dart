@@ -27,62 +27,71 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
     if (widget.kelas != null) {
       fetchSiswa();
     } else {
-      setState(() {
-        isLoading = false;
-      });
+      isLoading = false;
     }
   }
 
   Future<void> fetchSiswa() async {
-  try {
-    final kelas = widget.kelas;
+    try {
+      final kelas = widget.kelas;
 
-    if (kelas == null) {
-      setState(() => isLoading = false);
-      return;
-    }
+      if (kelas == null) {
+        setState(() => isLoading = false);
+        return;
+      }
 
-    final url =
-        "http://10.0.2.2:8080/api/siswa-kelas/filter"
-        "?idKelas=${kelas.idKelas}"
-        "&idTahun=${kelas.idTahunAjaran}";
+      final url =
+          "http://10.0.2.2:8080/api/siswa-kelas/filter"
+          "?idKelas=${kelas.idKelas}"
+          "&idTahun=${kelas.idTahunAjaran}";
 
-    print("URL: $url");
+      final response = await http.get(Uri.parse(url));
 
-    final response = await http.get(Uri.parse(url)); 
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
 
-    print("STATUS: ${response.statusCode}");
-    print("BODY: ${response.body}");
+        setState(() {
+          listSiswa =
+              data.map((e) => SiswaDetail.fromJson(e)).toList();
 
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
+          absensi.clear();
+          for (var s in listSiswa) {
+            absensi[s.idSiswa] = "hadir";
+          }
 
-      setState(() {
-        listSiswa =
-            data.map((e) => SiswaDetail.fromJson(e)).toList();
-
-        absensi.clear();
-        for (var s in listSiswa) {
-          absensi[s.idSiswa] = "hadir";
-        }
-
+          isLoading = false;
+        });
+      } else {
         isLoading = false;
-      });
-    } else {
-      setState(() => isLoading = false);
+      }
+    } catch (e) {
+      print("ERROR FETCH: $e");
+      isLoading = false;
     }
-  } catch (e) {
-    print("ERROR: $e");
-    setState(() => isLoading = false);
   }
-}
+
+  // 🔥 FIX: mapping status ke id
+  int getStatusId(String status) {
+    switch (status) {
+      case "hadir":
+        return 1;
+      case "izin":
+        return 2;
+      case "sakit":
+        return 3;
+      case "alfa":
+        return 4;
+      default:
+        return 1;
+    }
+  }
 
   Future<void> simpanAbsensi() async {
     List data = absensi.entries.map((e) {
       return {
         "idSiswa": e.key,
         "idKelas": widget.kelas!.idKelas,
-        "status": e.value,
+        "idStatus": getStatusId(e.value), // ✅ FIX
         "tanggal": DateTime.now().toString().substring(0, 10),
         "idTahunAjaran": widget.kelas!.idTahunAjaran
       };
@@ -94,9 +103,16 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
       body: jsonEncode(data),
     );
 
+    print("STATUS SIMPAN: ${response.statusCode}");
+    print("BODY: ${response.body}");
+
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Absensi berhasil disimpan")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal simpan absensi")),
       );
     }
   }
@@ -123,7 +139,7 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
     if (widget.kelas == null) {
       return const Scaffold(
         body: Center(
-          child: Text("Anda tidak memiliki kelas untuk absensi siswa"),
+          child: Text("Anda tidak memiliki kelas"),
         ),
       );
     }
@@ -132,7 +148,6 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
       appBar: AppBar(
         title: Text("Absen ${widget.kelas!.namaKelas}"),
       ),
-
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -144,7 +159,6 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
                       final siswa = listSiswa[index];
 
                       return Card(
-                        margin: const EdgeInsets.all(8),
                         child: ListTile(
                           title: Text(siswa.namaSiswa),
                           subtitle: Row(
@@ -159,16 +173,11 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
                     },
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: simpanAbsensi,
-                      child: const Text("SIMPAN ABSENSI"),
-                    ),
+                  child: ElevatedButton(
+                    onPressed: simpanAbsensi,
+                    child: const Text("SIMPAN ABSENSI"),
                   ),
                 ),
               ],

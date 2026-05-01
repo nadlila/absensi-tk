@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 11, 2026 at 02:59 PM
--- Server version: 8.4.3
+-- Generation Time: May 01, 2026 at 03:58 PM
+-- Server version: 9.6.0
 -- PHP Version: 8.3.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -28,8 +28,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `absensi_guru` (
-  `id_absensi_guru` int NOT NULL,
-  `id_guru` int DEFAULT NULL,
+  `id_absensi_guru` bigint NOT NULL,
+  `id_guru` bigint NOT NULL,
   `tanggal` date DEFAULT NULL,
   `keterangan` varchar(100) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL
@@ -42,14 +42,43 @@ CREATE TABLE `absensi_guru` (
 --
 
 CREATE TABLE `absensi_siswa` (
-  `id_absensi_siswa` int NOT NULL,
-  `tanggal` date DEFAULT NULL,
-  `id_kelas` varchar(10) DEFAULT NULL,
-  `id_guru` int DEFAULT NULL,
+  `id_absensi_siswa` bigint NOT NULL,
+  `tanggal` date NOT NULL,
+  `id_kelas` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `keterangan` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `id_siswa` bigint DEFAULT NULL
+  `id_status` bigint DEFAULT NULL,
+  `id_tahun_ajaran` bigint DEFAULT NULL,
+  `id_siswa` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `absensi_siswa`
+--
+
+INSERT INTO `absensi_siswa` (`id_absensi_siswa`, `tanggal`, `id_kelas`, `keterangan`, `id_status`, `id_tahun_ajaran`, `id_siswa`) VALUES
+(1, '2026-05-01', 'A2', NULL, 1, 1, 20),
+(2, '2026-05-01', 'A2', NULL, 1, 1, 21),
+(3, '2026-05-01', 'A2', NULL, 1, 1, 22),
+(4, '2026-05-01', 'A2', NULL, 1, 1, 23),
+(5, '2026-05-01', 'A2', NULL, 1, 1, 24),
+(6, '2026-05-01', 'A2', NULL, 1, 1, 25),
+(7, '2026-05-01', 'A2', NULL, 1, 1, 26),
+(8, '2026-05-01', 'A2', NULL, 1, 1, 27),
+(9, '2026-05-01', 'A2', NULL, 1, 1, 28),
+(10, '2026-05-01', 'A2', NULL, 1, 1, 29),
+(11, '2026-05-01', 'A2', NULL, 1, 1, 30),
+(12, '2026-05-01', 'A2', NULL, 1, 1, 31),
+(13, '2026-05-01', 'A2', NULL, 1, 1, 32),
+(14, '2026-05-01', 'A2', NULL, 1, 1, 33),
+(15, '2026-05-01', 'A2', NULL, 1, 1, 34),
+(16, '2026-05-01', 'A2', NULL, 1, 1, 35),
+(17, '2026-05-01', 'A2', NULL, 1, 1, 36),
+(18, '2026-05-01', 'A2', NULL, 1, 1, 37),
+(19, '2026-05-01', 'A2', NULL, 1, 1, 38),
+(20, '2026-05-01', 'A2', NULL, 1, 1, 39),
+(21, '2026-05-01', 'A2', NULL, 1, 1, 40),
+(22, '2026-05-01', 'A2', NULL, 1, 1, 41),
+(23, '2026-05-01', 'A2', NULL, 2, 1, 42);
 
 -- --------------------------------------------------------
 
@@ -59,8 +88,8 @@ CREATE TABLE `absensi_siswa` (
 
 CREATE TABLE `detail_absensi_siswa` (
   `id_detail_absensi_siswa` int NOT NULL,
-  `id_siswa` int DEFAULT NULL,
-  `id_absensi_siswa` int DEFAULT NULL,
+  `id_siswa` bigint DEFAULT NULL,
+  `id_absensi_siswa` bigint DEFAULT NULL,
   `id_status` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -71,7 +100,7 @@ CREATE TABLE `detail_absensi_siswa` (
 --
 
 CREATE TABLE `guru` (
-  `id_guru` int NOT NULL,
+  `id_guru` bigint NOT NULL,
   `nama_guru` varchar(255) DEFAULT NULL,
   `nuptk` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
@@ -93,7 +122,7 @@ INSERT INTO `guru` (`id_guru`, `nama_guru`, `nuptk`, `status`, `tempat_lahir`, `
 (3, 'KHUSNUL AZIZAH', '9261744647300043', 'GTY', 'Lumajang', '1966-09-29', 'Kedungrejo', NULL, NULL, NULL),
 (4, 'MARSINAH', '1353748651300033', 'GTY', 'Lumajang', '1970-07-21', 'Kedungrejo', NULL, NULL, NULL),
 (5, 'WIYANI, A.Md.', '6039748651300073', 'GTY', 'Lumajang', '1970-07-07', 'Kedungrejo', NULL, NULL, NULL),
-(6, 'ALFA FAUZIYAH, S.Pd.', '8537767668230283', 'GTY', 'Jember', '1989-12-05', 'Kedungrejo', NULL, NULL, NULL),
+(6, 'ALFA FAUZIYAH, S.Pd.', '8537767668230283', 'GTY', 'Jember', '1989-12-05', 'Kedungrejo', 6, NULL, NULL),
 (7, 'NAFISATUL FAUZIYAH, S.Pd.', '3762769670230362', 'GTY', 'Pasuruan', '1991-04-30', 'Kedungrejo', NULL, NULL, NULL),
 (8, 'DWI PUJI LESTARI, S.Pd.', '948772673230402', 'GTY', 'Jember', '1994-06-16', 'Kedungrejo', NULL, NULL, NULL),
 (9, 'NURIL HIDAYAH LAILLIA ARI, S.Ak.', NULL, 'GTY', 'Lumajang', '2001-07-29', 'Kedungrejo', NULL, NULL, NULL),
@@ -109,7 +138,7 @@ INSERT INTO `guru` (`id_guru`, `nama_guru`, `nuptk`, `status`, `tempat_lahir`, `
 
 CREATE TABLE `kelas` (
   `id_kelas` varchar(10) NOT NULL,
-  `nama_kelas` varchar(255) DEFAULT NULL
+  `nama_kelas` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -123,7 +152,8 @@ INSERT INTO `kelas` (`id_kelas`, `nama_kelas`) VALUES
 ('B2', 'B2'),
 ('B3', 'B3'),
 ('B4', 'B4'),
-('B5', 'B5');
+('B5', 'B5'),
+('B6', 'B6');
 
 -- --------------------------------------------------------
 
@@ -134,8 +164,8 @@ INSERT INTO `kelas` (`id_kelas`, `nama_kelas`) VALUES
 CREATE TABLE `kelas_guru` (
   `id` bigint NOT NULL,
   `id_kelas` varchar(10) NOT NULL,
-  `id_guru` int NOT NULL,
-  `id_tahun_ajaran` int NOT NULL
+  `id_guru` bigint NOT NULL,
+  `id_tahun_ajaran` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -143,13 +173,17 @@ CREATE TABLE `kelas_guru` (
 --
 
 INSERT INTO `kelas_guru` (`id`, `id_kelas`, `id_guru`, `id_tahun_ajaran`) VALUES
-(1, 'A1', 4, 1),
 (2, 'A2', 6, 1),
 (3, 'B1', 8, 1),
 (4, 'B2', 2, 1),
 (5, 'B3', 3, 1),
 (6, 'B4', 11, 1),
-(7, 'B5', 10, 1);
+(9, 'A1', 5, 1),
+(45, 'A1', 18, 2),
+(46, 'B5', 11, 1),
+(48, 'B6', 18, 1),
+(50, 'A2', 2, 2),
+(51, 'B1', 3, 2);
 
 -- --------------------------------------------------------
 
@@ -158,7 +192,7 @@ INSERT INTO `kelas_guru` (`id`, `id_kelas`, `id_guru`, `id_tahun_ajaran`) VALUES
 --
 
 CREATE TABLE `siswa` (
-  `id_siswa` int NOT NULL,
+  `id_siswa` bigint NOT NULL,
   `nama_siswa` varchar(255) DEFAULT NULL,
   `nisn` varchar(255) DEFAULT NULL,
   `tempat_lahir` varchar(255) DEFAULT NULL,
@@ -255,7 +289,7 @@ INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `nisn`, `tempat_lahir`, `tanggal_
 (82, 'Muhammad Fathan Al Varo', '3194893856', 'Lumajang', '2019-11-02', 'Jl. Selok Ondung'),
 (83, 'Muhammad Raffasya', '3194910311', 'Lumajang', '2019-06-09', 'Jl. Selok Ondung'),
 (84, 'Zalfa Qirana', '3196676649', 'Lumajang', '2019-12-14', 'Jl. Bayur'),
-(85, 'Afifah', '123456', 'Lumajang', '2024-06-04', 'Lumajang');
+(85, 'Afifah Na', '123456', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -265,9 +299,9 @@ INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `nisn`, `tempat_lahir`, `tanggal_
 
 CREATE TABLE `siswa_kelas` (
   `id_siswa_kelas` bigint NOT NULL,
-  `id_siswa` int NOT NULL,
+  `id_siswa` bigint NOT NULL,
   `id_kelas` varchar(10) NOT NULL,
-  `id_tahun_ajaran` int NOT NULL
+  `id_tahun_ajaran` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -317,8 +351,9 @@ INSERT INTO `siswa_kelas` (`id_siswa_kelas`, `id_siswa`, `id_kelas`, `id_tahun_a
 (41, 40, 'A2', 1),
 (42, 41, 'A2', 1),
 (43, 42, 'A2', 1),
-(44, 85, 'A1', 1),
-(45, 85, 'A2', 1);
+(44, 85, 'B1', 1),
+(48, 43, 'B1', 2),
+(49, 85, 'B1', 2);
 
 -- --------------------------------------------------------
 
@@ -327,8 +362,8 @@ INSERT INTO `siswa_kelas` (`id_siswa_kelas`, `id_siswa`, `id_kelas`, `id_tahun_a
 --
 
 CREATE TABLE `status_absensi` (
-  `id_status` int NOT NULL,
-  `nama_status` varchar(20) NOT NULL
+  `id_status` bigint NOT NULL,
+  `nama_status` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -339,7 +374,7 @@ INSERT INTO `status_absensi` (`id_status`, `nama_status`) VALUES
 (1, 'Hadir'),
 (2, 'Izin'),
 (3, 'Sakit'),
-(4, 'Alpha');
+(4, 'Alfa');
 
 -- --------------------------------------------------------
 
@@ -348,7 +383,7 @@ INSERT INTO `status_absensi` (`id_status`, `nama_status`) VALUES
 --
 
 CREATE TABLE `tahun_ajaran` (
-  `id_tahun_ajaran` int NOT NULL,
+  `id_tahun_ajaran` bigint NOT NULL,
   `tahun` varchar(255) DEFAULT NULL,
   `semester` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL
@@ -359,7 +394,8 @@ CREATE TABLE `tahun_ajaran` (
 --
 
 INSERT INTO `tahun_ajaran` (`id_tahun_ajaran`, `tahun`, `semester`, `status`) VALUES
-(1, '2026', '2', 'aktif');
+(1, '2026', '2', 'aktif'),
+(2, '2026/2027', '1', 'tidak');
 
 -- --------------------------------------------------------
 
@@ -372,18 +408,21 @@ CREATE TABLE `users` (
   `username` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL
+  `email` varchar(255) DEFAULT NULL,
+  `id_guru` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `email`) VALUES
-(1, 'admin', '123', 'admin', 'admin@gmail.com'),
-(2, 'Susiani', '123', 'guru', 'Susiani@gmail.com'),
-(3, 'budi', '123', 'guru', 'budi@gmail.com'),
-(4, 'afifah', '123', 'guru', 'afif@gmail.com');
+INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `email`, `id_guru`) VALUES
+(1, 'admin', '123', 'admin', 'admin@gmail.com', NULL),
+(2, 'Susiani', '123', 'guru', 'Susiani@gmail.com', NULL),
+(3, 'budi', '123', 'guru', 'budi@gmail.com', NULL),
+(4, 'afifah', '123', 'guru', 'afif@gmail.com', NULL),
+(5, 'amandaa', '123', 'guru', 'manda@gmail', NULL),
+(6, 'karin', '123', 'guru', 'karin@gmail.com', NULL);
 
 --
 -- Indexes for dumped tables
@@ -401,8 +440,10 @@ ALTER TABLE `absensi_guru`
 --
 ALTER TABLE `absensi_siswa`
   ADD PRIMARY KEY (`id_absensi_siswa`),
-  ADD KEY `id_guru` (`id_guru`),
-  ADD KEY `fk_kelas_absensi` (`id_kelas`);
+  ADD UNIQUE KEY `unique_absen` (`id_siswa`,`tanggal`),
+  ADD KEY `fk_kelas_absensi` (`id_kelas`),
+  ADD KEY `fk_status` (`id_status`),
+  ADD KEY `fk_tahun_ajaran` (`id_tahun_ajaran`);
 
 --
 -- Indexes for table `detail_absensi_siswa`
@@ -445,6 +486,8 @@ ALTER TABLE `siswa`
 --
 ALTER TABLE `siswa_kelas`
   ADD PRIMARY KEY (`id_siswa_kelas`),
+  ADD UNIQUE KEY `unique_siswa_tahun` (`id_siswa`,`id_tahun_ajaran`),
+  ADD UNIQUE KEY `UKrpjjdddbiyiqjvg07gmi947bo` (`id_siswa`,`id_tahun_ajaran`),
   ADD KEY `id_siswa` (`id_siswa`),
   ADD KEY `id_tahun_ajaran` (`id_tahun_ajaran`),
   ADD KEY `siswa_kelas_ibfk_3` (`id_kelas`);
@@ -475,13 +518,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `absensi_guru`
 --
 ALTER TABLE `absensi_guru`
-  MODIFY `id_absensi_guru` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_absensi_guru` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `absensi_siswa`
 --
 ALTER TABLE `absensi_siswa`
-  MODIFY `id_absensi_siswa` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_absensi_siswa` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `detail_absensi_siswa`
@@ -493,43 +536,43 @@ ALTER TABLE `detail_absensi_siswa`
 -- AUTO_INCREMENT for table `guru`
 --
 ALTER TABLE `guru`
-  MODIFY `id_guru` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_guru` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `kelas_guru`
 --
 ALTER TABLE `kelas_guru`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `id_siswa` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `id_siswa` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT for table `siswa_kelas`
 --
 ALTER TABLE `siswa_kelas`
-  MODIFY `id_siswa_kelas` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id_siswa_kelas` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `status_absensi`
 --
 ALTER TABLE `status_absensi`
-  MODIFY `id_status` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_status` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tahun_ajaran`
 --
 ALTER TABLE `tahun_ajaran`
-  MODIFY `id_tahun_ajaran` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_tahun_ajaran` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_user` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -539,21 +582,23 @@ ALTER TABLE `users`
 -- Constraints for table `absensi_guru`
 --
 ALTER TABLE `absensi_guru`
-  ADD CONSTRAINT `absensi_guru_ibfk_1` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `absensi_guru_ibfk_1` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `absensi_siswa`
 --
 ALTER TABLE `absensi_siswa`
-  ADD CONSTRAINT `absensi_siswa_ibfk_2` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_kelas_absensi` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`);
+  ADD CONSTRAINT `fk_kelas` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_siswa` FOREIGN KEY (`id_siswa`) REFERENCES `siswa` (`id_siswa`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_status` FOREIGN KEY (`id_status`) REFERENCES `status_absensi` (`id_status`),
+  ADD CONSTRAINT `fk_tahun_ajaran` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran` (`id_tahun_ajaran`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `detail_absensi_siswa`
 --
 ALTER TABLE `detail_absensi_siswa`
-  ADD CONSTRAINT `detail_absensi_siswa_ibfk_1` FOREIGN KEY (`id_siswa`) REFERENCES `siswa` (`id_siswa`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `detail_absensi_siswa_ibfk_2` FOREIGN KEY (`id_absensi_siswa`) REFERENCES `absensi_siswa` (`id_absensi_siswa`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `absensi_siswa_ibfk_2` FOREIGN KEY (`id_absensi_siswa`) REFERENCES `absensi_siswa` (`id_absensi_siswa`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `siswa_ibfk_1` FOREIGN KEY (`id_siswa`) REFERENCES `siswa` (`id_siswa`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `guru`
@@ -565,16 +610,16 @@ ALTER TABLE `guru`
 -- Constraints for table `kelas_guru`
 --
 ALTER TABLE `kelas_guru`
-  ADD CONSTRAINT `fk_kelas_guru_guru` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`),
-  ADD CONSTRAINT `fk_kelas_guru_kelas` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`),
-  ADD CONSTRAINT `fk_kelas_guru_tahun` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran` (`id_tahun_ajaran`);
+  ADD CONSTRAINT `fk_kelas_guru_guru` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_kelas_guru_kelas` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_kelas_guru_tahun_ajaran` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran` (`id_tahun_ajaran`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `siswa_kelas`
 --
 ALTER TABLE `siswa_kelas`
-  ADD CONSTRAINT `siswa_kelas_ibfk_1` FOREIGN KEY (`id_siswa`) REFERENCES `siswa` (`id_siswa`),
-  ADD CONSTRAINT `siswa_kelas_ibfk_2` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran` (`id_tahun_ajaran`),
+  ADD CONSTRAINT `siswa_kelas_ibfk_1` FOREIGN KEY (`id_siswa`) REFERENCES `siswa` (`id_siswa`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `siswa_kelas_ibfk_2` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran` (`id_tahun_ajaran`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `siswa_kelas_ibfk_3` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 

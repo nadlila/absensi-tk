@@ -48,6 +48,7 @@ class AppRoutes {
   static const String dataSiswaGuru = "/siswa/data";          // list
   static const String detailDataSiswa = "/siswa/detail";      // biodata
   static const String detailAbsensiSiswa = "/siswa/histori";  // histori
+  static const String detailRekapSiswa = "/siswa/rekap/detail";
 
   // ================= UMUM =================
   static const String profil = "/profil";

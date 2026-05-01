@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:http/http.dart' as http;
 
 import '../../models/kelas_detail_model.dart';
 import '../../models/rekap_absensi_model.dart';
+import '../../routes/app_routes.dart';
 
 class RekapAbsenSiswaScreen extends StatefulWidget {
   final KelasDetail kelas;
@@ -108,13 +109,27 @@ class _RekapAbsenSiswaScreenState
                       final d = list[index];
 
                       return Card(
-                        child: ListTile(
-                          title: Text(d.namaSiswa),
-                          subtitle: Text(
-                            "H:${d.hadir}  I:${d.izin}  S:${d.sakit}  A:${d.alfa}",
-                          ),
+                      child: ListTile(
+                        title: Text(d.namaSiswa),
+                        subtitle: Text(
+                          "H:${d.hadir}  I:${d.izin}  S:${d.sakit}  A:${d.alfa}",
                         ),
-                      );
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.detailRekapSiswa,
+                            arguments: {
+                              "idSiswa": d.idSiswa,
+                              "namaSiswa": d.namaSiswa,
+                              "startDate": startDate,
+                              "endDate": endDate,
+                            },
+                          );
+                        },
+                      ),
+                    );
+                        
+                      
                     },
                   ),
           ),

@@ -14,7 +14,7 @@ import java.util.List;
 public interface AbsensiSiswaRepository extends JpaRepository<AbsensiSiswa, Long> {
 
     List<AbsensiSiswa> findBySiswa(Siswa siswa);
-    boolean existsByIdSiswaAndTanggal(Long idSiswa, LocalDate tanggal);
+    boolean existsBySiswa_IdSiswaAndTanggal(Long idSiswa, LocalDate tanggal);
 
     @Query("""
 SELECT new com.absensi_api.dto.RekapAbsensiDTO(
@@ -47,7 +47,7 @@ SELECT new com.absensi_api.dto.DetailAbsensiDTO(
     a.keterangan
 )
 FROM AbsensiSiswa a
-JOIN a.status st
+JOIN a.status st 
 WHERE a.siswa.idSiswa = :idSiswa
 AND a.tahunAjaran.idTahunAjaran = :idTahun
 ORDER BY a.tanggal DESC
@@ -55,6 +55,23 @@ ORDER BY a.tanggal DESC
 List<DetailAbsensiDTO> getDetailSiswa(
     @Param("idSiswa") Long idSiswa,
     @Param("idTahun") Long idTahun
+);
+
+@Query("""
+    SELECT new com.absensi_api.dto.DetailAbsensiDTO(
+        a.tanggal,
+        a.status.namaStatus,
+        a.keterangan
+    )
+    FROM AbsensiSiswa a
+    WHERE a.siswa.idSiswa = :idSiswa
+    AND a.tanggal BETWEEN :start AND :end
+    ORDER BY a.tanggal ASC
+""")
+List<DetailAbsensiDTO> getDetailByTanggal(
+    Long idSiswa,
+    LocalDate start,
+    LocalDate end
 );
 
 }
