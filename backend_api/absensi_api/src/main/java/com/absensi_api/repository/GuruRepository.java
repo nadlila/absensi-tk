@@ -7,4 +7,4 @@ public interface GuruRepository extends JpaRepository<Guru, Long> {
 
     Guru findByIdUser(Long idUser);
 
-}
+} 

@@ -3,6 +3,7 @@ package com.absensi_api.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+
 @Entity
 @Table(name = "absensi_guru")
 public class AbsensiGuru {
@@ -17,14 +18,16 @@ public class AbsensiGuru {
 
     private LocalDate tanggal;
 
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "id_status")
+    private StatusAbsensi status;
 
     public Long getIdAbsensi() {
         return idAbsensiGuru;
     }
 
     public void setIdAbsensi(Long idAbsensi) {
-        this.idAbsensiGuru = idAbsensiGuru;
+        this.idAbsensiGuru = idAbsensi;
     }
 
     public Guru getGuru() {
@@ -43,11 +46,11 @@ public class AbsensiGuru {
         this.tanggal = tanggal;
     }
 
-    public String getStatus() {
+    public StatusAbsensi getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusAbsensi status) {
         this.status = status;
     }
 }

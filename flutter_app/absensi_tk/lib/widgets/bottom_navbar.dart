@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/kelas_detail_model.dart';
 
 import '../screens/dashboard/dashboard_screen.dart';
-import '../screens/guru/absen_guru_screen.dart';
+import '../screens/guru/menu_absensi_guru_screen.dart';
 import '../screens/siswa/menu_absensi_siswa_screen.dart';
 import '../screens/profil/profil_screen.dart';
 
@@ -26,7 +26,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
     pages = [
       DashboardScreen(kelas: widget.kelas),
-      AbsenGuruScreen(kelas: widget.kelas),
+      const MenuAbsensiGuruScreen(),
       widget.kelas != null
           ? MenuAbsensiSiswaScreen(kelas: widget.kelas!)
           : const Center(child: Text("Tidak ada kelas")),

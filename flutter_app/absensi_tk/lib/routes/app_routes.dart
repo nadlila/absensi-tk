@@ -38,6 +38,7 @@ class AppRoutes {
 
   // ================= GURU =================
   static const String absenGuru = "/guru/absen";
+   static const String menuGuru = "/guru/menu";
   static const String rekapAbsenGuru = "/guru/rekap";
 
   // ================= SISWA (GURU VIEW) =================

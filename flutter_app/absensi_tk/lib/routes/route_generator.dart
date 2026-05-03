@@ -41,6 +41,7 @@ import '../screens/admin/user/kelola_user_screen.dart';
 
 // Guru
 import '../screens/guru/absen_guru_screen.dart';
+import '../screens/guru/menu_absensi_guru_screen.dart';
 import '../screens/guru/rekap_absen_guru_screen.dart';
 
 // Siswa
@@ -194,19 +195,26 @@ class RouteGenerator {
       case AppRoutes.kelolaUser:
         return MaterialPageRoute(builder: (_) => const KelolaUserScreen());
 
-// absen guru
-      case AppRoutes.absenGuru:
+// ================= GURU =================
 
-        final kelas = settings.arguments as KelasDetail;
+//Menu
+case AppRoutes.menuGuru:
+  return MaterialPageRoute(
+    builder: (_) => const MenuAbsensiGuruScreen(),
+  );
 
-        return MaterialPageRoute(
-      builder: (_) => AbsenGuruScreen(kelas: kelas),
-    );
+// Absen Guru
+  case AppRoutes.absenGuru:
+    return MaterialPageRoute(
+      builder: (_) => const AbsensiGuruScreen(),
+  );
 
-      case AppRoutes.rekapAbsenGuru:
-        return MaterialPageRoute(builder: (_) => const RekapAbsenGuruScreen());
+// Rekap Absen Guru
+  case AppRoutes.rekapAbsenGuru:
+    return MaterialPageRoute(
+      builder: (_) => const RekapAbsensiGuruScreen(),
+  );
 
-// Siswa
      
 // ================= SISWA =================
 

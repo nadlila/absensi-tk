@@ -1,5 +1,5 @@
 package com.absensi_api.model;
-
+ 
 import jakarta.persistence.*;
 
 @Entity

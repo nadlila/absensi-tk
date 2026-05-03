@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/guru")
 @CrossOrigin
 public class GuruController {
-
+ 
     @Autowired
     private GuruRepository guruRepository;
 
@@ -26,6 +26,11 @@ public class GuruController {
     @GetMapping("/{id}")
     public Guru getGuruById(@PathVariable Long id) {
         return guruRepository.findById(id).orElse(null);
+    }
+
+    @GetMapping("/user/{idUser}")
+    public Guru getByUser(@PathVariable Long idUser) {
+        return guruRepository.findByIdUser(idUser);
     }
 
     // POST tambah guru

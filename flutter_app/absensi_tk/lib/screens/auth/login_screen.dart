@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets/bottom_navbar.dart';
 import '../admin/admin_dashboard.dart';
@@ -53,6 +54,12 @@ class _LoginScreenState extends State<LoginScreen> {
         final data = jsonDecode(response.body);
 
         if (data["status"] == true) {
+
+        final prefs = await SharedPreferences.getInstance();
+
+        // 🔥 SIMPAN DATA LOGIN
+        prefs.setInt("idUser", data["idUser"]);
+        prefs.setString("role", data["role"]);
 
           String role = data["role"].toString().toLowerCase();
 
