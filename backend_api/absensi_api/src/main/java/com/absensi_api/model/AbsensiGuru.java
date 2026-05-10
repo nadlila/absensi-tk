@@ -22,6 +22,10 @@ public class AbsensiGuru {
     @JoinColumn(name = "id_status")
     private StatusAbsensi status;
 
+    @ManyToOne
+    @JoinColumn(name = "id_tahun_ajaran")
+    private TahunAjaran tahunAjaran;
+
     public Long getIdAbsensi() {
         return idAbsensiGuru;
     }
@@ -52,5 +56,34 @@ public class AbsensiGuru {
 
     public void setStatus(StatusAbsensi status) {
         this.status = status;
+    }
+    public TahunAjaran getTahunAjaran() {
+    return tahunAjaran;
+    }
+
+    public void setTahunAjaran(TahunAjaran tahunAjaran) {
+        this.tahunAjaran = tahunAjaran;
+    }
+
+    public Long getIdTahunAjaran() {
+        return tahunAjaran != null
+                ? tahunAjaran.getIdTahunAjaran()
+                : null;
+    }
+
+    public void setIdTahunAjaran(Long idTahunAjaran) {
+        this.tahunAjaran = new TahunAjaran();
+        this.tahunAjaran.setIdTahunAjaran(idTahunAjaran);
+    }
+
+    public Long getIdStatus() {
+        return status != null
+                ? status.getIdStatus()
+                : null;
+    }
+
+    public void setIdStatus(Long idStatus) {
+        this.status = new StatusAbsensi();
+        this.status.setIdStatus(idStatus);
     }
 }

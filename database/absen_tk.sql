@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 01, 2026 at 03:58 PM
+-- Generation Time: May 10, 2026 at 10:11 AM
 -- Server version: 9.6.0
 -- PHP Version: 8.3.25
 
@@ -32,8 +32,17 @@ CREATE TABLE `absensi_guru` (
   `id_guru` bigint NOT NULL,
   `tanggal` date DEFAULT NULL,
   `keterangan` varchar(100) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL
+  `id_status` bigint NOT NULL,
+  `id_tahun_ajaran` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `absensi_guru`
+--
+
+INSERT INTO `absensi_guru` (`id_absensi_guru`, `id_guru`, `tanggal`, `keterangan`, `id_status`, `id_tahun_ajaran`) VALUES
+(1, 6, '2026-05-03', NULL, 1, 1),
+(2, 6, '2026-05-10', NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -78,7 +87,53 @@ INSERT INTO `absensi_siswa` (`id_absensi_siswa`, `tanggal`, `id_kelas`, `keteran
 (20, '2026-05-01', 'A2', NULL, 1, 1, 39),
 (21, '2026-05-01', 'A2', NULL, 1, 1, 40),
 (22, '2026-05-01', 'A2', NULL, 1, 1, 41),
-(23, '2026-05-01', 'A2', NULL, 2, 1, 42);
+(23, '2026-05-01', 'A2', NULL, 2, 1, 42),
+(24, '2026-05-03', 'A2', NULL, 1, 1, 20),
+(25, '2026-05-03', 'A2', NULL, 1, 1, 21),
+(26, '2026-05-03', 'A2', NULL, 1, 1, 22),
+(27, '2026-05-03', 'A2', NULL, 1, 1, 23),
+(28, '2026-05-03', 'A2', NULL, 1, 1, 24),
+(29, '2026-05-03', 'A2', NULL, 1, 1, 25),
+(30, '2026-05-03', 'A2', NULL, 1, 1, 26),
+(31, '2026-05-03', 'A2', NULL, 1, 1, 27),
+(32, '2026-05-03', 'A2', NULL, 1, 1, 28),
+(33, '2026-05-03', 'A2', NULL, 1, 1, 29),
+(34, '2026-05-03', 'A2', NULL, 1, 1, 30),
+(35, '2026-05-03', 'A2', NULL, 1, 1, 31),
+(36, '2026-05-03', 'A2', NULL, 1, 1, 32),
+(37, '2026-05-03', 'A2', NULL, 1, 1, 33),
+(38, '2026-05-03', 'A2', NULL, 1, 1, 34),
+(39, '2026-05-03', 'A2', NULL, 1, 1, 35),
+(40, '2026-05-03', 'A2', NULL, 1, 1, 36),
+(41, '2026-05-03', 'A2', NULL, 1, 1, 37),
+(42, '2026-05-03', 'A2', NULL, 1, 1, 38),
+(43, '2026-05-03', 'A2', NULL, 1, 1, 39),
+(44, '2026-05-03', 'A2', NULL, 2, 1, 40),
+(45, '2026-05-03', 'A2', NULL, 4, 1, 41),
+(46, '2026-05-03', 'A2', NULL, 1, 1, 42),
+(47, '2026-05-10', 'A2', NULL, 1, 1, 20),
+(48, '2026-05-10', 'A2', NULL, 1, 1, 21),
+(49, '2026-05-10', 'A2', NULL, 1, 1, 22),
+(50, '2026-05-10', 'A2', NULL, 2, 1, 23),
+(51, '2026-05-10', 'A2', NULL, 1, 1, 24),
+(52, '2026-05-10', 'A2', NULL, 1, 1, 25),
+(53, '2026-05-10', 'A2', NULL, 1, 1, 26),
+(54, '2026-05-10', 'A2', NULL, 1, 1, 27),
+(55, '2026-05-10', 'A2', NULL, 1, 1, 28),
+(56, '2026-05-10', 'A2', NULL, 1, 1, 29),
+(57, '2026-05-10', 'A2', NULL, 1, 1, 30),
+(58, '2026-05-10', 'A2', NULL, 1, 1, 31),
+(59, '2026-05-10', 'A2', NULL, 1, 1, 32),
+(60, '2026-05-10', 'A2', NULL, 1, 1, 33),
+(61, '2026-05-10', 'A2', NULL, 1, 1, 34),
+(62, '2026-05-10', 'A2', NULL, 1, 1, 35),
+(63, '2026-05-10', 'A2', NULL, 1, 1, 36),
+(64, '2026-05-10', 'A2', NULL, 1, 1, 37),
+(65, '2026-05-10', 'A2', NULL, 1, 1, 38),
+(66, '2026-05-10', 'A2', NULL, 1, 1, 39),
+(67, '2026-05-10', 'A2', NULL, 1, 1, 40),
+(68, '2026-05-10', 'A2', NULL, 1, 1, 41),
+(69, '2026-05-10', 'A2', NULL, 1, 1, 42);
 
 -- --------------------------------------------------------
 
@@ -433,7 +488,9 @@ INSERT INTO `users` (`id_user`, `username`, `password`, `role`, `email`, `id_gur
 --
 ALTER TABLE `absensi_guru`
   ADD PRIMARY KEY (`id_absensi_guru`),
-  ADD KEY `id_guru` (`id_guru`);
+  ADD KEY `id_guru` (`id_guru`),
+  ADD KEY `absensi_guru_ibfk_2` (`id_status`),
+  ADD KEY `absensi_guru_ibfk_3` (`id_tahun_ajaran`);
 
 --
 -- Indexes for table `absensi_siswa`
@@ -518,13 +575,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `absensi_guru`
 --
 ALTER TABLE `absensi_guru`
-  MODIFY `id_absensi_guru` bigint NOT NULL AUTO_INCREMENT;
+  MODIFY `id_absensi_guru` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `absensi_siswa`
 --
 ALTER TABLE `absensi_siswa`
-  MODIFY `id_absensi_siswa` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_absensi_siswa` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `detail_absensi_siswa`
@@ -582,7 +639,9 @@ ALTER TABLE `users`
 -- Constraints for table `absensi_guru`
 --
 ALTER TABLE `absensi_guru`
-  ADD CONSTRAINT `absensi_guru_ibfk_1` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `absensi_guru_ibfk_1` FOREIGN KEY (`id_guru`) REFERENCES `guru` (`id_guru`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `absensi_guru_ibfk_2` FOREIGN KEY (`id_status`) REFERENCES `status_absensi` (`id_status`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `absensi_guru_ibfk_3` FOREIGN KEY (`id_tahun_ajaran`) REFERENCES `tahun_ajaran` (`id_tahun_ajaran`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `absensi_siswa`

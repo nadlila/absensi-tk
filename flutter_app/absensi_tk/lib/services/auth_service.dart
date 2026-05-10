@@ -5,23 +5,30 @@ class AuthService {
 
   static const String baseUrl = "http://10.0.2.2:8080/api";
 
-  static Future<Map<String, dynamic>> login(
-      String username,
-      String password
-  ) async {
+  Future<Map<String, dynamic>> login({
+    required String username,
+    required String password,
+  }) async {
 
     final response = await http.post(
       Uri.parse("$baseUrl/login"),
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: jsonEncode({
         "username": username,
-        "password": password
+        "password": password,
       }),
     );
 
-    return jsonDecode(response.body);
-  }
+    if (response.statusCode == 200) {
 
+      return jsonDecode(response.body);
+
+    } else {
+
+      throw Exception("Server error");
+
+    }
+  }
 }

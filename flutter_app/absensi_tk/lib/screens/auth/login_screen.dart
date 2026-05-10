@@ -1,145 +1,175 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../widgets/bottom_navbar.dart';
-import '../admin/admin_dashboard.dart';
+import '../../routes/app_routes.dart';
+
 import '../../models/kelas_detail_model.dart';
+
+import '../../services/auth_service.dart';
+import '../../services/kelas_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreen> createState() =>
+      _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState
+    extends State<LoginScreen> {
 
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController
+      usernameController =
+      TextEditingController();
+
+  final TextEditingController
+      passwordController =
+      TextEditingController();
+
+  final AuthService authService =
+      AuthService();
+
+  final KelasService kelasService =
+      KelasService();
 
   bool isPasswordHidden = true;
 
   Future<void> login() async {
 
-    String username = usernameController.text.trim();
-    String password = passwordController.text.trim();
+    String username =
+        usernameController.text.trim();
 
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Username dan Password wajib diisi")),
+    String password =
+        passwordController.text.trim();
+
+    // VALIDASI
+    if (username.isEmpty ||
+        password.isEmpty) {
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Username dan Password wajib diisi",
+          ),
+        ),
       );
+
       return;
     }
 
     try {
 
-      final response = await http.post(
-        Uri.parse("http://10.0.2.2:8080/api/login"),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "username": username,
-          "password": password,
-        }),
+      // LOGIN API
+      final data =
+          await authService.login(
+        username: username,
+        password: password,
       );
 
-      print("LOGIN STATUS: ${response.statusCode}");
-      print("LOGIN BODY: ${response.body}");
+      print("LOGIN RESPONSE: $data");
 
-      if (response.statusCode == 200) {
+      // LOGIN BERHASIL
+      if (data["status"] == true) {
 
-        final data = jsonDecode(response.body);
+        final prefs =
+            await SharedPreferences
+                .getInstance();
 
-        if (data["status"] == true) {
+        // SIMPAN SESSION
+        await prefs.setInt(
+          "idUser",
+          data["idUser"],
+        );
 
-        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+          "role",
+          data["role"],
+        );
 
-        // 🔥 SIMPAN DATA LOGIN
-        prefs.setInt("idUser", data["idUser"]);
-        prefs.setString("role", data["role"]);
+        String role =
+            data["role"]
+                .toString()
+                .toLowerCase();
 
-          String role = data["role"].toString().toLowerCase();
+        // ================= ADMIN =================
 
-          // ================= ADMIN =================
-          if (role.contains("admin")) {
+        if (role.contains("admin")) {
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AdminDashboard(),
-              ),
-            );
-
-          }
-
-          // ================= GURU =================
-          else if (role.contains("guru")) {
-
-            int? idGuru = data["idGuru"];
-
-            // 🔥 kalau tidak ada idGuru → tetap masuk (tanpa kelas)
-            if (idGuru == null) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BottomNavbar(
-                    kelas: null,
-                  ),
-                ),
-              );
-              return;
-            }
-
-            final kelasRes = await http.get(
-              Uri.parse("http://10.0.2.2:8080/api/kelas-guru/guru/$idGuru/detail-aktif"),
-            );
-
-            print("STATUS KELAS: ${kelasRes.statusCode}");
-            print("BODY KELAS: ${kelasRes.body}");
-
-            KelasDetail? kelas;
-
-            if (kelasRes.statusCode == 200 && kelasRes.body != "null") {
-              final kelasData = jsonDecode(kelasRes.body);
-              kelas = KelasDetail.fromJson(kelasData);
-            }
-
-            // 🔥 SELALU MASUK (walaupun kelas null)
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BottomNavbar(
-                  kelas: kelas,
-                ),
-              ),
-            );
-
-          }
-
-          // ================= ROLE TIDAK DIKENALI =================
-          else {
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Role tidak dikenali")),
-            );
-
-          }
-
-        } else {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(data["message"])),
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.adminDashboard,
           );
 
         }
 
-      } else {
+        // ================= GURU =================
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Server error")),
+        else if (role.contains("guru")) {
+
+          int? idGuru = data["idGuru"];
+
+          KelasDetail? kelas;
+
+          // AMBIL KELAS AKTIF
+          if (idGuru != null) {
+
+            kelas = await kelasService
+                .getKelasAktif(idGuru);
+
+          }
+
+          // MASUK DASHBOARD
+          if (kelas != null) {
+
+            Navigator.pushReplacementNamed(
+              context,
+              AppRoutes.dashboard,
+              arguments: kelas,
+            );
+
+          } else {
+
+            ScaffoldMessenger.of(context)
+                .showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "Kelas aktif tidak ditemukan",
+                ),
+              ),
+            );
+
+          }
+
+        }
+
+        // ROLE TIDAK DIKENALI
+        else {
+
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Role tidak dikenali",
+              ),
+            ),
+          );
+
+        }
+
+      }
+
+      // LOGIN GAGAL
+      else {
+
+        ScaffoldMessenger.of(context)
+            .showSnackBar(
+          SnackBar(
+            content: Text(
+              data["message"],
+            ),
+          ),
         );
 
       }
@@ -148,30 +178,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print("ERROR LOGIN: $e");
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Tidak dapat terhubung ke server")),
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Tidak dapat terhubung ke server",
+          ),
+        ),
       );
 
     }
   }
 
   void loginWithGmail() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Login Gmail belum diaktifkan")),
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Login Gmail belum diaktifkan",
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+
       backgroundColor: Colors.white,
 
       body: Center(
+
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+
+          padding:
+              const EdgeInsets.all(24),
 
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+
+            crossAxisAlignment:
+                CrossAxisAlignment.center,
+
             children: [
 
               const Icon(
@@ -186,44 +235,84 @@ class _LoginScreenState extends State<LoginScreen> {
                 "Aplikasi Absensi",
                 style: TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontWeight:
+                      FontWeight.bold,
                 ),
               ),
 
               const SizedBox(height: 40),
 
+              // USERNAME
               TextField(
-                controller: usernameController,
-                decoration: InputDecoration(
+
+                controller:
+                    usernameController,
+
+                decoration:
+                    InputDecoration(
+
                   labelText: "Username",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+
+                  border:
+                      OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius
+                            .circular(10),
                   ),
-                  prefixIcon: const Icon(Icons.person),
+
+                  prefixIcon:
+                      const Icon(
+                    Icons.person,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 20),
 
+              // PASSWORD
               TextField(
-                controller: passwordController,
-                obscureText: isPasswordHidden,
-                decoration: InputDecoration(
+
+                controller:
+                    passwordController,
+
+                obscureText:
+                    isPasswordHidden,
+
+                decoration:
+                    InputDecoration(
+
                   labelText: "Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+
+                  border:
+                      OutlineInputBorder(
+                    borderRadius:
+                        BorderRadius
+                            .circular(10),
                   ),
-                  prefixIcon: const Icon(Icons.lock),
-                  suffixIcon: IconButton(
+
+                  prefixIcon:
+                      const Icon(
+                    Icons.lock,
+                  ),
+
+                  suffixIcon:
+                      IconButton(
+
                     icon: Icon(
                       isPasswordHidden
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                          ? Icons
+                              .visibility
+                          : Icons
+                              .visibility_off,
                     ),
+
                     onPressed: () {
+
                       setState(() {
-                        isPasswordHidden = !isPasswordHidden;
+                        isPasswordHidden =
+                            !isPasswordHidden;
                       });
+
                     },
                   ),
                 ),
@@ -231,20 +320,38 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 30),
 
+              // LOGIN BUTTON
               SizedBox(
+
                 width: double.infinity,
                 height: 50,
+
                 child: ElevatedButton(
+
                   onPressed: login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+
+                  style:
+                      ElevatedButton
+                          .styleFrom(
+
+                    backgroundColor:
+                        Colors.blue,
+
+                    shape:
+                        RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        10,
+                      ),
                     ),
                   ),
+
                   child: const Text(
                     "LOGIN",
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
@@ -252,40 +359,72 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 25),
 
               Row(
+
                 children: const [
-                  Expanded(child: Divider()),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text("atau login dengan"),
+
+                  Expanded(
+                    child: Divider(),
                   ),
-                  Expanded(child: Divider()),
+
+                  Padding(
+                    padding:
+                        EdgeInsets
+                            .symmetric(
+                      horizontal: 10,
+                    ),
+                    child: Text(
+                      "atau login dengan",
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Divider(),
+                  ),
                 ],
               ),
 
               const SizedBox(height: 20),
 
+              // GOOGLE LOGIN
               SizedBox(
+
                 width: double.infinity,
                 height: 50,
-                child: OutlinedButton.icon(
+
+                child:
+                    OutlinedButton.icon(
+
                   icon: const Icon(
                     Icons.g_mobiledata,
                     size: 30,
                     color: Colors.red,
                   ),
+
                   label: const Text(
                     "Login dengan Gmail",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
                   ),
-                  onPressed: loginWithGmail,
+
+                  style:
+                      OutlinedButton
+                          .styleFrom(
+
+                    shape:
+                        RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        10,
+                      ),
+                    ),
+                  ),
+
+                  onPressed:
+                      loginWithGmail,
                 ),
               ),
-
             ],
           ),
         ),

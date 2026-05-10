@@ -28,6 +28,8 @@ class AppRoutes {
 
   // ADMIN - REKAP
   static const String rekapAbsensi = "/admin/rekap";
+  static const String rekapGuruAdmin = "/admin/rekap/guru";
+  static const String rekapSiswaAdmin = "/admin/rekap/siswa";
 
   // ADMIN - USER
   static const String kelolaUser = "/admin/user";

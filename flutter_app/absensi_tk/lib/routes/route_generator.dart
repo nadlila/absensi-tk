@@ -4,6 +4,7 @@ import '../models/guru_model.dart';
 
 import '../screens/auth/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
+import '../widgets/bottom_navbar.dart';
 
 import '../screens/admin/admin_dashboard.dart';
 
@@ -34,7 +35,9 @@ import '../screens/admin/tahun_ajaran/tahun_ajaran_screen.dart';
 import '../screens/admin/tahun_ajaran/tambah_tahun_ajaran_screen.dart';
 
 //Admin - Rekap
-import '../screens/admin/rekap/rekap_absensi_screen.dart';
+import '../screens/admin/rekap/menu_rekap_screen.dart';
+import '../screens/admin/rekap/guru/rekap_guru_screen.dart';
+import '../screens/admin/rekap/siswa/rekap_siswa_screen.dart';
 
 //Admin - User
 import '../screens/admin/user/kelola_user_screen.dart';
@@ -73,9 +76,14 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
 // dashboard guru
       case AppRoutes.dashboard:
-        final kelas = settings.arguments as KelasDetail;
-          return MaterialPageRoute(
-        builder: (_) => DashboardScreen(kelas: kelas),
+
+      final kelas =
+          settings.arguments as KelasDetail?;
+
+      return MaterialPageRoute(
+        builder: (_) => BottomNavbar(
+          kelas: kelas,
+        ),
       );
 
 //Admin
@@ -189,7 +197,21 @@ class RouteGenerator {
 
 // rekap
       case AppRoutes.rekapAbsensi:
-        return MaterialPageRoute(builder: (_) => const RekapAbsensiScreen());
+        return MaterialPageRoute(
+          builder: (_) => const MenuRekapScreen(),
+        );
+
+      // REKAP GURU
+      case AppRoutes.rekapGuruAdmin:
+        return MaterialPageRoute(
+          builder: (_) => const RekapGuruScreen(),
+        );
+
+      // REKAP SISWA
+      case AppRoutes.rekapSiswaAdmin:
+        return MaterialPageRoute(
+          builder: (_) => const RekapSiswaScreen(),
+        );
 
 // user
       case AppRoutes.kelolaUser:
@@ -276,8 +298,7 @@ case AppRoutes.detailDataSiswa:
     builder: (_) => DetailRekapSiswaScreen(
       siswaId: map["idSiswa"],
       namaSiswa: map["namaSiswa"],
-      startDate: map["startDate"],
-      endDate: map["endDate"],
+      idTahun: map["idTahun"],
     ),
   );
 

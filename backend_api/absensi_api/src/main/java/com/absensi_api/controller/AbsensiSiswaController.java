@@ -55,15 +55,13 @@ public void saveAbsensi(@RequestBody List<AbsensiSiswa> list){
     @GetMapping("/rekap")
     public List<RekapAbsensiDTO> rekap(
         @RequestParam String idKelas,
-        @RequestParam String start,
-        @RequestParam String end
+        @RequestParam Long idTahun
     ){
-    return repo.getRekap(
-        idKelas,
-        LocalDate.parse(start),
-        LocalDate.parse(end)
-    );
-    } 
+        return repo.getRekapByTahun(
+            idKelas,
+            idTahun
+        );
+    }
 
     @GetMapping("/detail-siswa")
     public List<DetailAbsensiDTO> detailSiswa(

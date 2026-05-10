@@ -30,14 +30,13 @@ SELECT new com.absensi_api.dto.RekapAbsensiDTO(
 FROM AbsensiSiswa a
 JOIN a.siswa s
 JOIN a.status st
-WHERE a.tanggal BETWEEN :start AND :end
-AND a.idKelas = :idKelas
+WHERE a.kelas.idKelas = :idKelas
+AND a.tahunAjaran.idTahunAjaran = :idTahun
 GROUP BY s.idSiswa, s.namaSiswa
 """)
-List<RekapAbsensiDTO> getRekap(
+List<RekapAbsensiDTO> getRekapByTahun(
     @Param("idKelas") String idKelas,
-    @Param("start") LocalDate start,
-    @Param("end") LocalDate end
+    @Param("idTahun") Long idTahun
 );
 
 @Query("""

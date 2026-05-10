@@ -23,8 +23,9 @@ public class AbsensiSiswa {
 
     private String keterangan;
 
-    @Column(name = "id_kelas")
-    private String idKelas;
+    @ManyToOne
+    @JoinColumn(name = "id_kelas")
+    private Kelas kelas;
 
     @ManyToOne
     @JoinColumn(name = "id_tahun_ajaran")
@@ -78,12 +79,23 @@ public class AbsensiSiswa {
         this.siswa.setIdSiswa(idSiswa);
     }
 
+    public Kelas getKelas() {
+    return kelas;
+    }
+
+    public void setKelas(Kelas kelas) {
+        this.kelas = kelas;
+    }
+
     public String getIdKelas() {
-    return idKelas;
+        return kelas != null
+                ? kelas.getIdKelas()
+                : null;
     }
 
     public void setIdKelas(String idKelas) {
-        this.idKelas = idKelas;
+        this.kelas = new Kelas();
+        this.kelas.setIdKelas(idKelas);
     }
 
     public Long getIdTahunAjaran() {
