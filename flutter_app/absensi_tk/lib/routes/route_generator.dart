@@ -6,7 +6,9 @@ import '../screens/auth/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../widgets/bottom_navbar.dart';
 
+//Admin
 import '../screens/admin/admin_dashboard.dart';
+import '../screens/admin/hari_libur_screen.dart';
 
 //Admin - Guru
 import '../screens/admin/guru/data_guru_screen.dart';
@@ -37,6 +39,7 @@ import '../screens/admin/tahun_ajaran/tambah_tahun_ajaran_screen.dart';
 //Admin - Rekap
 import '../screens/admin/rekap/menu_rekap_screen.dart';
 import '../screens/admin/rekap/guru/rekap_guru_screen.dart';
+import '../screens/admin/rekap/guru/detail_rekap_guru_admin_screen.dart';
 import '../screens/admin/rekap/siswa/rekap_siswa_screen.dart';
 
 //Admin - User
@@ -89,6 +92,9 @@ class RouteGenerator {
 //Admin
       case AppRoutes.adminDashboard:
         return MaterialPageRoute(builder: (_) => const AdminDashboard());
+// libur
+      case AppRoutes.hariLibur:
+        return MaterialPageRoute(builder: (_) => const HariLiburScreen());
 
 //Admin - Guru
       case AppRoutes.dataGuru:
@@ -205,6 +211,16 @@ class RouteGenerator {
       case AppRoutes.rekapGuruAdmin:
         return MaterialPageRoute(
           builder: (_) => const RekapGuruScreen(),
+        );
+
+      case AppRoutes.detailRekapGuruAdmin:
+        final map = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => DetailRekapGuruAdminScreen(
+            idGuru: map["idGuru"],
+            namaGuru: map["namaGuru"],
+            idTahun: map["idTahun"],
+          ),
         );
 
       // REKAP SISWA

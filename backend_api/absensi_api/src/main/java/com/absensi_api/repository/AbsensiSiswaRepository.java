@@ -15,7 +15,7 @@ public interface AbsensiSiswaRepository extends JpaRepository<AbsensiSiswa, Long
 
     List<AbsensiSiswa> findBySiswa(Siswa siswa);
     boolean existsBySiswa_IdSiswaAndTanggal(Long idSiswa, LocalDate tanggal);
-
+    boolean existsByKelas_IdKelasAndTanggal(java.lang.String idKelas, java.time.LocalDate tanggal);
     @Query("""
 SELECT new com.absensi_api.dto.RekapAbsensiDTO(
     s.idSiswa,

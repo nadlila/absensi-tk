@@ -2,6 +2,7 @@ package com.absensi_api.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 @Entity
@@ -17,6 +18,10 @@ public class AbsensiGuru {
     private Guru guru;
 
     private LocalDate tanggal;
+
+    private LocalTime jam;
+
+    private String keterangan;
 
     @ManyToOne
     @JoinColumn(name = "id_status")
@@ -48,6 +53,22 @@ public class AbsensiGuru {
 
     public void setTanggal(LocalDate tanggal) {
         this.tanggal = tanggal;
+    }
+
+    public LocalTime getJam() {
+        return jam;
+    }
+
+    public void setJam(LocalTime jam) {
+        this.jam = jam;
+    }
+
+    public String getKeterangan() {
+        return keterangan;
+    }
+
+    public void setKeterangan(String keterangan) {
+        this.keterangan = keterangan;
     }
 
     public StatusAbsensi getStatus() {

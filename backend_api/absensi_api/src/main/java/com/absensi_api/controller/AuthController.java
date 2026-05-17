@@ -41,11 +41,10 @@ public Map<String, Object> login(@RequestBody LoginRequest request){
 
         // 🔥 AMBIL ID GURU DARI TABEL GURU
         if(user.getRole().equalsIgnoreCase("guru")){
-
             var guru = guruRepository.findByIdUser(user.getIdUser());
-
             if(guru != null){
                 response.put("idGuru", guru.getIdGuru());
+                response.put("namaGuru", guru.getNamaGuru());
             } else {
                 response.put("idGuru", null);
             }

@@ -21,6 +21,7 @@ public interface SiswaKelasRepository extends JpaRepository<SiswaKelas, Long> {
 
     List<SiswaKelas> findByIdTahunAjaran(Long idTahunAjaran);
 
+    List<SiswaKelas> findByIdKelasAndIdTahunAjaran(String idKelas, Long idTahun);
     Optional<SiswaKelas> findByIdSiswaAndIdTahunAjaran(Long idSiswa, Long idTahunAjaran);
 
     @Modifying

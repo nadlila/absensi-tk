@@ -60,25 +60,102 @@ class DetailKelasScreen extends StatelessWidget {
     );
 
     if(response.statusCode == 200 || response.statusCode == 204){
-
       if(context.mounted){
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Data berhasil dihapus")),
         );
 
         Navigator.pop(context, true); // 🔥 trigger refresh
-
       }
 
     } else {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Gagal menghapus data")),
       );
-
     }
+  }
 
+  // 🔥 Fungsi untuk mengambil daftar Tahun Ajaran
+  Future<List<dynamic>> fetchTahun() async {
+    final response = await http.get(Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran"));
+    return response.statusCode == 200 ? jsonDecode(response.body) : [];
+  }
+
+  Future<List<dynamic>> fetchDaftarKelas() async {
+    final response = await http.get(Uri.parse("http://10.0.2.2:8080/api/kelas"));
+    return response.statusCode == 200 ? jsonDecode(response.body) : [];
+  }
+
+  // 🔥 Dialog Naik Kelas Massal
+  void showNaikKelasMassal(BuildContext context) async {
+    String? selectedKelasBaru = kelas.namaKelas; // Default ke nama kelas yang sama (misal A1 ke A1 di tahun baru)
+    int? selectedTahunId;
+    final listTahun = await fetchTahun();
+    final listKelas = await fetchDaftarKelas();
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text("Naik Kelas / Lanjut Semester"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 1. Pilih Tahun Ajaran Baru
+              DropdownButtonFormField<int>(
+                items: listTahun.map<DropdownMenuItem<int>>((t) => DropdownMenuItem(
+                  value: t["idTahunAjaran"],
+                  child: Text("${t["tahun"]} - ${t["semester"]}"),
+                )).toList(),
+                onChanged: (v) => setState(() => selectedTahunId = v),
+                decoration: const InputDecoration(labelText: "Tahun Ajaran Baru", border: OutlineInputBorder()),
+              ),
+              const SizedBox(height: 15),
+              // 2. Pilih Kelas Baru (Fleksibel: bisa tetap atau pindah)
+              DropdownButtonFormField<String>(
+                value: selectedKelasBaru,
+                items: listKelas.map<DropdownMenuItem<String>>((k) => DropdownMenuItem(
+                  value: k["idKelas"],
+                  child: Text(k["namaKelas"]),
+                )).toList(),
+                onChanged: (v) => setState(() => selectedKelasBaru = v),
+                decoration: const InputDecoration(labelText: "Pilih Kelas Tujuan", border: OutlineInputBorder()),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Batal")),
+            ElevatedButton(
+              onPressed: () async {
+                if (selectedTahunId == null) return;
+                await eksekusiNaikKelasMassal(context, selectedTahunId!, selectedKelasBaru!);
+                Navigator.pop(context);
+              },
+              child: const Text("Proses Sekarang"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> eksekusiNaikKelasMassal(BuildContext context, int idTahunBaru, String idKelasBaru) async {
+    final response = await http.post(
+      Uri.parse("http://10.0.2.2:8080/api/siswa-kelas/naik-kelas-massal"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "idKelasAsal": kelas.idKelas, // Gunakan idKelas (misal: "A1")
+        "idTahunLama": kelas.idTahunAjaran,
+        "idTahunBaru": idTahunBaru,
+        "idKelasBaru": idKelasBaru // Kelas tujuan (bisa B1)
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Berhasil memindahkan siswa ke tahun ajaran baru")));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Gagal memproses data")));
+    }
   }
 
   @override
@@ -167,6 +244,14 @@ class DetailKelasScreen extends StatelessWidget {
                 backgroundColor: Colors.red,
               ),
 
+            ),
+
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: () => showNaikKelasMassal(context),
+              icon: const Icon(Icons.group_add),
+              label: const Text("Naik Kelas / Lanjut Semester (Massal)"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             ),
 
           ],

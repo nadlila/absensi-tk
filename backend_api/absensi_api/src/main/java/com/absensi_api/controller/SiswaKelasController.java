@@ -53,45 +53,34 @@ public class SiswaKelasController {
     }
 
 //     // 🔥 NAIK KELAS MASSAL
-//     @PostMapping("/naik-kelas")
-// public String naikKelas(@RequestBody Map<String, Object> payload){
+@PostMapping("/naik-kelas-massal")
+public String naikKelasMassal(@RequestBody Map<String, Object> payload) {
+    String idKelasAsal = payload.get("idKelasAsal").toString();
+    Long idTahunLama = Long.valueOf(payload.get("idTahunLama").toString());
 
-//     Long tahunLama = Long.valueOf(payload.get("tahunLama").toString());
-//     Long tahunBaru = Long.valueOf(payload.get("tahunBaru").toString());
+    String idKelasBaru = payload.get("idKelasBaru").toString();
+    Long idTahunBaru = Long.valueOf(payload.get("idTahunBaru").toString());
 
-//     Map<String, String> mapping =
-//             (Map<String, String>) payload.get("mapping");
+    // 1. Ambil semua siswa dari kelas lama & tahun lama
+    List<SiswaKelas> listSiswaLama = siswaKelasRepository.findByIdKelasAndIdTahunAjaran(idKelasAsal, idTahunLama);
 
-//     List<SiswaKelas> dataLama =
-//             siswaKelasRepository.findByIdTahunAjaran(tahunLama);
+    int count = 0;
+    for (SiswaKelas sk : listSiswaLama) {
+        // 2. Cek apakah siswa sudah terdaftar di tahun baru (biar tidak dobel)
+        boolean exists = siswaKelasRepository.findByIdSiswaAndIdTahunAjaran(sk.getIdSiswa(), idTahunBaru).isPresent();
 
-//     for(SiswaKelas sk : dataLama){
+        if (!exists) {
+            SiswaKelas baru = new SiswaKelas();
+            baru.setIdSiswa(sk.getIdSiswa());
+            baru.setIdKelas(idKelasBaru); // Kelas tujuan (bisa sama atau beda)
+            baru.setIdTahunAjaran(idTahunBaru);
+            siswaKelasRepository.save(baru);
+            count++;
+        }
+    }
 
-//         String kelasBaru = mapping.get(sk.getIdKelas());
-
-//         // 🔥 kalau tidak ada mapping → skip (misal B = lulus)
-//         if(kelasBaru == null) continue;
-
-//         // 🔥 anti dobel
-//         boolean sudahAda =
-//                 siswaKelasRepository
-//                 .findByIdSiswaAndIdTahunAjaran(
-//                         sk.getIdSiswa(), tahunBaru
-//                 ).isPresent();
-
-//         if(sudahAda) continue;
-
-//         SiswaKelas baru = new SiswaKelas();
-
-//         baru.setIdSiswa(sk.getIdSiswa());
-//         baru.setIdTahunAjaran(tahunBaru);
-//         baru.setIdKelas(kelasBaru);
-
-//         siswaKelasRepository.save(baru);
-//     }
-
-//     return "Naik kelas berhasil";
-// }
+    return "Berhasil memindahkan " + count + " siswa ke kelas " + idKelasBaru;
+}
 
 @PostMapping("/naik-kelas-siswa")
 public String naikKelasPerSiswa(@RequestBody Map<String, Object> payload){

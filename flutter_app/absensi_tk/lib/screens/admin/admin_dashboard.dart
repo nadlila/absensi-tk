@@ -80,6 +80,13 @@ class AdminDashboard extends StatelessWidget {
               route: AppRoutes.tahunAjaran,
             ),
 
+            _menuCard(
+              context,
+              icon: Icons.event_busy, // Icon kalender libur
+              title: "Hari Libur",
+              route: AppRoutes.hariLibur,
+            ),
+
           ],
         ),
       ),

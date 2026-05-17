@@ -1,4 +1,4 @@
- package com.absensi_api.controller;
+package com.absensi_api.controller;
 
 import com.absensi_api.model.Guru;
 import com.absensi_api.repository.GuruRepository;
@@ -13,6 +13,7 @@ import com.absensi_api.dto.RekapGuruDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
  
 @RestController
@@ -51,9 +52,27 @@ public class AbsensiGuruController {
             throw new RuntimeException("Guru sudah absen hari ini");
         }
 
+        LocalTime jamSekarang = LocalTime.now();
+        
+        // Batasan Jam Absen
+        if (jamSekarang.isBefore(LocalTime.of(7, 0))) {
+            throw new RuntimeException("Absen belum dibuka, silakan kembali pukul 07:00");
+        }
+        if (jamSekarang.isAfter(LocalTime.of(11, 0))) {
+            throw new RuntimeException("Batas waktu absen telah berakhir (11:00)");
+        }
+
+        // Logika Keterangan Terlambat
+        if (jamSekarang.isAfter(LocalTime.of(7, 30))) {
+            request.setKeterangan("Terlambat");
+        } else {
+            request.setKeterangan("Tepat Waktu");
+        }
+
         request.setGuru(guru);
         request.setStatus(status);
         request.setTahunAjaran(tahun);
+        request.setJam(jamSekarang);
 
         return absensiGuruRepository.save(request);
     }

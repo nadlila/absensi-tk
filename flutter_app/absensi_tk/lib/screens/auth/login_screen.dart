@@ -62,86 +62,59 @@ class _LoginScreenState
     try {
 
       // LOGIN API
-      final data =
-          await authService.login(
+      final data = await authService.login(
         username: username,
         password: password,
       );
-
       print("LOGIN RESPONSE: $data");
 
       // LOGIN BERHASIL
       if (data["status"] == true) {
-
-        final prefs =
-            await SharedPreferences
-                .getInstance();
+        final prefs = await SharedPreferences.getInstance();
 
         // SIMPAN SESSION
-        await prefs.setInt(
-          "idUser",
-          data["idUser"],
-        );
+        await prefs.setInt("idUser", data["idUser"],);
+        await prefs.setString("role", data["role"],);
+        await prefs.setString("username", data["username"] ?? "");
 
-        await prefs.setString(
-          "role",
-          data["role"],
-        );
+        if (data["namaGuru"] != null) {
+          await prefs.setString("namaGuru", data["namaGuru"]);
+        }
+        if (data["idGuru"] != null) {
+          await prefs.setInt("idGuru", data["idGuru"]);
+        }
 
         String role =
-            data["role"]
-                .toString()
-                .toLowerCase();
+            data["role"].toString().toLowerCase();
 
         // ================= ADMIN =================
 
         if (role.contains("admin")) {
 
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoutes.adminDashboard,
-          );
-
+          Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard,);
         }
 
         // ================= GURU =================
-
         else if (role.contains("guru")) {
-
           int? idGuru = data["idGuru"];
-
           KelasDetail? kelas;
 
           // AMBIL KELAS AKTIF
           if (idGuru != null) {
-
-            kelas = await kelasService
-                .getKelasAktif(idGuru);
-
+            // Kita bungkus dengan try-catch agar jika service error, login tetap lanjut
+            try {
+              kelas = await kelasService.getKelasAktif(idGuru);
+            } catch (e) {
+              print("Info: Guru tidak memiliki kelas aktif");
+            }
           }
 
           // MASUK DASHBOARD
-          if (kelas != null) {
-
             Navigator.pushReplacementNamed(
               context,
               AppRoutes.dashboard,
               arguments: kelas,
             );
-
-          } else {
-
-            ScaffoldMessenger.of(context)
-                .showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "Kelas aktif tidak ditemukan",
-                ),
-              ),
-            );
-
-          }
-
         }
 
         // ROLE TIDAK DIKENALI

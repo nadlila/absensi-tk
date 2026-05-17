@@ -22,7 +22,7 @@ public class TahunAjaranController {
 
     @GetMapping("/aktif")
     public TahunAjaran getAktif() {
-        return tahunAjaranRepository.findByStatus("aktif");
+        return tahunAjaranRepository.findByStatus("aktif").orElse(null);
     }
 
     @PostMapping
@@ -49,8 +49,8 @@ public class TahunAjaranController {
         List<TahunAjaran> list = tahunAjaranRepository.findAll();
 
         for(TahunAjaran t : list){
-        t.setStatus("tidak");
-        tahunAjaranRepository.save(t);
+            t.setStatus("tidak");
+            tahunAjaranRepository.save(t);
         }
 
         // aktifkan yang dipilih

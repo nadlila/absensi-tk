@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../routes/app_routes.dart';
 
 class RekapGuruScreen extends StatefulWidget {
   const RekapGuruScreen({super.key});
@@ -156,62 +157,76 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
                     final data = rekapList[index];
 
                     return Card(
-
                       margin: const EdgeInsets.only(bottom: 15),
-
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
-                          children: [
-
-                            Text(
-                              data["namaGuru"],
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.detailRekapGuruAdmin,
+                            arguments: {
+                              "idGuru": data["idGuru"],
+                              "namaGuru": data["namaGuru"],
+                              "idTahun": selectedTahun["idTahunAjaran"],
+                            },
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    data["namaGuru"],
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Icon(Icons.chevron_right, color: Colors.grey),
+                                ],
                               ),
-                            ),
 
-                            const Divider(),
+                              const Divider(),
 
-                            Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
 
-                              children: [
+                                children: [
 
-                                buildItem(
-                                  "Hadir",
-                                  data["hadir"].toString(),
-                                  Colors.green,
-                                ),
+                                  buildItem(
+                                    "Hadir",
+                                    data["hadir"].toString(),
+                                    Colors.green,
+                                  ),
 
-                                buildItem(
-                                  "Izin",
-                                  data["izin"].toString(),
-                                  Colors.orange,
-                                ),
+                                  buildItem(
+                                    "Izin",
+                                    data["izin"].toString(),
+                                    Colors.orange,
+                                  ),
 
-                                buildItem(
-                                  "Sakit",
-                                  data["sakit"].toString(),
-                                  Colors.blue,
-                                ),
+                                  buildItem(
+                                    "Sakit",
+                                    data["sakit"].toString(),
+                                    Colors.blue,
+                                  ),
 
-                                buildItem(
-                                  "Alfa",
-                                  data["alfa"].toString(),
-                                  Colors.red,
-                                ),
+                                  buildItem(
+                                    "Alfa",
+                                    data["alfa"].toString(),
+                                    Colors.red,
+                                  ),
 
-                              ],
-                            )
+                                ],
+                              )
 
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );

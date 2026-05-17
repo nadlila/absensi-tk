@@ -29,6 +29,7 @@ class AppRoutes {
   // ADMIN - REKAP
   static const String rekapAbsensi = "/admin/rekap";
   static const String rekapGuruAdmin = "/admin/rekap/guru";
+  static const String detailRekapGuruAdmin = "/admin/rekap/guru/detail";
   static const String rekapSiswaAdmin = "/admin/rekap/siswa";
 
   // ADMIN - USER
@@ -37,6 +38,9 @@ class AppRoutes {
   // ADMIN - TAHUN AJARAN
   static const String tahunAjaran = "/admin/tahun-ajaran";
   static const String tambahTahunAjaran = "/admin/tahun-ajaran/tambah";
+
+  // ADMIN - HARI LIBUR
+  static const String hariLibur = "/admin/hari-libur";
 
   // ================= GURU =================
   static const String absenGuru = "/guru/absen";
