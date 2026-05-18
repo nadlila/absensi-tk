@@ -9,6 +9,7 @@ import '../widgets/bottom_navbar.dart';
 //Admin
 import '../screens/admin/admin_dashboard.dart';
 import '../screens/admin/hari_libur_screen.dart';
+import '../screens/admin/laporan_belum_absen_screen.dart';
 
 //Admin - Guru
 import '../screens/admin/guru/data_guru_screen.dart';
@@ -95,6 +96,9 @@ class RouteGenerator {
 // libur
       case AppRoutes.hariLibur:
         return MaterialPageRoute(builder: (_) => const HariLiburScreen());
+// laporan
+      case AppRoutes.laporanBelumAbsen:
+        return MaterialPageRoute(builder: (_) => const LaporanBelumAbsenScreen());
 
 //Admin - Guru
       case AppRoutes.dataGuru:

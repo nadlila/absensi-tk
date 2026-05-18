@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+
 import '../models/kelas_detail_model.dart';
 
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/guru/menu_absensi_guru_screen.dart';
-import '../screens/siswa/menu_absensi_siswa_screen.dart';
 import '../screens/profil/profil_screen.dart';
+import '../screens/siswa/menu_absensi_siswa_screen.dart';
 
 class BottomNavbar extends StatefulWidget {
   final KelasDetail? kelas;
 
-  const BottomNavbar({super.key, this.kelas});
+  const BottomNavbar({
+    super.key,
+    this.kelas,
+  });
 
   @override
   State<BottomNavbar> createState() => _BottomNavbarState();
@@ -26,10 +30,17 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
     pages = [
       DashboardScreen(kelas: widget.kelas),
+
       const MenuAbsensiGuruScreen(),
+
       widget.kelas != null
-          ? MenuAbsensiSiswaScreen(kelas: widget.kelas!)
-          : const Center(child: Text("Tidak ada kelas")),
+          ? MenuAbsensiSiswaScreen(
+        kelas: widget.kelas!,
+      )
+          : const Center(
+        child: Text("Tidak ada kelas"),
+      ),
+
       const ProfilScreen(),
     ];
   }
@@ -37,36 +48,109 @@ class _BottomNavbarState extends State<BottomNavbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
+
       body: pages[currentIndex],
 
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        type: BottomNavigationBarType.fixed,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 8),
 
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
+        child: Container(
+          height: 65,
 
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
+          decoration: BoxDecoration(
+            color: const Color(0xFFB6DEE8),
+
+            borderRadius: BorderRadius.circular(30),
+
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.badge),
-            label: "Guru",
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+            children: [
+
+              _navItem(
+                icon: Icons.home,
+                label: "Home",
+                index: 0,
+              ),
+
+              _navItem(
+                icon: Icons.assignment,
+                label: "Absen",
+                index: 1,
+              ),
+
+              _navItem(
+                icon: Icons.school,
+                label: "Siswa",
+                index: 2,
+              ),
+
+              _navItem(
+                icon: Icons.person,
+                label: "Profil",
+                index: 3,
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: "Siswa",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profil",
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _navItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
+    final bool isSelected = currentIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          currentIndex = index;
+        });
+      },
+
+      child: SizedBox(
+        width: 70,
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+
+          children: [
+
+            Icon(
+              icon,
+              size: isSelected ? 24 : 22,
+              color: const Color(0xFFF58220),
+            ),
+
+            const SizedBox(height: 4),
+
+            Text(
+              label,
+
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight:
+                isSelected
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+                color: const Color(0xFF000000),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

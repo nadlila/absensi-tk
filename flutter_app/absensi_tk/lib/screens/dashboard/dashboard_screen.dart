@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../../models/kelas_detail_model.dart';
 import '../../routes/app_routes.dart';
 
@@ -19,74 +21,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadData();
+    _checkNotifications();
   }
 
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      // Pastikan saat login, username disimpan ke prefs
-      String? savedNama = prefs.getString("namaGuru");
-
-      if (savedNama != null && savedNama.isNotEmpty) {
-        namaGuru = savedNama;
-      } else if (widget.kelas != null) {
-        namaGuru = widget.kelas!.waliKelas;
-      } else {
-        namaGuru = prefs.getString("username") ?? "Guru";
-      }
-      
-      // Logika Notifikasi: Jika sudah lewat 08:30 dan guru belum absen
-      final now = DateTime.now();
-      if (now.hour > 8 || (now.hour == 8 && now.minute >= 30)) {
-         showNotification = true; 
-      }
+      namaGuru = prefs.getString("namaGuru") ?? prefs.getString("username") ?? "Guru";
     });
+  }
+
+  Future<void> _checkNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final idUser = prefs.getInt("idUser");
+    if (idUser == null) return;
+
+    try {
+      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"));
+      if (res.statusCode == 200) {
+        List data = jsonDecode(res.body);
+        setState(() {
+          showNotification = data.any((n) => n["dibaca"] == false);
+        });
+      }
+    } catch (e) {
+      print("Error check notif: $e");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            // ===== TOP BAR / GREETING =====
-            Padding(
-              padding: const EdgeInsets.all(20),
+            // ===== TOP BAR / HEADER (Biru Muda B6DEE8) =====
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              color: const Color(0xFFB6DEE8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      const Text(
-                        "Selamat Datang,",
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      const CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.person, color: Color(0xFFF58220)),
                       ),
-                      Text(
-                        namaGuru,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent,
-                        ),
+                      const SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            namaGuru,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const Text("Guru / Wali Kelas", style: TextStyle(fontSize: 12)),
+                        ],
                       ),
                     ],
                   ),
                   Stack(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.notifications_outlined, size: 30),
-                        onPressed: () => Navigator.pushNamed(context, AppRoutes.notifikasi),
+                        icon: const Icon(Icons.email_outlined, size: 28),
+                        onPressed: () => Navigator.pushNamed(context, AppRoutes.notifikasi).then((_) => _checkNotifications()),
                       ),
                       if (showNotification)
                         Positioned(
                           right: 12,
                           top: 12,
                           child: Container(
-                            padding: const EdgeInsets.all(4),
+                            width: 10,
+                            height: 10,
                             decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-                            constraints: const BoxConstraints(minWidth: 8, minHeight: 8),
                           ),
                         )
                     ],
@@ -95,50 +104,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
-            // ===== MENU GRID =====
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
+            // ===== BANNER IMAGE (Gambar Anak TK) =====
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset('assets/gambar.png',
+                  height: 180,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  children: [
-                    _menuCard(
-                      context,
-                      title: "Absensi Guru",
-                      subtitle: "07:00 - 11:00",
-                      icon: Icons.badge,
-                      color: Colors.blue,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // ===== MENU CARDS (Oranye F58220) =====
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _menuCard(
+                      title: "Absen guru",
+                      icon: Icons.menu_book_rounded,
                       onTap: () => Navigator.pushNamed(context, AppRoutes.absenGuru),
                     ),
-                    _menuCard(
-                      context,
-                      title: "Absensi Siswa",
-                      subtitle: widget.kelas?.namaKelas ?? "Tidak ada Kelas",
-                      icon: Icons.school,
-                      color: Colors.green,
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: _menuCard(
+                      title: "Absen siswa",
+                      icon: Icons.person_search_rounded,
                       onTap: () {
                         if (widget.kelas != null) {
                           Navigator.pushNamed(context, AppRoutes.absenSiswa, arguments: widget.kelas);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Menu ini tidak tersedia")),
+                            const SnackBar(content: Text("Anda tidak memiliki kelas")),
                           );
                         }
                       },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -147,29 +158,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _menuCard(BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
+  Widget _menuCard({required String title, required IconData icon, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
       child: Container(
+        height: 150,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
+          color: const Color(0xFFF58220), // 🔥 Warna Oranye F58220
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.2)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 45, color: color),
+            Icon(icon, size: 60, color: Colors.white.withOpacity(0.9)),
             const SizedBox(height: 10),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
           ],
         ),
       ),

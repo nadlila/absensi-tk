@@ -118,8 +118,8 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
       _showError("Absensi belum dibuka. Silakan kembali pukul 07:00.");
       return;
     }
-    if (currentTime > 11.0) {
-      _showError("Batas waktu absensi sudah berakhir (jam 11:00).");
+    if (currentTime > 8.5) {
+      _showError("Batas waktu absensi sudah berakhir (jam 08:30).");
       return;
     }
 
@@ -225,7 +225,7 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    "Penting: Batas waktu absensi adalah pukul 11:00 WIB. Lewat dari jam tersebut, sistem akan mencatat Anda sebagai 'Alfa' secara otomatis.",
+                    "Penting: Batas waktu absensi adalah pukul 08:30 WIB. Lewat dari jam tersebut, sistem akan mencatat Anda sebagai 'Alfa' secara otomatis.",
                     style: TextStyle(fontSize: 12, color: Colors.orange[900], height: 1.4),
                   ),
                 ),
@@ -234,7 +234,7 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
             ),
             ],
           ),
-        ),
+      ),
     );
   }
 }

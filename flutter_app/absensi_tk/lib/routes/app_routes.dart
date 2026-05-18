@@ -42,6 +42,9 @@ class AppRoutes {
   // ADMIN - HARI LIBUR
   static const String hariLibur = "/admin/hari-libur";
 
+  // ADMIN LAPORAN
+  static const String laporanBelumAbsen = "/admin/laporan-belum-absen";
+
   // ================= GURU =================
   static const String absenGuru = "/guru/absen";
    static const String menuGuru = "/guru/menu";

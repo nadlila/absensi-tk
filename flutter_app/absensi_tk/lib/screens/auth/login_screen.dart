@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../routes/app_routes.dart';
-
 import '../../models/kelas_detail_model.dart';
-
 import '../../services/auth_service.dart';
 import '../../services/kelas_service.dart';
 
@@ -12,69 +10,40 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() =>
-      _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState
-    extends State<LoginScreen> {
-
-  final TextEditingController
-      usernameController =
-      TextEditingController();
-
-  final TextEditingController
-      passwordController =
-      TextEditingController();
-
-  final AuthService authService =
-      AuthService();
-
-  final KelasService kelasService =
-      KelasService();
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final AuthService authService = AuthService();
+  final KelasService kelasService = KelasService();
 
   bool isPasswordHidden = true;
 
   Future<void> login() async {
+    String username = usernameController.text.trim();
+    String password = passwordController.text.trim();
 
-    String username =
-        usernameController.text.trim();
-
-    String password =
-        passwordController.text.trim();
-
-    // VALIDASI
-    if (username.isEmpty ||
-        password.isEmpty) {
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Username dan Password wajib diisi",
-          ),
-        ),
+    if (username.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Username dan Password wajib diisi")),
       );
-
       return;
     }
 
     try {
-
-      // LOGIN API
       final data = await authService.login(
         username: username,
         password: password,
       );
       print("LOGIN RESPONSE: $data");
 
-      // LOGIN BERHASIL
       if (data["status"] == true) {
         final prefs = await SharedPreferences.getInstance();
 
-        // SIMPAN SESSION
-        await prefs.setInt("idUser", data["idUser"],);
-        await prefs.setString("role", data["role"],);
+        await prefs.setInt("idUser", data["idUser"]);
+        await prefs.setString("role", data["role"]);
         await prefs.setString("username", data["username"] ?? "");
 
         if (data["namaGuru"] != null) {
@@ -84,24 +53,15 @@ class _LoginScreenState
           await prefs.setInt("idGuru", data["idGuru"]);
         }
 
-        String role =
-            data["role"].toString().toLowerCase();
-
-        // ================= ADMIN =================
+        String role = data["role"].toString().toLowerCase();
 
         if (role.contains("admin")) {
-
-          Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard,);
-        }
-
-        // ================= GURU =================
-        else if (role.contains("guru")) {
+          Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
+        } else if (role.contains("guru")) {
           int? idGuru = data["idGuru"];
           KelasDetail? kelas;
 
-          // AMBIL KELAS AKTIF
           if (idGuru != null) {
-            // Kita bungkus dengan try-catch agar jika service error, login tetap lanjut
             try {
               kelas = await kelasService.getKelasAktif(idGuru);
             } catch (e) {
@@ -109,294 +69,174 @@ class _LoginScreenState
             }
           }
 
-          // MASUK DASHBOARD
-            Navigator.pushReplacementNamed(
-              context,
-              AppRoutes.dashboard,
-              arguments: kelas,
-            );
-        }
-
-        // ROLE TIDAK DIKENALI
-        else {
-
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-            const SnackBar(
-              content: Text(
-                "Role tidak dikenali",
-              ),
-            ),
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.dashboard,
+            arguments: kelas,
           );
-
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Role tidak dikenali")),
+          );
         }
-
-      }
-
-      // LOGIN GAGAL
-      else {
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-          SnackBar(
-            content: Text(
-              data["message"],
-            ),
-          ),
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data["message"])),
         );
-
       }
-
     } catch (e) {
-
       print("ERROR LOGIN: $e");
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Tidak dapat terhubung ke server",
-          ),
-        ),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tidak dapat terhubung ke server")),
       );
-
     }
-  }
-
-  void loginWithGmail() {
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Login Gmail belum diaktifkan",
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    const orangeColor = Color(0xFFF58220);
+    const lightBlueColor = Color(0xFFB6DEE8);
 
     return Scaffold(
-
       backgroundColor: Colors.white,
-
-      body: Center(
-
+      body: SafeArea(
         child: SingleChildScrollView(
-
-          padding:
-              const EdgeInsets.all(24),
-
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
           child: Column(
-
-            crossAxisAlignment:
-                CrossAxisAlignment.center,
-
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-
-              const Icon(
-                Icons.school,
-                size: 80,
-                color: Colors.blue,
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                "Aplikasi Absensi",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight:
-                      FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // USERNAME
-              TextField(
-
-                controller:
-                    usernameController,
-
-                decoration:
-                    InputDecoration(
-
-                  labelText: "Username",
-
-                  border:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius
-                            .circular(10),
-                  ),
-
-                  prefixIcon:
-                      const Icon(
-                    Icons.person,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // PASSWORD
-              TextField(
-
-                controller:
-                    passwordController,
-
-                obscureText:
-                    isPasswordHidden,
-
-                decoration:
-                    InputDecoration(
-
-                  labelText: "Password",
-
-                  border:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius
-                            .circular(10),
-                  ),
-
-                  prefixIcon:
-                      const Icon(
-                    Icons.lock,
-                  ),
-
-                  suffixIcon:
-                      IconButton(
-
-                    icon: Icon(
-                      isPasswordHidden
-                          ? Icons
-                              .visibility
-                          : Icons
-                              .visibility_off,
-                    ),
-
-                    onPressed: () {
-
-                      setState(() {
-                        isPasswordHidden =
-                            !isPasswordHidden;
-                      });
-
-                    },
-                  ),
-                ),
-              ),
-
               const SizedBox(height: 30),
-
-              // LOGIN BUTTON
-              SizedBox(
-
-                width: double.infinity,
-                height: 50,
-
-                child: ElevatedButton(
-
-                  onPressed: login,
-
-                  style:
-                      ElevatedButton
-                          .styleFrom(
-
-                    backgroundColor:
-                        Colors.blue,
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        10,
-                      ),
-                    ),
-                  ),
-
-                  child: const Text(
-                    "LOGIN",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 25),
-
+              // Logo and School Name
               Row(
-
-                children: const [
-
-                  Expanded(
-                    child: Divider(),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/logo.png',
+                    height: 50,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.school, size: 50, color: orangeColor),
                   ),
-
-                  Padding(
-                    padding:
-                        EdgeInsets
-                            .symmetric(
-                      horizontal: 10,
-                    ),
-                    child: Text(
-                      "atau login dengan",
-                    ),
-                  ),
-
-                  Expanded(
-                    child: Divider(),
+                  const SizedBox(width: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Taman Kanak-kanak",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      Text(
+                        "Islam Terpadu Alif",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-
-              const SizedBox(height: 20),
-
-              // GOOGLE LOGIN
-              SizedBox(
-
-                width: double.infinity,
-                height: 50,
-
-                child:
-                    OutlinedButton.icon(
-
-                  icon: const Icon(
-                    Icons.g_mobiledata,
-                    size: 30,
-                    color: Colors.red,
+              const SizedBox(height: 60),
+              // Greetings
+              const Text(
+                "Selamat Datang",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: orangeColor,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Silahkan masuk untuk melanjutkan",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 60),
+              // Form
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Username",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
                   ),
-
-                  label: const Text(
-                    "Login dengan Gmail",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-
-                  style:
-                      OutlinedButton
-                          .styleFrom(
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        10,
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: usernameController,
+                    decoration: InputDecoration(
+                      hintText: "Masukkan Username Anda",
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(color: orangeColor),
                       ),
                     ),
                   ),
-
-                  onPressed:
-                      loginWithGmail,
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Kata Sandi",
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: isPasswordHidden,
+                    decoration: InputDecoration(
+                      hintText: "..........",
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(color: orangeColor),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 50),
+              // Login Button
+              SizedBox(
+                width: 140,
+                height: 45,
+                child: ElevatedButton(
+                  onPressed: login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: lightBlueColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    "Masuk",
+                    style: TextStyle(
+                      color: orangeColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
+              ),
+              const SizedBox(height: 100),
+              // Footer
+              const Text(
+                "@2026 TK Islam Terpadu Alif",
+                style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),

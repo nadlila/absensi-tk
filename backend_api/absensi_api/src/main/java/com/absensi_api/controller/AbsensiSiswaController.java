@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.HashMap;
+import java.time.LocalDate;
 
 import com.absensi_api.dto.DetailAbsensiDTO;
 import com.absensi_api.dto.RekapAbsensiDTO;
@@ -82,6 +84,39 @@ public void saveAbsensi(@RequestBody List<AbsensiSiswa> list){
             LocalDate.parse(start),
             LocalDate.parse(end)
         );
+    }
+
+    @GetMapping("/daily-stats")
+    public java.util.Map<java.lang.String, java.lang.Integer> getDailyStats(
+            @RequestParam java.lang.String idKelas,
+            @RequestParam java.lang.String tanggal // format: yyyy-MM-dd
+    ) {
+
+        LocalDate date = LocalDate.parse(tanggal);
+
+        java.util.List<AbsensiSiswa> list =
+                repo.findByKelas_IdKelasAndTanggal(idKelas, date);
+
+        java.util.Map<java.lang.String, java.lang.Integer> stats =
+                new HashMap<>();
+
+        stats.put("hadir", 0);
+        stats.put("izin", 0);
+        stats.put("sakit", 0);
+        stats.put("alfa", 0);
+
+        for (AbsensiSiswa a : list) {
+
+            java.lang.String status =
+                    a.getStatus().getNamaStatus().toLowerCase();
+
+            stats.put(
+                    status,
+                    stats.getOrDefault(status, 0) + 1
+            );
+        }
+
+        return stats;
     }
 
 }

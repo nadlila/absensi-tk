@@ -5,6 +5,8 @@ import com.absensi_api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +33,14 @@ public class AbsensiService {
     @Autowired
     private NotifikasiRepository notifikasiRepository;
 
+    @EventListener(ApplicationReadyEvent.class)
+    public void runOnStartup() {
+        System.out.println("Sistem: Menjalankan pengecekan otomatis saat startup...");
+        notifGuruBelumAbsen(); // Pengingat Guru (Hadir/Alfa)
+        notifWaliKelasBelumAbsenSiswa(); // Pengingat Absen Siswa
+        prosesOtomatisAlfa(); // Eksekusi Alfa jika sudah lewat batas
+    }
+
     // 1. PENGINGAT ABSEN GURU (Setiap Jam 07:31)
     @Scheduled(cron = "0 31 7 * * MON-SAT")
     public void notifGuruBelumAbsen() {
@@ -40,8 +50,8 @@ public class AbsensiService {
         List<Guru> allGuru = guruRepository.findAll();
         for (Guru guru : allGuru) {
             if (!absensiGuruRepository.existsByGuruAndTanggal(guru, today)) {
-                sendNotif(guru.getIdUser(), "Peringatan Absensi",
-                        "Anda belum melakukan absensi hari ini. Silakan segera absen sebelum jam 11:00.");
+                sendNotif(guru.getIdUser(), "Peringatan Absensi Diri",
+                        "Anda belum melakukan absensi hari ini. Silakan segera absen.");
             }
         }
     }
@@ -60,57 +70,48 @@ public class AbsensiService {
             boolean sudahAbsen = absensiSiswaRepository.existsByKelas_IdKelasAndTanggal(kg.getIdKelas(), today);
 
             if (!sudahAbsen) {
+                // Notif ke Wali Kelas
                 Guru guru = guruRepository.findById(kg.getIdGuru()).orElse(null);
                 if (guru != null && guru.getIdUser() != null) {
                     sendNotif(guru.getIdUser(), "Peringatan Absensi Siswa",
                             "Anda belum mengabsen siswa hari ini untuk kelas " + kg.getIdKelas() + ".");
-                    sendNotif(1L, "Laporan Kelas", "Kelas " + kg.getIdKelas() + " belum melakukan absensi.");
-                    }
                 }
+                // Notif ke Admin (User ID 1)
+                sendNotif(1L, "Laporan Absensi Kelas", "Kelas " + kg.getIdKelas() + " belum melakukan absensi siswa hari ini.");
             }
         }
     }
 
-    //3. Proses Otomatis Alpha setiap hari jam 11:05
-    @Scheduled(cron = "0 5 11 * * MON-SAT")
+    // 3. Proses Otomatis Alpha (Jam 08:35)
+    @Scheduled(cron = "0 35 8 * * MON-SAT")
     public void prosesOtomatisAlfa() {
         LocalDate hariIni = LocalDate.now();
+        if (hariLiburRepository.existsByTanggal(hariIni)) return;
 
-        // 1. Cek Libur
-        if (hariLiburRepository.existsByTanggal(hariIni)) {
-            System.out.println("Sistem: Hari ini libur, proses Alpha dibatalkan.");
-            return;
-        }
-
-        // 2. Ambil Tahun Ajaran Aktif
         TahunAjaran tahunAktif = tahunRepo.findByStatus("aktif").orElse(null);
         if (tahunAktif == null) return;
 
-        // 3. Ambil Status "Alfa" (Asumsi ID 4 adalah Alfa)
         StatusAbsensi statusAlfa = statusRepo.findById(4L).orElse(null);
         if (statusAlfa == null) return;
 
-        // 4. Ambil semua Guru & Proses
         List<Guru> allGuru = guruRepository.findAll();
         for (Guru guru : allGuru) {
             boolean sudahAbsen = absensiGuruRepository.existsByGuruAndTanggal(guru, hariIni);
-
             if (!sudahAbsen) {
                 AbsensiGuru alfaRecord = new AbsensiGuru();
                 alfaRecord.setGuru(guru);
                 alfaRecord.setTanggal(hariIni);
-                alfaRecord.setJam(LocalTime.of(11, 0));
+                alfaRecord.setJam(LocalTime.of(8, 30));
                 alfaRecord.setStatus(statusAlfa);
                 alfaRecord.setTahunAjaran(tahunAktif);
-                alfaRecord.setKeterangan("Otomatis oleh Sistem");
-
+                alfaRecord.setKeterangan("Otomatis Alfa oleh Sistem");
                 absensiGuruRepository.save(alfaRecord);
-                System.out.println("Sistem: Guru " + guru.getNamaGuru() + " diset ALFA.");
+                
+                sendNotif(guru.getIdUser(), "Sistem Absensi", "Batas waktu berakhir. Anda dicatat 'Alfa' hari ini.");
             }
         }
     }
 
-    // Helper untuk simpan notifikasi
     private void sendNotif(Long idUser, String judul, String isi) {
         if (idUser == null) return;
         Notifikasi n = new Notifikasi();
