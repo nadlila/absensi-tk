@@ -105,6 +105,20 @@ class _RekapAbsenSiswaScreenState
       appBar: AppBar(
         title: Text(
           "Rekap ${widget.kelas.namaKelas}",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: const Color(0xFFB6DEE8),
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
 

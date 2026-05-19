@@ -75,7 +75,7 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Grafik kehadiran siswa.", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  const Text("Grafik kehadiran siswa hari ini.", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 20),
                   Row(
                     children: [

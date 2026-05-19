@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
         username: username,
         password: password,
       );
-      print("LOGIN RESPONSE: $data");
 
       if (data["status"] == true) {
         final prefs = await SharedPreferences.getInstance();
@@ -51,6 +50,10 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         if (data["idGuru"] != null) {
           await prefs.setInt("idGuru", data["idGuru"]);
+        }
+        // 🔥 SIMPAN NUPTK KE STORAGE
+        if (data["nuptk"] != null) {
+          await prefs.setString("nuptk", data["nuptk"].toString());
         }
 
         String role = data["role"].toString().toLowerCase();
@@ -85,7 +88,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } catch (e) {
-      print("ERROR LOGIN: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Tidak dapat terhubung ke server")),
       );
@@ -106,7 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30),
-              // Logo and School Name
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -119,76 +120,32 @@ class _LoginScreenState extends State<LoginScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Text(
-                        "Taman Kanak-kanak",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        "Islam Terpadu Alif",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
+                      Text("Taman Kanak-kanak", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                      Text("Islam Terpadu Alif", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ],
               ),
               const SizedBox(height: 60),
-              // Greetings
-              const Text(
-                "Selamat Datang",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: orangeColor,
-                ),
-              ),
+              const Text("Selamat Datang", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: orangeColor)),
               const SizedBox(height: 10),
-              const Text(
-                "Silahkan masuk untuk melanjutkan",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              const Text("Silahkan masuk untuk melanjutkan", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
               const SizedBox(height: 60),
-              // Form
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Username",
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
+                  const Text("Username", style: TextStyle(fontSize: 14, color: Colors.black87)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: usernameController,
                     decoration: InputDecoration(
                       hintText: "Masukkan Username Anda",
                       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey.shade400),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: orangeColor),
-                      ),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    "Kata Sandi",
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
+                  const Text("Kata Sandi", style: TextStyle(fontSize: 14, color: Colors.black87)),
                   const SizedBox(height: 8),
                   TextField(
                     controller: passwordController,
@@ -196,40 +153,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       hintText: "..........",
                       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey.shade400),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: orangeColor),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                      suffixIcon: IconButton(
+                        icon: Icon(isPasswordHidden ? Icons.visibility_off : Icons.visibility),
+                        onPressed: () => setState(() => isPasswordHidden = !isPasswordHidden),
                       ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 50),
-              // Login Button
               SizedBox(
                 width: 140,
                 height: 45,
                 child: ElevatedButton(
                   onPressed: login,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: lightBlueColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    "Masuk",
-                    style: TextStyle(
-                      color: orangeColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: lightBlueColor, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30))),
+                  child: const Text("Masuk", style: TextStyle(color: orangeColor, fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 100),

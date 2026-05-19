@@ -75,7 +75,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
           ],
         ),
-        title: const Text("Admin Dashboard"),
+        title: const Text("Dashboard Admin TK IT Alif"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -168,7 +168,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Icon(
               icon,
               size: 50,
-              color: Colors.blue,
+              color: const Color(0xFFF58220),
             ),
             const SizedBox(height: 10),
             Text(

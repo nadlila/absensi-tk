@@ -22,67 +22,55 @@ public class AuthController {
     private GuruRepository guruRepository;
 
     @PostMapping("/login")
-public Map<String, Object> login(@RequestBody LoginRequest request){
-
-    Map<String, Object> response = new HashMap<>();
-
-    User user = userRepository.findByUsernameAndPassword(
-            request.getUsername(),
-            request.getPassword()
-    );
-
-    if(user != null){
-
-        response.put("status", true);
-        response.put("message", "Login berhasil");
-        response.put("role", user.getRole());
-        response.put("username", user.getUsername());
-        response.put("idUser", user.getIdUser());
-
-        // 🔥 AMBIL ID GURU DARI TABEL GURU
-        if(user.getRole().equalsIgnoreCase("guru")){
-            var guru = guruRepository.findByIdUser(user.getIdUser());
-            if(guru != null){
-                response.put("idGuru", guru.getIdGuru());
-                response.put("namaGuru", guru.getNamaGuru());
-            } else {
-                response.put("idGuru", null);
-            }
-        }
-
-    } else {
-
-        response.put("status", false);
-        response.put("message", "Username atau password salah");
-
-    }
-
-    return response;
-}
-
-    @PostMapping("/login-email")
-    public Map<String, Object> loginEmail(@RequestBody Map<String, String> request){
+    public Map<String, Object> login(@RequestBody LoginRequest request) {
 
         Map<String, Object> response = new HashMap<>();
 
-        String email = request.get("email");
+        User user = userRepository.findByUsernameAndPassword(
+                request.getUsername(),
+                request.getPassword()
+        );
 
-        User user = userRepository.findByEmail(email);
-
-        if(user != null){
-
+        if (user != null) {
             response.put("status", true);
             response.put("message", "Login berhasil");
             response.put("role", user.getRole());
             response.put("username", user.getUsername());
+            response.put("idUser", user.getIdUser());
 
+            // 🔥 AMBIL DATA GURU LENGKAP TERMASUK NUPTK
+            if (user.getRole().equalsIgnoreCase("guru")) {
+                var guru = guruRepository.findByIdUser(user.getIdUser());
+                if (guru != null) {
+                    response.put("idGuru", guru.getIdGuru());
+                    response.put("namaGuru", guru.getNamaGuru());
+                    response.put("nuptk", guru.getNuptk()); // ✅ Kirim NUPTK ke Frontend
+                }
+            }
         } else {
-
             response.put("status", false);
-            response.put("message", "Email tidak ditemukan");
-
+            response.put("message", "Username atau password salah");
         }
 
         return response;
     }
-} 
+
+    @PostMapping("/login-email")
+    public Map<String, Object> loginEmail(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        String email = request.get("email");
+        User user = userRepository.findByEmail(email);
+
+        if (user != null) {
+            response.put("status", true);
+            response.put("message", "Login berhasil");
+            response.put("role", user.getRole());
+            response.put("username", user.getUsername());
+        } else {
+            response.put("status", false);
+            response.put("message", "Email tidak ditemukan");
+        }
+
+        return response;
+    }
+}

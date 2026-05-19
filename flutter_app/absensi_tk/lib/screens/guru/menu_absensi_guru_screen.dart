@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../routes/app_routes.dart';
+import '../../widgets/custom_top_bar.dart';
 
 class MenuAbsensiGuruScreen extends StatefulWidget {
-  const MenuAbsensiGuruScreen({super.key});
+  final Map<String, String>? profileData;
+  const MenuAbsensiGuruScreen({super.key, this.profileData});
 
   @override
   State<MenuAbsensiGuruScreen> createState() => _MenuAbsensiGuruScreenState();
@@ -13,12 +15,49 @@ class MenuAbsensiGuruScreen extends StatefulWidget {
 
 class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
   int alpha = 0, hadir = 0, izin = 0, sakit = 0;
+  String? namaGuru;
+  String? nuptk;
+  bool isProfileLoaded = false;
+  bool showNotification = false;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadData();
     fetchRekapData();
+    _checkNotifications();
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    namaGuru = prefs.getString("namaGuru") ??
+        prefs.getString("username");
+
+    nuptk = prefs.getString("nuptk");
+
+    setState(() {
+      isProfileLoaded = true;
+    });
+  }
+
+  Future<void> _checkNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final idUser = prefs.getInt("idUser");
+    if (idUser == null) return;
+
+    try {
+      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"));
+      if (res.statusCode == 200) {
+        List data = jsonDecode(res.body);
+        setState(() {
+          showNotification = data.any((n) => n["dibaca"] == false);
+        });
+      }
+    } catch (e) {
+      print("Error check notif: $e");
+    }
   }
 
   Future<void> fetchRekapData() async {
@@ -52,60 +91,77 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text("Absensi Guru", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+      body: SafeArea(
         child: Column(
           children: [
-            // ===== CARD GRAFIK =====
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.grey.shade200),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+            // ===== CUSTOM TOP BAR =====
+            if (isProfileLoaded)
+              CustomTopBar(
+                nama: namaGuru ?? "",
+                nuptk: nuptk ?? "",
+                showNotification: showNotification,
+                onNotificationTap: () => Navigator.pushNamed(
+                  context,
+                  AppRoutes.notifikasi,
+                ).then((_) => _checkNotifications()),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Grafik kehadiran anda.", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildBar("Hadir", hadir, const Color(0xFF29B6F6)),
-                      _buildBar("Izin", izin, const Color(0xFF66BB6A)),
-                      _buildBar("Sakit", sakit, const Color(0xFFEF5350)),
-                      _buildBar("Alpha", alpha, const Color(0xFFF58220)),
-                    ],
-                  ),
-                ],
+
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // ===== CARD GRAFIK =====
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.grey.shade200),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Grafik kehadiran anda.", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              _buildBar("Hadir", hadir, const Color(0xFFF58220)),
+                              _buildBar("Izin", izin, const Color(0xFF29B6F6)),
+                              _buildBar("Sakit", sakit, const Color(0xFF66BB6A)),
+                              _buildBar("Alpha", alpha, const Color(0xFFEF5350)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    // ===== TOMBOL ABSEN =====
+                    _buildActionCard(
+                      "Isi kehadiran anda hari ini.",
+                      "Absen Sekarang",
+                          () => Navigator.pushNamed(context, AppRoutes.absenGuru, arguments: {
+                            'nama': namaGuru,
+                            'nuptk': nuptk
+                          }).then((_) => fetchRekapData()),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    // ===== TOMBOL REKAP =====
+                    _buildActionCard(
+                      "Lihat rekapan absensi anda.",
+                      "Lihat Rekap",
+                          () => Navigator.pushNamed(context, AppRoutes.rekapAbsenGuru),
+                    ),
+                  ],
+                ),
               ),
-            ),
-
-            const SizedBox(height: 25),
-
-            // ===== TOMBOL ABSEN =====
-            _buildActionCard(
-              "Isi kehadiran anda hari ini.",
-              "Absen Sekarang",
-                  () => Navigator.pushNamed(context, AppRoutes.absenGuru).then((_) => fetchRekapData()),
-            ),
-
-            const SizedBox(height: 15),
-
-            // ===== TOMBOL REKAP =====
-            _buildActionCard(
-              "Lihat rekapan absensi anda.",
-              "Lihat Rekap",
-                  () => Navigator.pushNamed(context, AppRoutes.rekapAbsenGuru),
             ),
           ],
         ),
@@ -115,7 +171,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
 
   Widget _buildBar(String label, int value, Color color) {
     double maxHeight = 120.0;
-    // Hitung tinggi berdasarkan nilai (maksimal 20 untuk skala visual)
     double height = (value / 20).clamp(0.1, 1.0) * maxHeight;
 
     return Column(
