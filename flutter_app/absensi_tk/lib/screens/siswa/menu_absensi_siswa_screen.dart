@@ -14,7 +14,7 @@ class MenuAbsensiSiswaScreen extends StatefulWidget {
 }
 
 class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
-  int alpha = 0, hadir = 0, izin = 0, sakit = 0;
+  int alpa = 0, hadir = 0, izin = 0, sakit = 0;
   bool isLoading = true;
 
   @override
@@ -39,7 +39,7 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
           hadir = data["hadir"] ?? 0;
           izin = data["izin"] ?? 0;
           sakit = data["sakit"] ?? 0;
-          alpha = data["alfa"] ?? 0;
+          alpa = data["alpa"] ?? 0;
           isLoading = false;
         });
       }
@@ -88,7 +88,7 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
                             hadir: hadir.toDouble(),
                             izin: izin.toDouble(),
                             sakit: sakit.toDouble(),
-                            alpha: alpha.toDouble(),
+                            alpha: alpa.toDouble(),
                           ),
                         ),
                       ),
@@ -97,10 +97,10 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
                       Expanded(
                         child: Column(
                           children: [
-                            _buildLegend(const Color(0xFFF58220), "Hadir"),
-                            _buildLegend(const Color(0xFF29B6F6), "Izin"),
-                            _buildLegend(const Color(0xFF66BB6A), "Sakit"),
-                            _buildLegend(const Color(0xFFEF5350), "Alpha"),
+                            _buildLegend(const Color(0xFF66BB6A), "Hadir"),
+                            _buildLegend(const Color(0xFFF6F329), "Izin"),
+                            _buildLegend(const Color(0xFFEF50AF), "Sakit"),
+                            _buildLegend(const Color(0xFFEF5350), "Alpa"),
                           ],
                         ),
                       )
@@ -202,15 +202,15 @@ class PieChartPainter extends CustomPainter {
     double startAngle = -pi / 2;
 
     // Hadir
-    _drawArc(canvas, rect, startAngle, (hadir / total) * 2 * pi, const Color(0xFFF58220), paint);
+    _drawArc(canvas, rect, startAngle, (hadir / total) * 2 * pi, const Color(0xFF66BB6A), paint);
     startAngle += (hadir / total) * 2 * pi;
 
     // Izin
-    _drawArc(canvas, rect, startAngle, (izin / total) * 2 * pi, const Color(0xFF29B6F6), paint);
+    _drawArc(canvas, rect, startAngle, (izin / total) * 2 * pi, const Color(0xFFF6F329), paint);
     startAngle += (izin / total) * 2 * pi;
 
     // Sakit
-    _drawArc(canvas, rect, startAngle, (sakit / total) * 2 * pi, const Color(0xFF66BB6A), paint);
+    _drawArc(canvas, rect, startAngle, (sakit / total) * 2 * pi, const Color(0xFFEF50AF), paint);
     startAngle += (sakit / total) * 2 * pi;
 
     // Alpha

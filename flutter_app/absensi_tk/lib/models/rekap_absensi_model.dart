@@ -4,7 +4,7 @@ class RekapAbsensi {
   final int hadir;
   final int izin;
   final int sakit;
-  final int alfa;
+  final int alpa;
 
   RekapAbsensi({
     required this.idSiswa,
@@ -12,7 +12,7 @@ class RekapAbsensi {
     required this.hadir,
     required this.izin,
     required this.sakit,
-    required this.alfa,
+    required this.alpa,
   });
 
   factory RekapAbsensi.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class RekapAbsensi {
       hadir: json['hadir'],
       izin: json['izin'],
       sakit: json['sakit'],
-      alfa: json['alfa'],
+      alpa: json['alpa'] ?? json['alfa'] ?? 0,
     );
   }
 }

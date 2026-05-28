@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
-
 class DetailRekapSiswaScreen extends StatefulWidget {
 
   final int siswaId;
@@ -100,95 +97,17 @@ class _DetailRekapSiswaScreenState
 
   }
 
-  // ================= EXPORT PDF =================
-  Future<void> exportPDF() async {
-
-    final pdf = pw.Document();
-
-    pdf.addPage(
-
-      pw.Page(
-
-        build: (context) {
-
-          return pw.Column(
-
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-
-            children: [
-
-              pw.Text(
-                "DETAIL REKAP ABSENSI SISWA",
-                style: pw.TextStyle(
-                  fontSize: 18,
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-
-              pw.SizedBox(height: 10),
-
-              pw.Text("Nama: ${widget.namaSiswa}"),
-
-              pw.Text("Tahun Ajaran ID: ${widget.idTahun}"),
-
-              pw.SizedBox(height: 20),
-
-              pw.Table.fromTextArray(
-
-                headers: [
-                  "Tanggal",
-                  "Status",
-                  "Keterangan",
-                ],
-
-                data: detail.map((e) {
-
-                  return [
-
-                    e["tanggal"] ?? "-",
-                    e["status"] ?? "-",
-                    e["keterangan"] ?? "-",
-
-                  ];
-
-                }).toList(),
-
-              ),
-
-            ],
-
-          );
-
-        },
-
-      ),
-
-    );
-
-    await Printing.layoutPdf(
-      onLayout: (format) => pdf.save(),
-    );
-
-  }
-
   // ================= UI =================
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
+        title: Text(
+          "${widget.namaSiswa}",
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
+        backgroundColor: const Color(0xFFB6DEE8),
 
-        title: Text(widget.namaSiswa),
-
-        actions: [
-
-          IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
-            onPressed: exportPDF,
-          ),
-
-        ],
 
       ),
 

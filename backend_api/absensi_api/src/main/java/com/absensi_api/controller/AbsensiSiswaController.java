@@ -107,7 +107,7 @@ public class AbsensiSiswaController {
         stats.put("hadir", 0);
         stats.put("izin", 0);
         stats.put("sakit", 0);
-        stats.put("alfa", 0);
+        stats.put("alpa", 0);
 
         for (AbsensiSiswa a : list) {
             java.lang.String status = a.getStatus().getNamaStatus().toLowerCase();

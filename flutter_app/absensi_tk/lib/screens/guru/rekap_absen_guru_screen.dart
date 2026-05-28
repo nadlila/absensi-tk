@@ -100,7 +100,7 @@ class _RekapAbsensiGuruScreenState extends State<RekapAbsensiGuruScreen> {
             if (status == "Hadir") statusColor = Colors.green;
             if (status == "Izin") statusColor = Colors.orange;
             if (status == "Sakit") statusColor = Colors.red;
-            if (status == "Alfa") statusColor = Colors.black;
+            if (status == "Alpa") statusColor = Colors.black;
 
             return Card(
               margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),

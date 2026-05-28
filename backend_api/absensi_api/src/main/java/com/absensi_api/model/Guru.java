@@ -30,6 +30,9 @@ public class Guru {
     @Column(name = "alamat")
     private String alamat;
 
+    @Column(name = "foto")
+    private String foto;
+
     @Column(name = "id_user", unique = true)
     private Long idUser;
 
@@ -87,6 +90,14 @@ public class Guru {
 
     public void setAlamat(String alamat) {
         this.alamat = alamat;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     public Long getIdUser() {

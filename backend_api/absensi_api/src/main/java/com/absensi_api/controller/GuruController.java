@@ -52,6 +52,7 @@ public class GuruController {
             existing.setTempatLahir(guru.getTempatLahir());
             existing.setTanggalLahir(guru.getTanggalLahir());
             existing.setAlamat(guru.getAlamat());
+            existing.setFoto(guru.getFoto()); // Tambahkan baris ini
             existing.setIdUser(guru.getIdUser());
 
             return guruRepository.save(existing);

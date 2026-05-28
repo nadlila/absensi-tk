@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -35,19 +36,48 @@ public class AbsensiService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void runOnStartup() {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
         System.out.println("Sistem: Menjalankan pengecekan otomatis saat startup...");
-        notifGuruBelumAbsen(); // Pengingat Guru (Hadir/Alfa)
-        notifWaliKelasBelumAbsenSiswa(); // Pengingat Absen Siswa
-        prosesOtomatisAlfa(); // Eksekusi Alfa jika sudah lewat batas
+
+        // Jika hari ini libur atau Minggu, jangan lakukan apa-apa
+        if (isLiburAtauMinggu(today)) {
+            System.out.println("Sistem: Hari ini libur atau Minggu. Melewati proses otomatis.");
+            return;
+        }
+
+        // Jalankan notifikasi guru jika sudah lewat jam 07:31
+        if (now.isAfter(LocalTime.of(7, 31))) {
+            notifGuruBelumAbsen();
+        }
+
+        // Jalankan proses Alpa otomatis jika sudah lewat jam 08:35
+        if (now.isAfter(LocalTime.of(8, 35))) {
+            prosesOtomatisAlfa();
+        }
+
+        // Jalankan notifikasi absen siswa jika sudah lewat jam 11:01
+        if (now.isAfter(LocalTime.of(11, 1))) {
+            notifWaliKelasBelumAbsenSiswa();
+        }
+    }
+
+    /**
+     * Mengecek apakah tanggal tertentu adalah hari libur (dari database) atau hari Minggu.
+     */
+    private boolean isLiburAtauMinggu(LocalDate date) {
+        if (date.getDayOfWeek() == DayOfWeek.SUNDAY) return true;
+        return hariLiburRepository.existsByTanggal(date);
     }
 
     // 1. PENGINGAT ABSEN GURU (Setiap Jam 07:31)
     @Scheduled(cron = "0 31 7 * * MON-SAT")
     public void notifGuruBelumAbsen() {
         LocalDate today = LocalDate.now();
-        if (hariLiburRepository.existsByTanggal(today)) return;
+        if (isLiburAtauMinggu(today)) return;
 
-        List<Guru> allGuru = guruRepository.findAll();
+        java.util.List<Guru> allGuru = guruRepository.findAll();
         for (Guru guru : allGuru) {
             if (!absensiGuruRepository.existsByGuruAndTanggal(guru, today)) {
                 sendNotif(guru.getIdUser(), "Peringatan Absensi Diri",
@@ -60,12 +90,12 @@ public class AbsensiService {
     @Scheduled(cron = "0 1 11 * * MON-SAT")
     public void notifWaliKelasBelumAbsenSiswa() {
         LocalDate today = LocalDate.now();
-        if (hariLiburRepository.existsByTanggal(today)) return;
+        if (isLiburAtauMinggu(today)) return;
 
         TahunAjaran tahunAktif = tahunRepo.findByStatus("aktif").orElse(null);
         if (tahunAktif == null) return;
 
-        List<KelasGuru> listKelas = kelasGuruRepository.findByIdTahunAjaran(tahunAktif.getIdTahunAjaran());
+        java.util.List<KelasGuru> listKelas = kelasGuruRepository.findByIdTahunAjaran(tahunAktif.getIdTahunAjaran());
         for (KelasGuru kg : listKelas) {
             boolean sudahAbsen = absensiSiswaRepository.existsByKelas_IdKelasAndTanggal(kg.getIdKelas(), today);
 
@@ -82,37 +112,37 @@ public class AbsensiService {
         }
     }
 
-    // 3. Proses Otomatis Alpha (Jam 08:35)
+    // 3. Proses Otomatis Alpa (Jam 08:35)
     @Scheduled(cron = "0 35 8 * * MON-SAT")
     public void prosesOtomatisAlfa() {
         LocalDate hariIni = LocalDate.now();
-        if (hariLiburRepository.existsByTanggal(hariIni)) return;
+        if (isLiburAtauMinggu(hariIni)) return;
 
         TahunAjaran tahunAktif = tahunRepo.findByStatus("aktif").orElse(null);
         if (tahunAktif == null) return;
 
-        StatusAbsensi statusAlfa = statusRepo.findById(4L).orElse(null);
-        if (statusAlfa == null) return;
+        StatusAbsensi statusAlpa = statusRepo.findById(4L).orElse(null);
+        if (statusAlpa == null) return;
 
-        List<Guru> allGuru = guruRepository.findAll();
+        java.util.List<Guru> allGuru = guruRepository.findAll();
         for (Guru guru : allGuru) {
             boolean sudahAbsen = absensiGuruRepository.existsByGuruAndTanggal(guru, hariIni);
             if (!sudahAbsen) {
-                AbsensiGuru alfaRecord = new AbsensiGuru();
-                alfaRecord.setGuru(guru);
-                alfaRecord.setTanggal(hariIni);
-                alfaRecord.setJam(LocalTime.of(8, 30));
-                alfaRecord.setStatus(statusAlfa);
-                alfaRecord.setTahunAjaran(tahunAktif);
-                alfaRecord.setKeterangan("Otomatis Alfa oleh Sistem");
-                absensiGuruRepository.save(alfaRecord);
-                
-                sendNotif(guru.getIdUser(), "Sistem Absensi", "Batas waktu berakhir. Anda dicatat 'Alfa' hari ini.");
+                AbsensiGuru alpaRecord = new AbsensiGuru();
+                alpaRecord.setGuru(guru);
+                alpaRecord.setTanggal(hariIni);
+                alpaRecord.setJam(LocalTime.of(8, 30));
+                alpaRecord.setStatus(statusAlpa);
+                alpaRecord.setTahunAjaran(tahunAktif);
+                alpaRecord.setKeterangan("Otomatis Alpa oleh Sistem");
+                absensiGuruRepository.save(alpaRecord);
+
+                sendNotif(guru.getIdUser(), "Sistem Absensi", "Batas waktu berakhir. Anda dicatat 'Alpa' hari ini.");
             }
         }
     }
 
-    private void sendNotif(Long idUser, String judul, String isi) {
+    private void sendNotif(java.lang.Long idUser, java.lang.String judul, java.lang.String isi) {
         if (idUser == null) return;
         Notifikasi n = new Notifikasi();
         n.setIdUser(idUser);

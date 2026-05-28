@@ -85,7 +85,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
               _navItem(
                 icon: Icons.assignment,
-                label: "Absen",
+                label: "Guru",
                 index: 1,
               ),
 

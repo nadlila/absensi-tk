@@ -14,7 +14,7 @@ class MenuAbsensiGuruScreen extends StatefulWidget {
 }
 
 class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
-  int alpha = 0, hadir = 0, izin = 0, sakit = 0;
+  int alpa = 0, hadir = 0, izin = 0, sakit = 0; // Menggunakan 'alpa'
   String? namaGuru;
   String? nuptk;
   bool isProfileLoaded = false;
@@ -71,14 +71,16 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
         List data = jsonDecode(res.body);
         int a = 0, h = 0, i = 0, s = 0;
         for (var item in data) {
-          String status = item["status"]["namaStatus"];
-          if (status == "Alfa") a++;
-          else if (status == "Hadir") h++;
-          else if (status == "Izin") i++;
-          else if (status == "Sakit") s++;
+          // Mengubah status menjadi lowercase agar pencocokan lebih akurat
+          String status = item["status"]["namaStatus"].toString().toLowerCase();
+          
+          if (status == "alpa") a++;
+          else if (status == "hadir") h++;
+          else if (status == "izin") i++;
+          else if (status == "sakit") s++;
         }
         setState(() {
-          alpha = a; hadir = h; izin = i; sakit = s;
+          alpa = a; hadir = h; izin = i; sakit = s;
           isLoading = false;
         });
       }
@@ -129,10 +131,10 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              _buildBar("Hadir", hadir, const Color(0xFFF58220)),
-                              _buildBar("Izin", izin, const Color(0xFF29B6F6)),
-                              _buildBar("Sakit", sakit, const Color(0xFF66BB6A)),
-                              _buildBar("Alpha", alpha, const Color(0xFFEF5350)),
+                              _buildBar("Hadir", hadir, const Color(0xFF66BB6A)),
+                              _buildBar("Izin", izin, const Color(0xFFF6F329)),
+                              _buildBar("Sakit", sakit, const Color(0xFFEF50AF)),
+                              _buildBar("Alpa", alpa, const Color(0xFFEF5350)),
                             ],
                           ),
                         ],
@@ -171,6 +173,7 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
 
   Widget _buildBar(String label, int value, Color color) {
     double maxHeight = 120.0;
+    // Rasio tinggi batang grafik
     double height = (value / 20).clamp(0.1, 1.0) * maxHeight;
 
     return Column(
@@ -203,7 +206,7 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -79,7 +79,7 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
         return 2;
       case "sakit":
         return 3;
-      case "alfa":
+      case "alpa":
         return 4;
       default:
         return 1;
@@ -243,10 +243,10 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                radioItem(siswa.idSiswa, "hadir", "Hadir", const Color(0xFFF58220)),
-                                radioItem(siswa.idSiswa, "izin", "Izin", Colors.blue),
-                                radioItem(siswa.idSiswa, "sakit", "Sakit", Colors.green),
-                                radioItem(siswa.idSiswa, "alfa", "Alfa", Colors.red),
+                                radioItem(siswa.idSiswa, "hadir", "Hadir", const Color(0xFF66BB6A)),
+                                radioItem(siswa.idSiswa, "izin", "Izin", Colors.yellow),
+                                radioItem(siswa.idSiswa, "sakit", "Sakit", const Color(0xFFEF50AF)),
+                                radioItem(siswa.idSiswa, "alpa", "Alpa", Colors.red),
                               ],
                             ),
                           ),

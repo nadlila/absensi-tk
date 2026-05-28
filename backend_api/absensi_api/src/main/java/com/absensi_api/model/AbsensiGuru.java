@@ -21,7 +21,9 @@ public class AbsensiGuru {
 
     private LocalTime jam;
 
-    private String keterangan;
+    private String keterangan; // Untuk "Tepat Waktu" / "Terlambat"
+    
+    private String alasan; // Kolom baru untuk alasan Izin / Sakit
 
     @ManyToOne
     @JoinColumn(name = "id_status")
@@ -69,6 +71,14 @@ public class AbsensiGuru {
 
     public void setKeterangan(String keterangan) {
         this.keterangan = keterangan;
+    }
+
+    public String getAlasan() {
+        return alasan;
+    }
+
+    public void setAlasan(String alasan) {
+        this.alasan = alasan;
     }
 
     public StatusAbsensi getStatus() {
