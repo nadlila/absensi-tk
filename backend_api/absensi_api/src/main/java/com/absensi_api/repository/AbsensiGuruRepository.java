@@ -34,7 +34,7 @@ public interface AbsensiGuruRepository
         SUM(CASE WHEN st.namaStatus = 'Hadir' THEN 1 ELSE 0 END),
         SUM(CASE WHEN st.namaStatus = 'Izin' THEN 1 ELSE 0 END),
         SUM(CASE WHEN st.namaStatus = 'Sakit' THEN 1 ELSE 0 END),
-        SUM(CASE WHEN st.namaStatus = 'Alfa' THEN 1 ELSE 0 END)
+        SUM(CASE WHEN st.namaStatus = 'Alpa' THEN 1 ELSE 0 END)
 
     )
     FROM AbsensiGuru a

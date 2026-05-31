@@ -8,7 +8,7 @@ public class RekapGuruDTO {
     private Long hadir;
     private Long izin;
     private Long sakit;
-    private Long alfa;
+    private Long alpa;
 
     public RekapGuruDTO(
             Long idGuru,
@@ -16,14 +16,14 @@ public class RekapGuruDTO {
             Long hadir,
             Long izin,
             Long sakit,
-            Long alfa
+            Long alpa
     ) {
         this.idGuru = idGuru;
         this.namaGuru = namaGuru;
         this.hadir = hadir;
         this.izin = izin;
         this.sakit = sakit;
-        this.alfa = alfa;
+        this.alpa = alpa;
     }
 
     public Long getIdGuru() {
@@ -46,7 +46,7 @@ public class RekapGuruDTO {
         return sakit;
     }
 
-    public Long getAlfa() {
-        return alfa;
+    public Long getAlpa() {
+        return alpa;
     }
 }

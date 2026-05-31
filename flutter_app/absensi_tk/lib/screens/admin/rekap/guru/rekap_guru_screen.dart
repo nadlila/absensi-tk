@@ -217,8 +217,8 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
                                   ),
 
                                   buildItem(
-                                    "Alfa",
-                                    data["alfa"].toString(),
+                                    "Alpa",
+                                    data["alpa"].toString(),
                                     Colors.red,
                                   ),
 
