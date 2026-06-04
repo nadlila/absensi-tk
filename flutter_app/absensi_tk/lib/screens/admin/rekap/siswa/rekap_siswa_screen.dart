@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../services/api_config.dart';
 
 class RekapSiswaScreen extends StatefulWidget {
   const RekapSiswaScreen({super.key});
@@ -34,7 +35,7 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
     final res = await http.get(
       Uri.parse(
-        "http://10.0.2.2:8080/api/kelas",
+        "${ApiConfig.baseUrl}/kelas",
       ),
     );
 
@@ -53,7 +54,7 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
     final res = await http.get(
       Uri.parse(
-        "http://10.0.2.2:8080/api/tahun-ajaran",
+        "${ApiConfig.baseUrl}/tahun-ajaran",
       ),
     );
 
@@ -83,7 +84,7 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
     final res = await http.get(
       Uri.parse(
-        "http://10.0.2.2:8080/api/absensi-siswa/rekap"
+        "${ApiConfig.baseUrl}/absensi-siswa/rekap"
         "?idKelas=$idKelas"
         "&idTahun=$idTahun",
       ),
@@ -267,7 +268,7 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
                                 ),
 
                                 buildItem(
-                                  "Alfa",
+                                  "Alpa",
                                   data["alfa"].toString(),
                                   Colors.red,
                                 ),

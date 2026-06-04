@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../../services/api_config.dart';
 
 class DetailRekapGuruAdminScreen extends StatefulWidget {
   final int idGuru;
@@ -31,9 +32,8 @@ class _DetailRekapGuruAdminScreenState extends State<DetailRekapGuruAdminScreen>
   Future<void> fetchDetailRekap() async {
     try {
       // Kita panggil endpoint per guru
-      // Note: Di backend pastikan ada filter per tahun ajaran juga jika perlu
       final res = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/absensi-guru/guru/${widget.idGuru}"),
+        Uri.parse("${ApiConfig.baseUrl}/absensi-guru/guru/${widget.idGuru}"),
       );
 
       if (res.statusCode == 200) {
@@ -67,7 +67,14 @@ class _DetailRekapGuruAdminScreenState extends State<DetailRekapGuruAdminScreen>
                     final d = data[i];
                     final status = d["status"]["namaStatus"];
                     final jam = d["jam"] ?? "--:--";
-                    final ket = d["keterangan"] ?? "";
+                    
+                    // LOGIKA: Ambil 'alasan' jika 'keterangan' berisi '-' (karena dipaksa backend)
+                    String displayKet = d["keterangan"] ?? "";
+                    String alasanUser = d["alasan"] ?? "";
+                    
+                    if ((displayKet == "-" || displayKet.isEmpty) && alasanUser.isNotEmpty) {
+                      displayKet = alasanUser;
+                    }
 
                     Color statusColor = Colors.grey;
                     if (status == "Hadir") statusColor = Colors.green;
@@ -79,12 +86,12 @@ class _DetailRekapGuruAdminScreenState extends State<DetailRekapGuruAdminScreen>
                         leading: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(jam, style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(jam.toString().substring(0, 5), style: const TextStyle(fontWeight: FontWeight.bold)),
                             const Text("WIB", style: TextStyle(fontSize: 10)),
                           ],
                         ),
                         title: Text(d["tanggal"], style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text("Status: $status ($ket)"),
+                        subtitle: Text("Status: $status ($displayKet)"),
                         trailing: Icon(Icons.circle, color: statusColor, size: 12),
                       ),
                     );

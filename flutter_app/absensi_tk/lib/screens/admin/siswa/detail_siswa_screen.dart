@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../models/siswa_detail_model.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/api_config.dart';
 
 class DetailSiswaScreen extends StatelessWidget {
   final SiswaDetail siswa;
@@ -91,7 +92,7 @@ class DetailSiswaScreen extends StatelessWidget {
   Future<void> hapusSiswa(BuildContext context) async {
     try {
       final response = await http.delete(
-        Uri.parse("http://10.0.2.2:8080/api/siswa/${siswa.idSiswa}"),
+        Uri.parse("${ApiConfig.baseUrl}/siswa/${siswa.idSiswa}"),
       );
 
       if (response.statusCode == 200) {

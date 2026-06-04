@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../services/api_config.dart';
 
 class SetupKelasTahunScreen extends StatefulWidget {
   const SetupKelasTahunScreen({super.key});
@@ -10,7 +11,6 @@ class SetupKelasTahunScreen extends StatefulWidget {
 }
 
 class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
-
   List kelasList = [];
   List guruList = [];
 
@@ -28,19 +28,16 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
   }
 
   Future<void> fetchData() async {
-
     final kelasRes = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/kelas"),
+      Uri.parse("${ApiConfig.baseUrl}/kelas"),
     );
 
     final guruRes = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/guru"),
+      Uri.parse("${ApiConfig.baseUrl}/guru"),
     );
 
     if (kelasRes.statusCode == 200 && guruRes.statusCode == 200) {
-
       setState(() {
-
         kelasList = jsonDecode(kelasRes.body);
         guruList = jsonDecode(guruRes.body);
 
@@ -49,20 +46,16 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
         }
 
         isLoading = false;
-
       });
-
     }
   }
 
   Future<void> fetchTahunAjaranAktif() async {
-
     final response = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran/aktif"),
+      Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
     );
 
     if (response.statusCode == 200) {
-
       final data = jsonDecode(response.body);
 
       setState(() {
@@ -70,13 +63,10 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
       });
 
       print("🔥 Tahun aktif: $idTahunAjaran");
-
     }
   }
 
   Future<void> simpan() async {
-
-    // 🔥 safety check supaya tidak error null
     if (idTahunAjaran == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -87,14 +77,12 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
     }
 
     for (var k in kelasList) {
-
       final idKelas = k['idKelas'];
       final idGuru = selectedGuru[idKelas];
 
       if (idGuru != null) {
-
         await http.post(
-          Uri.parse("http://10.0.2.2:8080/api/kelas-guru"),
+          Uri.parse("${ApiConfig.baseUrl}/kelas-guru"),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode({
             "idKelas": idKelas,
@@ -102,9 +90,7 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
             "idTahunAjaran": idTahunAjaran
           }),
         );
-
       }
-
     }
 
     if (context.mounted) {
@@ -117,95 +103,80 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Setup Kelas Tahun Ajaran"),
+      ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 100),
+                      itemCount: kelasList.length,
+                      itemBuilder: (context, index) {
+                        final kelas = kelasList[index];
 
-  appBar: AppBar(
-    title: const Text("Setup Kelas Tahun Ajaran"),
-  ),
-
-  body: isLoading
-      ? const Center(child: CircularProgressIndicator())
-      : Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-
-              Expanded(
-                child: ListView.builder(
-                   padding: const EdgeInsets.only(bottom: 100),
-                  itemCount: kelasList.length,
-                  itemBuilder: (context, index) {
-                    final kelas = kelasList[index];
-
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-
-                            Text(
-                              kelas['namaKelas'],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  kelas['namaKelas'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                DropdownButtonFormField<int>(
+                                  value: selectedGuru[kelas['idKelas']],
+                                  items: guruList.map<DropdownMenuItem<int>>((g) {
+                                    return DropdownMenuItem(
+                                      value: g['idGuru'],
+                                      child: Text(g['namaGuru']),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedGuru[kelas['idKelas']] = value;
+                                    });
+                                  },
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: "Pilih Guru",
+                                  ),
+                                )
+                              ],
                             ),
-
-                            const SizedBox(height: 10),
-
-                            DropdownButtonFormField<int>(
-                              value: selectedGuru[kelas['idKelas']],
-                              items: guruList.map<DropdownMenuItem<int>>((g) {
-                                return DropdownMenuItem(
-                                  value: g['idGuru'],
-                                  child: Text(g['namaGuru']),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGuru[kelas['idKelas']] = value;
-                                });
-                              },
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: "Pilih Guru",
-                              ),
-                            )
-
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-
-            ],
+            ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: 50,
+          child: FloatingActionButton.extended(
+            onPressed: simpan,
+            label: const Text(
+              "SIMPAN",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ),
-
-  // 🔥 INI BAGIAN FLOAT BUTTON
-  floatingActionButton: Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: SizedBox(
-      width: MediaQuery.of(context).size.width * 0.9,
-      height: 50,
-
-      child: FloatingActionButton.extended(
-        onPressed: simpan,
-        label: const Text(
-          "SIMPAN",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
       ),
-    ),
-  ),
-
-  floatingActionButtonLocation:
-      FloatingActionButtonLocation.centerFloat,
-);
-
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
   }
 }

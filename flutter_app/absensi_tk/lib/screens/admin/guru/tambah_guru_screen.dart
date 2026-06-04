@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../services/api_config.dart';
 
 class TambahGuruScreen extends StatefulWidget {
   const TambahGuruScreen({super.key});
@@ -10,7 +11,6 @@ class TambahGuruScreen extends StatefulWidget {
 }
 
 class _TambahGuruScreenState extends State<TambahGuruScreen> {
-
   final namaController = TextEditingController();
   final nuptkController = TextEditingController();
   final statusController = TextEditingController();
@@ -29,41 +29,29 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
     fetchUsers();
   }
 
-  // ambil data user
   Future<void> fetchUsers() async {
-
     try {
-
       final response = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/users"),
+        Uri.parse("${ApiConfig.baseUrl}/users"),
       );
 
       if (response.statusCode == 200) {
-
         setState(() {
           users = jsonDecode(response.body);
         });
-
       }
-
     } catch (e) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Gagal mengambil data user")),
       );
-
     }
-
   }
 
   Future<void> tambahGuru() async {
-
     if (selectedUserId == null) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Pilih user terlebih dahulu")),
       );
-
       return;
     }
 
@@ -72,12 +60,9 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
     });
 
     final response = await http.post(
-      Uri.parse("http://10.0.2.2:8080/api/guru"),
-      headers: {
-        "Content-Type": "application/json"
-      },
+      Uri.parse("${ApiConfig.baseUrl}/guru"),
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-
         "namaGuru": namaController.text,
         "nuptk": nuptkController.text,
         "status": statusController.text,
@@ -85,7 +70,6 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
         "tanggalLahir": tanggalLahirController.text,
         "alamat": alamatController.text,
         "idUser": selectedUserId
-
       }),
     );
 
@@ -94,40 +78,27 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
     });
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Guru berhasil ditambahkan")),
       );
-
       Navigator.pop(context);
-
     } else {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Gagal menambahkan guru")),
       );
-
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         title: const Text("Tambah Guru"),
       ),
-
       body: SingleChildScrollView(
-
         padding: const EdgeInsets.all(20),
-
         child: Column(
-
           children: [
-
             TextField(
               controller: namaController,
               decoration: const InputDecoration(
@@ -135,9 +106,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
             TextField(
               controller: nuptkController,
               decoration: const InputDecoration(
@@ -145,9 +114,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
             TextField(
               controller: statusController,
               decoration: const InputDecoration(
@@ -155,9 +122,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
             TextField(
               controller: tempatLahirController,
               decoration: const InputDecoration(
@@ -165,9 +130,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
             TextField(
               controller: tanggalLahirController,
               decoration: const InputDecoration(
@@ -176,9 +139,7 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
             TextField(
               controller: alamatController,
               decoration: const InputDecoration(
@@ -186,63 +147,39 @@ class _TambahGuruScreenState extends State<TambahGuruScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
-            // DROPDOWN USER
             DropdownButtonFormField<int>(
-
               value: selectedUserId,
-
               items: users.map<DropdownMenuItem<int>>((user) {
-
                 return DropdownMenuItem<int>(
                   value: user["idUser"],
                   child: Text(user["username"]),
                 );
-
               }).toList(),
-
               onChanged: (value) {
-
                 setState(() {
                   selectedUserId = value;
                 });
-
               },
-
               decoration: const InputDecoration(
                 labelText: "Pilih User",
                 border: OutlineInputBorder(),
               ),
-
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
               width: double.infinity,
               height: 50,
-
               child: ElevatedButton(
-
                 onPressed: isLoading ? null : tambahGuru,
-
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text("SIMPAN"),
-
               ),
-
             )
-
           ],
-
         ),
-
       ),
-
     );
-
   }
 }

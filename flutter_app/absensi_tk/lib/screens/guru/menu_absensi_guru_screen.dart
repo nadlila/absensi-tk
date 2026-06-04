@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/custom_top_bar.dart';
+import '../../services/api_config.dart';
 
 class MenuAbsensiGuruScreen extends StatefulWidget {
   final Map<String, String>? profileData;
@@ -48,7 +49,7 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
     if (idUser == null) return;
 
     try {
-      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"));
+      final res = await http.get(Uri.parse("${ApiConfig.baseUrl}/notifikasi/user/$idUser"));
       if (res.statusCode == 200) {
         List data = jsonDecode(res.body);
         setState(() {
@@ -66,7 +67,7 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
     if (idGuru == null) return;
 
     try {
-      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/absensi-guru/guru/$idGuru"));
+      final res = await http.get(Uri.parse("${ApiConfig.baseUrl}/absensi-guru/guru/$idGuru"));
       if (res.statusCode == 200) {
         List data = jsonDecode(res.body);
         int a = 0, h = 0, i = 0, s = 0;

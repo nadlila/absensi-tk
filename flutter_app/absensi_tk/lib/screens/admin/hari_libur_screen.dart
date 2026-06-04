@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import '../../services/api_config.dart';
 
 class HariLiburScreen extends StatefulWidget {
   const HariLiburScreen({super.key});
@@ -23,7 +24,7 @@ class _HariLiburScreenState extends State<HariLiburScreen> {
   Future<void> fetchHariLibur() async {
     setState(() => isLoading = true);
     try {
-      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/hari-libur"));
+      final res = await http.get(Uri.parse("${ApiConfig.baseUrl}/hari-libur"));
       if (res.statusCode == 200) {
         setState(() {
           listLibur = jsonDecode(res.body);
@@ -88,7 +89,7 @@ class _HariLiburScreenState extends State<HariLiburScreen> {
   Future<void> simpanLibur(DateTime tanggal, String ket) async {
     try {
       await http.post(
-        Uri.parse("http://10.0.2.2:8080/api/hari-libur"),
+        Uri.parse("${ApiConfig.baseUrl}/hari-libur"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "tanggal": DateFormat('yyyy-MM-dd').format(tanggal),
@@ -102,7 +103,7 @@ class _HariLiburScreenState extends State<HariLiburScreen> {
 
   Future<void> hapusLibur(int id) async {
     try {
-      await http.delete(Uri.parse("http://10.0.2.2:8080/api/hari-libur/$id"));
+      await http.delete(Uri.parse("${ApiConfig.baseUrl}/hari-libur/$id"));
       fetchHariLibur();
     } catch (e) {
       print("Error hapus libur: $e");

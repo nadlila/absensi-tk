@@ -9,6 +9,7 @@ import 'package:printing/printing.dart';
 import '../../models/kelas_detail_model.dart';
 import '../../models/rekap_absensi_model.dart';
 import '../../routes/app_routes.dart';
+import '../../services/api_config.dart';
 
 class RekapAbsenSiswaScreen extends StatefulWidget {
   final KelasDetail kelas;
@@ -43,7 +44,7 @@ class _RekapAbsenSiswaScreenState
 
     try {
       final url =
-          "http://10.0.2.2:8080/api/absensi-siswa/rekap"
+          "${ApiConfig.baseUrl}/absensi-siswa/rekap"
           "?idKelas=${widget.kelas.idKelas}"
           "&idTahun=${widget.kelas.idTahunAjaran}";
 

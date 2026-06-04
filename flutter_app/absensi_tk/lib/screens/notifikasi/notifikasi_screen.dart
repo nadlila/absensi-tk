@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import '../../services/api_config.dart';
 
 class NotifikasiScreen extends StatefulWidget {
   const NotifikasiScreen({super.key});
@@ -32,7 +33,7 @@ class _NotifikasiScreenState extends State<NotifikasiScreen> {
 
     try {
       final res = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"),
+        Uri.parse("${ApiConfig.baseUrl}/notifikasi/user/$idUser"),
       );
 
       if (res.statusCode == 200) {
@@ -59,7 +60,7 @@ class _NotifikasiScreenState extends State<NotifikasiScreen> {
 
     try {
       final res = await http.put(
-        Uri.parse("http://10.0.2.2:8080/api/notifikasi/read-all/$idUser"),
+        Uri.parse("${ApiConfig.baseUrl}/notifikasi/read-all/$idUser"),
       );
 
       if (res.statusCode == 200) {
@@ -73,7 +74,7 @@ class _NotifikasiScreenState extends State<NotifikasiScreen> {
   Future<void> markAsRead(int id) async {
     try {
       final res = await http.put(
-        Uri.parse("http://10.0.2.2:8080/api/notifikasi/read/$id"),
+        Uri.parse("${ApiConfig.baseUrl}/notifikasi/read/$id"),
       );
 
       if (res.statusCode == 200) {

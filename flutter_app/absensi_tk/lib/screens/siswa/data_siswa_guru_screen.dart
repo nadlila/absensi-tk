@@ -5,6 +5,7 @@ import '../../routes/app_routes.dart';
 
 import '../../models/kelas_detail_model.dart';
 import '../../models/siswa_detail_model.dart';
+import '../../services/api_config.dart';
 
 class DataSiswaGuruScreen extends StatefulWidget {
   final KelasDetail kelas;
@@ -30,7 +31,7 @@ class _DataSiswaGuruScreenState
 
   Future<void> fetchSiswa() async {
     final url =
-        "http://10.0.2.2:8080/api/siswa/kelas/${widget.kelas.idKelas}"
+        "${ApiConfig.baseUrl}/siswa/kelas/${widget.kelas.idKelas}"
         "?idTahunAjaran=${widget.kelas.idTahunAjaran}";
 
     final res = await http.get(Uri.parse(url));

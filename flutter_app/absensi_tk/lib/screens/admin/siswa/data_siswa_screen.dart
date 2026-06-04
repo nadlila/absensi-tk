@@ -6,6 +6,7 @@ import '../../../models/kelas_model.dart';
 import '../../../models/tahun_ajaran_model.dart';
 import '../../../models/siswa_detail_model.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/api_config.dart';
 
 class DataSiswaScreen extends StatefulWidget {
   const DataSiswaScreen({super.key});
@@ -45,7 +46,7 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
   Future<void> fetchTahunAktif() async {
 
     final response = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran/aktif"),
+      Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
     );
 
     if(response.statusCode == 200){
@@ -58,7 +59,7 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
   Future<void> fetchKelas() async {
 
     final response = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/kelas"),
+      Uri.parse("${ApiConfig.baseUrl}/kelas"),
     );
 
     if(response.statusCode == 200){
@@ -84,7 +85,7 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
 
     final response = await http.get(
       Uri.parse(
-        "http://10.0.2.2:8080/api/siswa-kelas/filter?idKelas=$selectedKelas&idTahun=${tahunAktif!.idTahunAjaran}",
+        "${ApiConfig.baseUrl}/siswa-kelas/filter?idKelas=$selectedKelas&idTahun=${tahunAktif!.idTahunAjaran}",
       ),
     );
 

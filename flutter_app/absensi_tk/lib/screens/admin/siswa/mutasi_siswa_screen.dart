@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../models/siswa_detail_model.dart';
 import '../../../models/kelas_model.dart';
 import '../../../models/tahun_ajaran_model.dart';
+import '../../../services/api_config.dart';
 
 class MutasiSiswaScreen extends StatefulWidget {
 
@@ -37,7 +38,7 @@ class _MutasiSiswaScreenState extends State<MutasiSiswaScreen> {
   Future<void> loadData() async {
 
     final tahunResponse = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran/aktif"),
+      Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
     );
 
     if(tahunResponse.statusCode == 200){
@@ -47,7 +48,7 @@ class _MutasiSiswaScreenState extends State<MutasiSiswaScreen> {
     }
 
     final kelasResponse = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/kelas"),
+      Uri.parse("${ApiConfig.baseUrl}/kelas"),
     );
 
     if(kelasResponse.statusCode == 200){
@@ -76,7 +77,7 @@ class _MutasiSiswaScreenState extends State<MutasiSiswaScreen> {
 
   final response = await http.put(
 
-    Uri.parse("http://10.0.2.2:8080/api/siswa-kelas/mutasi"),
+    Uri.parse("${ApiConfig.baseUrl}/siswa-kelas/mutasi"),
 
     headers: {
       "Content-Type":"application/json"

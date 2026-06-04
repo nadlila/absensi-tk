@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/api_config.dart';
 
 class AbsensiGuruScreen extends StatefulWidget {
   const AbsensiGuruScreen({super.key});
@@ -32,12 +33,20 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
     super.dispose();
   }
 
-  // ===== INIT DATA =====
+  // ===== INIT DATA (DIOPTIMALKAN) =====
   Future<void> initData() async {
-    await getUser();
-    await fetchGuruLogin();
-    await fetchStatus();
-    await fetchTahunAjaranAktif();
+    await getUser(); // Ambil ID User dari SharedPreferences
+    
+    // Jalankan pengambilan data secara paralel agar lebih cepat
+    try {
+      await Future.wait([
+        fetchGuruLogin(),
+        fetchStatus(),
+        fetchTahunAjaranAktif(),
+      ]);
+    } catch (e) {
+      print("Error initData: $e");
+    }
   }
 
   Future<void> getUser() async {
@@ -49,34 +58,42 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
 
   Future<void> fetchGuruLogin() async {
     if (idUser == null) return;
-    final res = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/guru/user/$idUser"),
-    );
-    if (res.statusCode == 200) {
-      setState(() {
-        guruLogin = jsonDecode(res.body);
-      });
+    try {
+      final res = await http.get(
+        Uri.parse("${ApiConfig.baseUrl}/guru/user/$idUser"),
+      );
+      if (res.statusCode == 200) {
+        setState(() {
+          guruLogin = jsonDecode(res.body);
+        });
+      }
+    } catch (e) {
+      print("Error fetchGuruLogin: $e");
     }
   }
 
   Future<void> fetchStatus() async {
-    final res = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/status-absensi"),
-    );
-    if (res.statusCode == 200) {
-      List allStatus = jsonDecode(res.body);
-      setState(() {
-        statusList = allStatus
-            .where((s) => s["namaStatus"].toString().toLowerCase() != "alpa")
-            .toList();
-      });
+    try {
+      final res = await http.get(
+        Uri.parse("${ApiConfig.baseUrl}/status-absensi"),
+      );
+      if (res.statusCode == 200) {
+        List allStatus = jsonDecode(res.body);
+        setState(() {
+          statusList = allStatus
+              .where((s) => s["namaStatus"].toString().toLowerCase() != "alpa")
+              .toList();
+        });
+      }
+    } catch (e) {
+      print("Error fetchStatus: $e");
     }
   }
 
   Future<void> fetchTahunAjaranAktif() async {
     try {
       final res = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran/aktif"),
+        Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
       );
       if (res.statusCode == 200 && res.body.isNotEmpty) {
         final data = jsonDecode(res.body);
@@ -118,7 +135,6 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
       return;
     }
 
-    // Validasi Alasan jika Izin atau Sakit
     String statusNama = selectedStatus!["namaStatus"].toString().toLowerCase();
     if ((statusNama == "izin" || statusNama == "sakit") && _alasanController.text.trim().isEmpty) {
       _showError("Harap isi alasan $statusNama terlebih dahulu");
@@ -133,7 +149,6 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
     final now = DateTime.now();
     final currentTime = now.hour + (now.minute / 60.0);
 
-    // Pengecekan waktu hanya untuk status Hadir
     if (statusNama == "hadir") {
       if (currentTime < 7.0) {
         _showError("Absensi belum dibuka. Silakan kembali pukul 07:00.");
@@ -147,14 +162,14 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
 
     try {
       final res = await http.post(
-        Uri.parse("http://10.0.2.2:8080/api/absensi-guru"),
+        Uri.parse("${ApiConfig.baseUrl}/absensi-guru"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "guru": {"idGuru": guruLogin!["idGuru"]},
           "tanggal": DateTime.now().toIso8601String().substring(0, 10),
           "status": {"idStatus": selectedStatus!["idStatus"]},
           "idTahunAjaran": idTahunAjaran,
-          "alasan": _alasanController.text.trim(), // Mengirim data ke kolom 'alasan'
+          "alasan": _alasanController.text.trim(), // PERBAIKAN: Ganti 'keterangan' menjadi 'alasan' agar tidak ditimpa server
         }),
       );
 
@@ -174,7 +189,6 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Tentukan apakah form alasan harus muncul
     bool showAlasanField = false;
     if (selectedStatus != null) {
       String nama = selectedStatus!["namaStatus"].toString().toLowerCase();
@@ -238,7 +252,6 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
                 decoration: _inputDecoration(),
               ),
 
-              // FORM TULIS KETERANGAN/ALASAN (Hanya muncul jika Izin/Sakit)
               if (showAlasanField) ...[
                 const SizedBox(height: 20),
                 const Text("Keterangan Alasan", style: TextStyle(fontWeight: FontWeight.bold)),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:io'; // Tambahkan ini
-import 'package:image_picker/image_picker.dart'; // Tambahkan ini
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import '../../routes/app_routes.dart';
+import '../../services/api_config.dart';
 
 class ProfilScreen extends StatefulWidget {
   const ProfilScreen({super.key});
@@ -29,7 +30,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
     final idUser = prefs.getInt("idUser");
 
     try {
-      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/guru/user/$idUser"));
+      final res = await http.get(Uri.parse("${ApiConfig.baseUrl}/guru/user/$idUser"));
       if (res.statusCode == 200) {
         setState(() {
           guru = jsonDecode(res.body);
@@ -67,7 +68,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
       body['foto'] = base64String;
 
       final res = await http.put(
-        Uri.parse("http://10.0.2.2:8080/api/guru/${guru!['idGuru']}"),
+        Uri.parse("${ApiConfig.baseUrl}/guru/${guru!['idGuru']}"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(body),
       );
@@ -94,28 +95,56 @@ class _ProfilScreenState extends State<ProfilScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
   }
 
-  // Fungsi untuk membersihkan sesi dan kembali ke login
-  Future<void> _logout() async {    final prefs = await SharedPreferences.getInstance();
-  await prefs.clear(); // Menghapus semua data (idUser, role, dll)
-
-  if (mounted) {
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.login,
-          (route) => false,
+  // Fungsi untuk memunculkan dialog konfirmasi logout
+  void _confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Konfirmasi"),
+          content: const Text("Apakah anda yakin ingin keluar dari akun?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Tutup dialog
+                _logout(); // Jalankan fungsi logout
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFF58220),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text("Keluar", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
     );
   }
+
+  // Fungsi untuk membersihkan sesi dan kembali ke login
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.login,
+            (route) => false,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Widget untuk menampilkan gambar (Base64 atau Default)
-    ImageProvider getProfileImage() {
-      if (guru != null && guru!["foto"] != null && guru!["foto"].toString().isNotEmpty) {
-        return MemoryImage(base64Decode(guru!["foto"]));
-      }
-      return const NetworkImage("https://cdn-icons-png.flaticon.com/512/6840/6840478.png");
-    }
+    // Mengecek apakah data foto tersedia
+    final bool hasPhoto = guru != null && 
+                          guru!["foto"] != null && 
+                          guru!["foto"].toString().isNotEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -165,7 +194,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                       const SizedBox(height: 40),
                       Center(
                         child: ElevatedButton(
-                          onPressed: _logout,
+                          onPressed: _confirmLogout, // Ganti ke fungsi konfirmasi
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFF58220),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -180,7 +209,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
               ],
             ),
           ),
-          // Foto Profil dengan tombol Edit
           Positioned(
             top: 20,
             left: MediaQuery.of(context).size.width / 2 - 50,
@@ -191,7 +219,13 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                   child: CircleAvatar(
                     radius: 45,
-                    backgroundImage: getProfileImage(),
+                    backgroundColor: Colors.grey[200], // Latar belakang abu-abu terang
+                    backgroundImage: hasPhoto 
+                        ? MemoryImage(base64Decode(guru!["foto"])) 
+                        : null,
+                    child: !hasPhoto 
+                        ? Icon(Icons.person_3, size: 55, color: Colors.grey[500]) // Ikon wanita abu-abu
+                        : null,
                   ),
                 ),
                 Positioned(

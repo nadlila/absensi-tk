@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/api_config.dart';
 
 class LaporanBelumAbsenScreen extends StatefulWidget {
   const LaporanBelumAbsenScreen({super.key});
@@ -25,7 +26,7 @@ class _LaporanBelumAbsenScreenState extends State<LaporanBelumAbsenScreen> {
     final idUser = prefs.getInt("idUser");
 
     try {
-      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"));
+      final res = await http.get(Uri.parse("${ApiConfig.baseUrl}/notifikasi/user/$idUser"));
       if (res.statusCode == 200) {
         List allNotif = jsonDecode(res.body);
         setState(() {

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../models/kelas_detail_model.dart';
 import '../../models/siswa_detail_model.dart';
+import '../../services/api_config.dart';
 
 class AbsenSiswaScreen extends StatefulWidget {
   final KelasDetail? kelas;
@@ -41,7 +42,7 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
       }
 
       final url =
-          "http://10.0.2.2:8080/api/siswa-kelas/filter"
+          "${ApiConfig.baseUrl}/siswa-kelas/filter"
           "?idKelas=${kelas.idKelas}"
           "&idTahun=${kelas.idTahunAjaran}";
 
@@ -113,7 +114,7 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://10.0.2.2:8080/api/absensi-siswa"),
+        Uri.parse("${ApiConfig.baseUrl}/absensi-siswa"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(data),
       );

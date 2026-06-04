@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../models/kelas_detail_model.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/api_config.dart';
 
 class DetailKelasScreen extends StatelessWidget {
 
@@ -56,7 +57,7 @@ class DetailKelasScreen extends StatelessWidget {
   Future<void> deleteKelas(BuildContext context) async {
 
     final response = await http.delete(
-      Uri.parse("http://10.0.2.2:8080/api/kelas-guru/${kelas.id}"),
+      Uri.parse("${ApiConfig.baseUrl}/kelas-guru/${kelas.id}"),
     );
 
     if(response.statusCode == 200 || response.statusCode == 204){
@@ -77,12 +78,12 @@ class DetailKelasScreen extends StatelessWidget {
 
   // 🔥 Fungsi untuk mengambil daftar Tahun Ajaran
   Future<List<dynamic>> fetchTahun() async {
-    final response = await http.get(Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran"));
+    final response = await http.get(Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran"));
     return response.statusCode == 200 ? jsonDecode(response.body) : [];
   }
 
   Future<List<dynamic>> fetchDaftarKelas() async {
-    final response = await http.get(Uri.parse("http://10.0.2.2:8080/api/kelas"));
+    final response = await http.get(Uri.parse("${ApiConfig.baseUrl}/kelas"));
     return response.statusCode == 200 ? jsonDecode(response.body) : [];
   }
 
@@ -141,7 +142,7 @@ class DetailKelasScreen extends StatelessWidget {
 
   Future<void> eksekusiNaikKelasMassal(BuildContext context, int idTahunBaru, String idKelasBaru) async {
     final response = await http.post(
-      Uri.parse("http://10.0.2.2:8080/api/siswa-kelas/naik-kelas-massal"),
+      Uri.parse("${ApiConfig.baseUrl}/siswa-kelas/naik-kelas-massal"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         "idKelasAsal": kelas.idKelas, // Gunakan idKelas (misal: "A1")

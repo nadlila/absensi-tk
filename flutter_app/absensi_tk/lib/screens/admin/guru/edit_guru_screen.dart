@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../models/guru_model.dart';
+import '../../../services/api_config.dart';
 
 class EditGuruScreen extends StatefulWidget {
-
   final Guru guru;
 
   const EditGuruScreen({
@@ -18,7 +18,6 @@ class EditGuruScreen extends StatefulWidget {
 }
 
 class _EditGuruScreenState extends State<EditGuruScreen> {
-
   final namaController = TextEditingController();
   final nuptkController = TextEditingController();
   final statusController = TextEditingController();
@@ -48,46 +47,32 @@ class _EditGuruScreenState extends State<EditGuruScreen> {
   }
 
   Future<void> fetchUsers() async {
-
     try {
-
       final response = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/users"),
+        Uri.parse("${ApiConfig.baseUrl}/users"),
       );
 
       if (response.statusCode == 200) {
-
         setState(() {
           users = jsonDecode(response.body);
         });
-
       }
-
     } catch (e) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Gagal mengambil data user")),
       );
-
     }
-
   }
 
   Future<void> updateGuru() async {
-
     setState(() {
       isLoading = true;
     });
 
     final response = await http.put(
-      Uri.parse("http://10.0.2.2:8080/api/guru/${widget.guru.idGuru}"),
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
+      Uri.parse("${ApiConfig.baseUrl}/guru/${widget.guru.idGuru}"),
+      headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-
         "namaGuru": namaController.text,
         "nuptk": nuptkController.text,
         "status": statusController.text,
@@ -95,9 +80,7 @@ class _EditGuruScreenState extends State<EditGuruScreen> {
         "tanggalLahir": tanggalLahirController.text,
         "alamat": alamatController.text,
         "idUser": selectedUserId
-
       }),
-
     );
 
     setState(() {
@@ -105,113 +88,75 @@ class _EditGuruScreenState extends State<EditGuruScreen> {
     });
 
     if (response.statusCode == 200) {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Data berhasil diupdate")),
       );
-
       Navigator.pop(context);
-
     } else {
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Update gagal")),
       );
-
     }
-
   }
 
   Widget field(String label, TextEditingController controller) {
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
-
       child: TextField(
         controller: controller,
-
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
-
       ),
     );
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         title: const Text("Edit Guru"),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(20),
-
         child: ListView(
-
           children: [
-
             field("Nama Guru", namaController),
             field("NUPTK", nuptkController),
             field("Status", statusController),
             field("Tempat Lahir", tempatLahirController),
             field("Tanggal Lahir", tanggalLahirController),
             field("Alamat", alamatController),
-
             const SizedBox(height: 15),
-
             DropdownButtonFormField<int>(
-
               value: selectedUserId,
-
               items: users.map<DropdownMenuItem<int>>((user) {
-
                 return DropdownMenuItem<int>(
                   value: user["idUser"],
                   child: Text(user["username"]),
                 );
-
               }).toList(),
-
               onChanged: (value) {
-
                 setState(() {
                   selectedUserId = value;
                 });
-
               },
-
               decoration: const InputDecoration(
                 labelText: "Pilih User",
                 border: OutlineInputBorder(),
               ),
-
             ),
-
             const SizedBox(height: 25),
-
             ElevatedButton(
-
               onPressed: isLoading ? null : updateGuru,
-
               child: isLoading
                   ? const CircularProgressIndicator(color: Colors.white)
                   : const Text("Update"),
-
             )
-
           ],
-
         ),
       ),
-
     );
-
   }
-
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../services/api_config.dart';
 
 class DetailRekapSiswaScreen extends StatefulWidget {
 
@@ -46,7 +46,7 @@ class _DetailRekapSiswaScreenState
     try {
 
       final url =
-          "http://10.0.2.2:8080/api/absensi-siswa/detail-siswa"
+          "${ApiConfig.baseUrl}/absensi-siswa/detail-siswa"
           "?idSiswa=${widget.siswaId}"
           "&idTahun=${widget.idTahun}";
 

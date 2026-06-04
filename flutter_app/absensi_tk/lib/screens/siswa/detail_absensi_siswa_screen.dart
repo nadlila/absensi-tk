@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../models/detail_absensi_model.dart';
 import '../../models/siswa_detail_model.dart';
 import '../../models/kelas_detail_model.dart';
+import '../../services/api_config.dart';
 
 class DetailAbsenSiswaScreen extends StatefulWidget {
   final SiswaDetail siswa;
@@ -35,7 +36,7 @@ class _DetailAbsenSiswaScreenState
 
   Future<void> fetchData() async {
     final url =
-        "http://10.0.2.2:8080/api/absensi-siswa/detail-siswa"
+        "${ApiConfig.baseUrl}/absensi-siswa/detail-siswa"
         "?idSiswa=${widget.siswa.idSiswa}"
         "&idTahun=${widget.kelas.idTahunAjaran}";
 

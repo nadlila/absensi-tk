@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../models/kelas_detail_model.dart';
 import '../../routes/app_routes.dart';
+import '../../services/api_config.dart';
 
 class MenuAbsensiSiswaScreen extends StatefulWidget {
   final KelasDetail kelas;
@@ -30,7 +31,7 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
       final String today = DateTime.now().toIso8601String().substring(0, 10);
 
       final res = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/absensi-siswa/daily-stats?idKelas=${widget.kelas.idKelas}&tanggal=$today"),
+        Uri.parse("${ApiConfig.baseUrl}/absensi-siswa/daily-stats?idKelas=${widget.kelas.idKelas}&tanggal=$today"),
       );
 
       if (res.statusCode == 200) {

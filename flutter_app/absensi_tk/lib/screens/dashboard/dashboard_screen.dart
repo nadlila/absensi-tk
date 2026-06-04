@@ -6,6 +6,7 @@ import 'dart:convert';
 import '../../models/kelas_detail_model.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/custom_top_bar.dart';
+import '../../services/api_config.dart';
 
 class DashboardScreen extends StatefulWidget {
   final KelasDetail? kelas;
@@ -53,7 +54,7 @@ class _DashboardScreenState
       try {
         final res = await http.get(
           Uri.parse(
-            "http://10.0.2.2:8080/api/guru/user/$idUser",
+            "${ApiConfig.baseUrl}/guru/user/$idUser",
           ),
         );
 
@@ -99,7 +100,7 @@ class _DashboardScreenState
     try {
       final res = await http.get(
         Uri.parse(
-          "http://10.0.2.2:8080/api/notifikasi/user/$idUser",
+          "${ApiConfig.baseUrl}/notifikasi/user/$idUser",
         ),
       );
 
@@ -123,103 +124,123 @@ class _DashboardScreenState
       backgroundColor: Colors.white,
 
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-
-            // ===== TOP BAR =====
-            if (isProfileLoaded)
-              CustomTopBar(
-                nama: namaGuru ?? "",
-                nuptk: nuptk ?? "",
-                showNotification:
-                showNotification,
-                onNotificationTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.notifikasi,
-                  ).then(
-                        (_) => _checkNotifications(),
-                  );
-                },
-              ),
-
-            const SizedBox(height: 20),
-
-            // ===== BANNER =====
-            Padding(
-              padding:
-              const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: ClipRRect(
-                borderRadius:
-                BorderRadius.circular(20),
+            // ===== LOGO BACKGROUND TRANSPARAN =====
+            Positioned(
+              top: 210, // Memposisikan logo dimulai dari area kartu absen
+              left: 10,
+              right: 10,
+              bottom: 60,
+              child: Opacity(
+                opacity: 0.08, // Tingkat transparansi (0.0 - 1.0)
                 child: Image.asset(
-                  'assets/gambar.png',
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
 
-            const SizedBox(height: 18),
+            // ===== KONTEN UTAMA =====
+            Column(
+              children: [
 
-            // ===== MENU =====
-            Padding(
-              padding:
-              const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: Row(
-                children: [
-
-                  Expanded(
-                    child: _menuCard(
-                      title: "Absen guru",
-                      icon:
-                      Icons.menu_book_rounded,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.absenGuru,
-                        );
-                      },
-                    ),
+                // ===== TOP BAR =====
+                if (isProfileLoaded)
+                  CustomTopBar(
+                    nama: namaGuru ?? "",
+                    nuptk: nuptk ?? "",
+                    showNotification:
+                    showNotification,
+                    onNotificationTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.notifikasi,
+                      ).then(
+                            (_) => _checkNotifications(),
+                      );
+                    },
                   ),
 
-                  const SizedBox(width: 15),
+                const SizedBox(height: 20),
 
-                  Expanded(
-                    child: _menuCard(
-                      title: "Absen siswa",
-                      icon: Icons
-                          .person_search_rounded,
-                      onTap: () {
-                        if (widget.kelas !=
-                            null) {
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.absenSiswa,
-                            arguments:
-                            widget.kelas,
-                          );
-                        } else {
-                          ScaffoldMessenger.of(
-                              context)
-                              .showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Anda tidak memiliki kelas",
-                              ),
-                            ),
-                          );
-                        }
-                      },
+                // ===== BANNER =====
+                Padding(
+                  padding:
+                  const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: ClipRRect(
+                    borderRadius:
+                    BorderRadius.circular(20),
+                    child: Image.asset(
+                      'assets/gambar.png',
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                const SizedBox(height: 18),
+
+                // ===== MENU =====
+                Padding(
+                  padding:
+                  const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: Row(
+                    children: [
+
+                      Expanded(
+                        child: _menuCard(
+                          title: "Absen guru",
+                          icon:
+                          Icons.menu_book_rounded,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.absenGuru,
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(width: 15),
+
+                      Expanded(
+                        child: _menuCard(
+                          title: "Absen siswa",
+                          icon: Icons
+                              .person_search_rounded,
+                          onTap: () {
+                            if (widget.kelas !=
+                                null) {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoutes.absenSiswa,
+                                arguments:
+                                widget.kelas,
+                              );
+                            } else {
+                              ScaffoldMessenger.of(
+                                  context)
+                                  .showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Anda tidak memiliki kelas",
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),

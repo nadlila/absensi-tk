@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../routes/app_routes.dart';
+import '../../services/api_config.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -29,7 +30,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
     try {
       final res = await http.get(
-        Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"),
+        Uri.parse("${ApiConfig.baseUrl}/notifikasi/user/$idUser"),
       );
 
       if (res.statusCode == 200) {

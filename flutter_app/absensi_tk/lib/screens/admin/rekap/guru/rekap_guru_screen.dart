@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../../routes/app_routes.dart';
+import '../../../../services/api_config.dart';
 
 class RekapGuruScreen extends StatefulWidget {
   const RekapGuruScreen({super.key});
@@ -12,7 +13,6 @@ class RekapGuruScreen extends StatefulWidget {
 }
 
 class _RekapGuruScreenState extends State<RekapGuruScreen> {
-
   List tahunList = [];
   List rekapList = [];
 
@@ -28,27 +28,23 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
 
   // ================= GET TAHUN AJARAN =================
   Future fetchTahunAjaran() async {
-
     final res = await http.get(
       Uri.parse(
-        "http://10.0.2.2:8080/api/tahun-ajaran",
+        "${ApiConfig.baseUrl}/tahun-ajaran",
       ),
     );
 
     if (res.statusCode == 200) {
-
       final data = jsonDecode(res.body);
 
       setState(() {
         tahunList = data;
       });
-
     }
   }
 
   // ================= GET REKAP =================
   Future fetchRekapGuru() async {
-
     if (selectedTahun == null) return;
 
     setState(() {
@@ -59,68 +55,53 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
 
     final res = await http.get(
       Uri.parse(
-        "http://10.0.2.2:8080/api/absensi-guru/rekap/$idTahun",
+        "${ApiConfig.baseUrl}/absensi-guru/rekap/$idTahun",
       ),
     );
 
     if (res.statusCode == 200) {
-
       setState(() {
         rekapList = jsonDecode(res.body);
       });
-
     }
 
     setState(() {
       isLoading = false;
     });
-
   }
 
   // ================= UI =================
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         title: const Text("Rekap Guru"),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
-
         child: Column(
           children: [
-
             // ================= DROPDOWN TAHUN =================
             DropdownButtonFormField(
               value: selectedTahun,
-
               decoration: const InputDecoration(
                 labelText: "Pilih Tahun Ajaran",
                 border: OutlineInputBorder(),
               ),
-
               items: tahunList.map((tahun) {
-
                 return DropdownMenuItem(
                   value: tahun,
                   child: Text(
                     "${tahun["tahun"]} - ${tahun["semester"]}",
                   ),
                 );
-
               }).toList(),
-
               onChanged: (value) {
-
                 setState(() {
                   selectedTahun = value;
                 });
 
                 fetchRekapGuru();
-
               },
             ),
 
@@ -136,7 +117,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
 
             // ================= DATA =================
             else if (rekapList.isEmpty)
-
               const Expanded(
                 child: Center(
                   child: Text(
@@ -144,16 +124,11 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
                   ),
                 ),
               )
-
             else
-
               Expanded(
                 child: ListView.builder(
-
                   itemCount: rekapList.length,
-
                   itemBuilder: (context, index) {
-
                     final data = rekapList[index];
 
                     return Card(
@@ -189,52 +164,40 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
                                   const Icon(Icons.chevron_right, color: Colors.grey),
                                 ],
                               ),
-
                               const Divider(),
-
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-
                                   buildItem(
                                     "Hadir",
                                     data["hadir"].toString(),
                                     Colors.green,
                                   ),
-
                                   buildItem(
                                     "Izin",
                                     data["izin"].toString(),
                                     Colors.orange,
                                   ),
-
                                   buildItem(
                                     "Sakit",
                                     data["sakit"].toString(),
                                     Colors.blue,
                                   ),
-
                                   buildItem(
                                     "Alpa",
                                     data["alpa"].toString(),
                                     Colors.red,
                                   ),
-
                                 ],
                               )
-
                             ],
                           ),
                         ),
                       ),
                     );
-
                   },
                 ),
               )
-
           ],
         ),
       ),
@@ -247,10 +210,8 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
     String value,
     Color color,
   ) {
-
     return Column(
       children: [
-
         Text(
           value,
           style: TextStyle(
@@ -259,11 +220,8 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
             color: color,
           ),
         ),
-
         const SizedBox(height: 5),
-
         Text(title),
-
       ],
     );
   }

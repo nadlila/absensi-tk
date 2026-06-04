@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../../models/siswa_detail_model.dart';
+import '../../services/api_config.dart';
 
 class DetailDataSiswaScreen extends StatefulWidget {
   final int idSiswa;
@@ -31,7 +32,7 @@ class _DetailDataSiswaScreenState
 
   Future<void> fetchDetail() async {
     final url =
-        "http://10.0.2.2:8080/api/siswa/detail/${widget.idSiswa}";
+        "${ApiConfig.baseUrl}/siswa/detail/${widget.idSiswa}";
 
     final res = await http.get(Uri.parse(url));
 

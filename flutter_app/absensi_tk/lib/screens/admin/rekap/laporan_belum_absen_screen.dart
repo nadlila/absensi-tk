@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../services/api_config.dart';
 
 class LaporanBelumAbsenScreen extends StatefulWidget {
   const LaporanBelumAbsenScreen({super.key});
@@ -25,17 +26,15 @@ class _LaporanBelumAbsenScreenState extends State<LaporanBelumAbsenScreen> {
     final idUser = prefs.getInt("idUser");
 
     try {
-      final res = await http.get(Uri.parse("http://10.0.2.2:8080/api/notifikasi/user/$idUser"));
+      final res = await http.get(Uri.parse("${ApiConfig.baseUrl}/notifikasi/user/$idUser"));
       if (res.statusCode == 200) {
         List allNotif = jsonDecode(res.body);
         setState(() {
-          // Filter hanya notifikasi yang merupakan laporan absensi kelas
           laporan = allNotif.where((n) => n["judul"] == "Laporan Absensi Kelas").toList();
           isLoading = false;
         });
       }
     } catch (e) {
-      print("Error fetch laporan: $e");
       setState(() => isLoading = false);
     }
   }
@@ -43,38 +42,25 @@ class _LaporanBelumAbsenScreenState extends State<LaporanBelumAbsenScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Kelas Belum Absen"),
-      ),
+      appBar: AppBar(title: const Text("Kelas Belum Absen")),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : laporan.isEmpty
-              ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                      "Semua kelas sudah melakukan absensi hari ini.",
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: laporan.length,
-                  itemBuilder: (context, index) {
-                    final item = laporan[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                      color: Colors.red[50],
-                      child: ListTile(
-                        leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
-                        title: Text(item["isi"] ?? ""),
-                        subtitle: Text(
-                          "Waktu: ${item["waktu"] != null ? item["waktu"].toString().substring(11, 16) : '--:--'} WIB",
-                        ),
-                      ),
-                    );
-                  },
-                ),
+          ? const Center(child: Text("Semua kelas sudah melakukan absensi hari ini."))
+          : ListView.builder(
+        itemCount: laporan.length,
+        itemBuilder: (context, index) {
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            color: Colors.red[50],
+            child: ListTile(
+              leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
+              title: Text(laporan[index]["isi"]),
+              subtitle: Text("Waktu: ${laporan[index]["waktu"].toString().substring(11, 16)} WIB"),
+            ),
+          );
+        },
+      ),
     );
   }
 }

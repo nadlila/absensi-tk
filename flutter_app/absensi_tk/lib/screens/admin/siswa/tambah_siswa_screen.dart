@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../../../models/kelas_model.dart';
 import '../../../models/tahun_ajaran_model.dart';
+import '../../../services/api_config.dart';
 
 class TambahSiswaScreen extends StatefulWidget {
   const TambahSiswaScreen({super.key});
@@ -36,7 +37,7 @@ class _TambahSiswaScreenState extends State<TambahSiswaScreen> {
   Future<void> loadData() async {
 
     final tahunResponse = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/tahun-ajaran/aktif"),
+      Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
     );
 
     if(tahunResponse.statusCode == 200){
@@ -48,7 +49,7 @@ class _TambahSiswaScreenState extends State<TambahSiswaScreen> {
     }
 
     final kelasResponse = await http.get(
-      Uri.parse("http://10.0.2.2:8080/api/kelas"),
+      Uri.parse("${ApiConfig.baseUrl}/kelas"),
     );
 
     if(kelasResponse.statusCode == 200){
@@ -82,7 +83,7 @@ class _TambahSiswaScreenState extends State<TambahSiswaScreen> {
     /// 1️⃣ simpan siswa
     final siswaResponse = await http.post(
 
-      Uri.parse("http://10.0.2.2:8080/api/siswa"),
+      Uri.parse("${ApiConfig.baseUrl}/siswa"),
 
       headers: {
         "Content-Type":"application/json"
@@ -109,7 +110,7 @@ class _TambahSiswaScreenState extends State<TambahSiswaScreen> {
       /// 2️⃣ simpan siswa_kelas
       await http.post(
 
-        Uri.parse("http://10.0.2.2:8080/api/siswa-kelas"),
+        Uri.parse("${ApiConfig.baseUrl}/siswa-kelas"),
 
         headers: {
           "Content-Type":"application/json"
@@ -131,7 +132,7 @@ class _TambahSiswaScreenState extends State<TambahSiswaScreen> {
           const SnackBar(content: Text("Siswa berhasil ditambahkan")),
         );
 
-        Navigator.pop(context);
+        Navigator.pop(context, true);
 
       }
 

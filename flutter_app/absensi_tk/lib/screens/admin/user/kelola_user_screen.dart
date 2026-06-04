@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../services/api_config.dart';
 
 class KelolaUserScreen extends StatefulWidget {
   const KelolaUserScreen({super.key});
@@ -12,7 +13,7 @@ class KelolaUserScreen extends StatefulWidget {
 class _KelolaUserScreenState extends State<KelolaUserScreen> {
   List users = [];
 
-  final String baseUrl = "http://10.0.2.2:8080/api/users";
+  final String baseUrl = "${ApiConfig.baseUrl}/users";
 
   @override
   void initState() {
