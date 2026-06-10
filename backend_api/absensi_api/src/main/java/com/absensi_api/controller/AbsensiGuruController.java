@@ -62,7 +62,7 @@ public class AbsensiGuruController {
                 throw new RuntimeException("Absen belum dibuka, silakan kembali pukul 07:00");
             }
             if (jamSekarang.isAfter(LocalTime.of(8, 30))) {
-                throw new RuntimeException("Batas waktu absen telah berakhir (08:30)");
+                throw new RuntimeException("Batas waktu absen telah berakhir (8:30)");
             }
 
             // Logika Keterangan Terlambat

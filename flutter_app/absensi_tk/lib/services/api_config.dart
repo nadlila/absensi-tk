@@ -1,4 +1,4 @@
 class ApiConfig {
-  // GANTI IP INI JIKA BERPINDAH JARINGAN WI-FI
-  static const String baseUrl = "http://192.168.100.55:8080/api";
+  // GANTI IP
+  static const String baseUrl = "http://10.71.102.45:8080/api";
 }
