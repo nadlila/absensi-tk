@@ -53,7 +53,6 @@ class DetailKelasScreen extends StatelessWidget {
 
   }
 
-  // 🔥 DELETE FUNCTION
   Future<void> deleteKelas(BuildContext context) async {
 
     final response = await http.delete(
@@ -76,7 +75,6 @@ class DetailKelasScreen extends StatelessWidget {
     }
   }
 
-  // 🔥 Fungsi untuk mengambil daftar Tahun Ajaran
   Future<List<dynamic>> fetchTahun() async {
     final response = await http.get(Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran"));
     return response.statusCode == 200 ? jsonDecode(response.body) : [];
@@ -87,7 +85,6 @@ class DetailKelasScreen extends StatelessWidget {
     return response.statusCode == 200 ? jsonDecode(response.body) : [];
   }
 
-  // 🔥 Dialog Naik Kelas Massal
   void showNaikKelasMassal(BuildContext context) async {
     String? selectedKelasBaru = kelas.namaKelas; // Default ke nama kelas yang sama (misal A1 ke A1 di tahun baru)
     int? selectedTahunId;
@@ -102,7 +99,7 @@ class DetailKelasScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 1. Pilih Tahun Ajaran Baru
+              
               DropdownButtonFormField<int>(
                 items: listTahun.map<DropdownMenuItem<int>>((t) => DropdownMenuItem(
                   value: t["idTahunAjaran"],
@@ -112,7 +109,7 @@ class DetailKelasScreen extends StatelessWidget {
                 decoration: const InputDecoration(labelText: "Tahun Ajaran Baru", border: OutlineInputBorder()),
               ),
               const SizedBox(height: 15),
-              // 2. Pilih Kelas Baru (Fleksibel: bisa tetap atau pindah)
+             
               DropdownButtonFormField<String>(
                 value: selectedKelasBaru,
                 items: listKelas.map<DropdownMenuItem<String>>((k) => DropdownMenuItem(
@@ -145,10 +142,10 @@ class DetailKelasScreen extends StatelessWidget {
       Uri.parse("${ApiConfig.baseUrl}/siswa-kelas/naik-kelas-massal"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "idKelasAsal": kelas.idKelas, // Gunakan idKelas (misal: "A1")
+        "idKelasAsal": kelas.idKelas, 
         "idTahunLama": kelas.idTahunAjaran,
         "idTahunBaru": idTahunBaru,
-        "idKelasBaru": idKelasBaru // Kelas tujuan (bisa B1)
+        "idKelasBaru": idKelasBaru
       }),
     );
 
@@ -182,7 +179,6 @@ class DetailKelasScreen extends StatelessWidget {
 
             const SizedBox(height:20),
 
-            // 🔵 EDIT BUTTON
             ElevatedButton.icon(
 
               onPressed: () async {
@@ -206,7 +202,6 @@ class DetailKelasScreen extends StatelessWidget {
 
             const SizedBox(height:10),
 
-            // 🔴 DELETE BUTTON
             ElevatedButton.icon(
 
               onPressed: () async {

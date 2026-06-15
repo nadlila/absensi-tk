@@ -15,19 +15,16 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // GET semua user
     @GetMapping
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
-    // TAMBAH USER
     @PostMapping
     public User createUser(@RequestBody User user){
         return userRepository.save(user);
     }
 
-    // UPDATE USER
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user){
 
@@ -41,7 +38,6 @@ public class UserController {
         return userRepository.save(existing);
     }
 
-    // DELETE USER
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id){
         userRepository.deleteById(id);

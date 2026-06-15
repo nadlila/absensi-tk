@@ -16,13 +16,13 @@ public class GuruController {
     @Autowired
     private GuruRepository guruRepository;
 
-    // GET semua guru
+    
     @GetMapping
     public List<Guru> getAllGuru() {
         return guruRepository.findAll();
     }
 
-    // GET guru by id
+  
     @GetMapping("/{id}")
     public Guru getGuruById(@PathVariable Long id) {
         return guruRepository.findById(id).orElse(null);
@@ -33,13 +33,13 @@ public class GuruController {
         return guruRepository.findByIdUser(idUser);
     }
 
-    // POST tambah guru
+    
     @PostMapping
     public Guru createGuru(@RequestBody Guru guru) {
         return guruRepository.save(guru);
     }
 
-    // PUT update guru
+    
     @PutMapping("/{id}")
     public Guru updateGuru(@PathVariable Long id, @RequestBody Guru guru) {
 
@@ -61,7 +61,7 @@ public class GuruController {
         return null;
     }
 
-    // DELETE guru
+ 
     @DeleteMapping("/{id}")
     public void deleteGuru(@PathVariable Long id) {
         guruRepository.deleteById(id);

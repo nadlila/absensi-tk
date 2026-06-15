@@ -26,7 +26,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
     fetchTahunAjaran();
   }
 
-  // ================= GET TAHUN AJARAN =================
   Future fetchTahunAjaran() async {
     final res = await http.get(
       Uri.parse(
@@ -43,7 +42,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
     }
   }
 
-  // ================= GET REKAP =================
   Future fetchRekapGuru() async {
     if (selectedTahun == null) return;
 
@@ -70,7 +68,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
     });
   }
 
-  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +78,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // ================= DROPDOWN TAHUN =================
             DropdownButtonFormField(
               value: selectedTahun,
               decoration: const InputDecoration(
@@ -107,7 +103,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
 
             const SizedBox(height: 20),
 
-            // ================= LOADING =================
             if (isLoading)
               const Expanded(
                 child: Center(
@@ -115,7 +110,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
                 ),
               )
 
-            // ================= DATA =================
             else if (rekapList.isEmpty)
               const Expanded(
                 child: Center(
@@ -204,7 +198,6 @@ class _RekapGuruScreenState extends State<RekapGuruScreen> {
     );
   }
 
-  // ================= CARD ITEM =================
   Widget buildItem(
     String title,
     String value,

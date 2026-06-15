@@ -284,7 +284,7 @@ case AppRoutes.rekapSiswa:
     ),
   );
 
-// 🔥 HISTORI ABSENSI (PER SISWA)
+// HISTORI ABSENSI PER SISWA
 case AppRoutes.detailAbsensiSiswa:
   final map = args as Map;
 
@@ -295,7 +295,7 @@ case AppRoutes.detailAbsensiSiswa:
     ),
   );
 
-// 🔥 DATA SISWA (LIST)
+// DATA SISWA LIST
 case AppRoutes.dataSiswaGuru:
   return MaterialPageRoute(
     builder: (_) => DataSiswaGuruScreen(
@@ -303,7 +303,7 @@ case AppRoutes.dataSiswaGuru:
     ),
   );
 
-// 🔥 DETAIL BIODATA SISWA
+// DETAIL BIODATA SISWA
 case AppRoutes.detailDataSiswa:
   return MaterialPageRoute(
     builder: (_) => DetailDataSiswaScreen(

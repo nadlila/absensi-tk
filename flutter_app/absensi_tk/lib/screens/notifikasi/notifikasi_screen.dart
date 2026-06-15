@@ -39,7 +39,6 @@ class _NotifikasiScreenState extends State<NotifikasiScreen> {
       if (res.statusCode == 200) {
         setState(() {
           notifications = jsonDecode(res.body);
-          // Urutkan dari yang terbaru
           notifications.sort((a, b) => b["waktu"].compareTo(a["waktu"]));
           isLoading = false;
         });

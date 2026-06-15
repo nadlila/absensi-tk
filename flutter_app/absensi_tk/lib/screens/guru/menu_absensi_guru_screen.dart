@@ -72,7 +72,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
         List data = jsonDecode(res.body);
         int a = 0, h = 0, i = 0, s = 0;
         for (var item in data) {
-          // Mengubah status menjadi lowercase agar pencocokan lebih akurat
           String status = item["status"]["namaStatus"].toString().toLowerCase();
           
           if (status == "alpa") a++;
@@ -97,7 +96,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ===== CUSTOM TOP BAR =====
             if (isProfileLoaded)
               CustomTopBar(
                 nama: namaGuru ?? "",
@@ -114,7 +112,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // ===== CARD GRAFIK =====
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
@@ -144,7 +141,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
 
                     const SizedBox(height: 25),
 
-                    // ===== TOMBOL ABSEN =====
                     _buildActionCard(
                       "Isi kehadiran anda hari ini.",
                       "Absen Sekarang",
@@ -156,7 +152,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
 
                     const SizedBox(height: 15),
 
-                    // ===== TOMBOL REKAP =====
                     _buildActionCard(
                       "Lihat rekapan absensi anda.",
                       "Lihat Rekap",
@@ -174,7 +169,6 @@ class _MenuAbsensiGuruScreenState extends State<MenuAbsensiGuruScreen> {
 
   Widget _buildBar(String label, int value, Color color) {
     double maxHeight = 120.0;
-    // Rasio tinggi batang grafik
     double height = (value / 20).clamp(0.1, 1.0) * maxHeight;
 
     return Column(

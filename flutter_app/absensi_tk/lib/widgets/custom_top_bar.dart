@@ -30,7 +30,6 @@ class CustomTopBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
 
-          // ===== PROFILE =====
           Row(
             children: [
               Container(
@@ -73,7 +72,6 @@ class CustomTopBar extends StatelessWidget {
             ],
           ),
 
-          // ===== NOTIF =====
           Stack(
             children: [
               IconButton(

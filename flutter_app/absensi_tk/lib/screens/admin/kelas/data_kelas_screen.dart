@@ -57,7 +57,6 @@ class _DataKelasScreenState extends State<DataKelasScreen> {
     }
   }
 
-  // 🔥 Pull to refresh
   Future<void> refreshData() async {
     await fetchKelas();
   }
@@ -112,7 +111,7 @@ class _DataKelasScreenState extends State<DataKelasScreen> {
                       },
                     ),
             ),
-      // ✅ FIX: gabungkan 2 FAB
+     
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -140,7 +139,7 @@ class _DataKelasScreenState extends State<DataKelasScreen> {
               );
 
               if (result == true) {
-                fetchKelas(); // refresh
+                fetchKelas(); 
               }
             },
             child: const Icon(Icons.add),

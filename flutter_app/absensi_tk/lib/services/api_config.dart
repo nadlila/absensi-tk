@@ -1,4 +1,4 @@
 class ApiConfig {
-  // GANTI IP
-  static const String baseUrl = "http://10.71.102.45:8080/api";
+  // Ganti IP sesuai dengan IP Laptop/Komputer
+  static const String baseUrl = "http://192.168.100.55:8080/api";
 }

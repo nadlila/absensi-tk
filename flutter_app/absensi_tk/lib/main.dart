@@ -16,14 +16,12 @@ void main() async {
   String initialRoute = AppRoutes.login;
   Object? arguments;
 
-  // Cek jika sudah ada sesi login
   if (idUser != null && role != null) {
     if (role.toLowerCase().contains("admin")) {
       initialRoute = AppRoutes.adminDashboard;
     } else if (role.toLowerCase().contains("guru")) {
       initialRoute = AppRoutes.dashboard;
 
-      // Khusus guru, kita coba ambil data kelas aktif jika ada
       if (idGuru != null) {
         try {
           final kelasService = KelasService();
@@ -49,7 +47,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: initialRoute,
-      // Jika ada arguments untuk initialRoute (seperti data kelas untuk Guru)
       onGenerateInitialRoutes: (initialRouteName) {
         return [
           RouteGenerator.generateRoute(RouteSettings(

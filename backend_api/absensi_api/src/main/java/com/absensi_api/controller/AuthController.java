@@ -38,7 +38,7 @@ public class AuthController {
             response.put("username", user.getUsername());
             response.put("idUser", user.getIdUser());
 
-            // 🔥 AMBIL DATA GURU LENGKAP TERMASUK NUPTK
+            
             if (user.getRole().equalsIgnoreCase("guru")) {
                 var guru = guruRepository.findByIdUser(user.getIdUser());
                 if (guru != null) {

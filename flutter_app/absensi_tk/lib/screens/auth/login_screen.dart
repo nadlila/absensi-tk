@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (data["idGuru"] != null) {
           await prefs.setInt("idGuru", data["idGuru"]);
         }
-        // 🔥 SIMPAN NUPTK KE STORAGE
+
         if (data["nuptk"] != null) {
           await prefs.setString("nuptk", data["nuptk"].toString());
         }
@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 100),
-              // Footer
+  
               const Text(
                 "@2026 TK Islam Terpadu Alif",
                 style: TextStyle(fontSize: 12, color: Colors.grey),

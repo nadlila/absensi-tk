@@ -41,37 +41,44 @@ public class AbsensiService {
 
         System.out.println("Sistem: Menjalankan pengecekan otomatis saat startup...");
 
-        // Jika hari ini libur atau Minggu, jangan lakukan apa-apa
+        for (int i = 0; i <= 7; i++) {
+            LocalDate checkDate = today.minusDays(i);
+
+            // Lewati jika hari Minggu atau hari Libur terdaftar
+            if (isLiburAtauMinggu(checkDate)) {
+                continue;
+            }
+
+            // Jika mengecek hari ini, pastikan sudah lewat jam batas (08:35)
+            if (checkDate.equals(today)) {
+                if (now.isAfter(LocalTime.of(8, 35))) {
+                    prosesOtomatisAlfaPerTanggal(checkDate, false);
+                }
+            } else {
+                // Untuk hari-hari sebelumnya, langsung proses Alpa jika belum ada catatan
+                prosesOtomatisAlfaPerTanggal(checkDate, false);
+            }
+        }
+
         if (isLiburAtauMinggu(today)) {
-            System.out.println("Sistem: Hari ini libur atau Minggu. Melewati proses otomatis.");
+            System.out.println("Sistem: Hari ini libur atau Minggu. Melewati notifikasi harian.");
             return;
         }
 
-        // Jalankan notifikasi guru jika sudah lewat jam 07:31
         if (now.isAfter(LocalTime.of(7, 31))) {
             notifGuruBelumAbsen();
         }
 
-        // Jalankan proses Alpa otomatis jika sudah lewat jam 08:35
-        if (now.isAfter(LocalTime.of(8, 35))) {
-            prosesOtomatisAlfa();
-        }
-
-        // Jalankan notifikasi absen siswa jika sudah lewat jam 11:01
         if (now.isAfter(LocalTime.of(11, 1))) {
             notifWaliKelasBelumAbsenSiswa();
         }
     }
 
-    /**
-     * Mengecek apakah tanggal tertentu adalah hari libur (dari database) atau hari Minggu.
-     */
     private boolean isLiburAtauMinggu(LocalDate date) {
         if (date.getDayOfWeek() == DayOfWeek.SUNDAY) return true;
         return hariLiburRepository.existsByTanggal(date);
     }
 
-    // 1. PENGINGAT ABSEN GURU (Setiap Jam 07:31)
     @Scheduled(cron = "0 31 7 * * MON-SAT")
     public void notifGuruBelumAbsen() {
         LocalDate today = LocalDate.now();
@@ -86,7 +93,6 @@ public class AbsensiService {
         }
     }
 
-    // 2. PENGINGAT ABSEN SISWA (Setiap Jam 11:01)
     @Scheduled(cron = "0 1 11 * * MON-SAT")
     public void notifWaliKelasBelumAbsenSiswa() {
         LocalDate today = LocalDate.now();
@@ -100,23 +106,23 @@ public class AbsensiService {
             boolean sudahAbsen = absensiSiswaRepository.existsByKelas_IdKelasAndTanggal(kg.getIdKelas(), today);
 
             if (!sudahAbsen) {
-                // Notif ke Wali Kelas
                 Guru guru = guruRepository.findById(kg.getIdGuru()).orElse(null);
                 if (guru != null && guru.getIdUser() != null) {
                     sendNotif(guru.getIdUser(), "Peringatan Absensi Siswa",
                             "Anda belum mengabsen siswa hari ini untuk kelas " + kg.getIdKelas() + ".");
                 }
-                // Notif ke Admin (User ID 1)
                 sendNotif(1L, "Laporan Absensi Kelas", "Kelas " + kg.getIdKelas() + " belum melakukan absensi siswa hari ini.");
             }
         }
     }
 
-    // 3. Proses Otomatis Alpa (Jam 08:35)
     @Scheduled(cron = "0 35 8 * * MON-SAT")
     public void prosesOtomatisAlfa() {
-        LocalDate hariIni = LocalDate.now();
-        if (isLiburAtauMinggu(hariIni)) return;
+        prosesOtomatisAlfaPerTanggal(LocalDate.now(), true);
+    }
+
+    public void prosesOtomatisAlfaPerTanggal(LocalDate tanggal, boolean kirimNotif) {
+        if (isLiburAtauMinggu(tanggal)) return;
 
         TahunAjaran tahunAktif = tahunRepo.findByStatus("aktif").orElse(null);
         if (tahunAktif == null) return;
@@ -126,18 +132,20 @@ public class AbsensiService {
 
         java.util.List<Guru> allGuru = guruRepository.findAll();
         for (Guru guru : allGuru) {
-            boolean sudahAbsen = absensiGuruRepository.existsByGuruAndTanggal(guru, hariIni);
-            if (!sudahAbsen) {
+            boolean sudahAdaCatatan = absensiGuruRepository.existsByGuruAndTanggal(guru, tanggal);
+            if (!sudahAdaCatatan) {
                 AbsensiGuru alpaRecord = new AbsensiGuru();
                 alpaRecord.setGuru(guru);
-                alpaRecord.setTanggal(hariIni);
+                alpaRecord.setTanggal(tanggal);
                 alpaRecord.setJam(LocalTime.of(8, 30));
                 alpaRecord.setStatus(statusAlpa);
                 alpaRecord.setTahunAjaran(tahunAktif);
                 alpaRecord.setKeterangan("Otomatis Alpa oleh Sistem");
                 absensiGuruRepository.save(alpaRecord);
 
-                sendNotif(guru.getIdUser(), "Sistem Absensi", "Batas waktu berakhir. Anda dicatat 'Alpa' hari ini.");
+                if (kirimNotif && guru.getIdUser() != null) {
+                    sendNotif(guru.getIdUser(), "Sistem Absensi", "Batas waktu berakhir. Anda dicatat 'Alpa' hari ini.");
+                }
             }
         }
     }

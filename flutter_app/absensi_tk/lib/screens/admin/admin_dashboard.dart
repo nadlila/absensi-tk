@@ -36,7 +36,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
       if (res.statusCode == 200) {
         List data = jsonDecode(res.body);
         setState(() {
-          // Titik merah muncul jika ada notif (laporan kelas) yang belum dibaca
           showNotification = data.any((n) => n["judul"] == "Laporan Absensi Kelas" && n["dibaca"] == false);
         });
       }

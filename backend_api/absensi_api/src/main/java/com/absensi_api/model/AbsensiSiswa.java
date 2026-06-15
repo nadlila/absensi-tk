@@ -107,7 +107,6 @@ public class AbsensiSiswa {
         this.tahunAjaran.setIdTahunAjaran(idTahunAjaran);
     }
 
-    // 🔥 TAMBAHAN WAJIB
     public Long getIdStatus() {
         return status != null ? status.getIdStatus() : null;
     }

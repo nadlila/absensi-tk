@@ -16,25 +16,25 @@ public class KelasGuruController {
     @Autowired
     private KelasGuruRepository kelasGuruRepository;
 
-    // GET semua
+    
     @GetMapping
     public List<KelasGuru> getAll() {
         return kelasGuruRepository.findAll();
     }
 
-    // GET berdasarkan kelas
+    
     @GetMapping("/kelas/{idKelas}")
     public List<KelasGuru> getByKelas(@PathVariable String idKelas) {
         return kelasGuruRepository.findByIdKelas(idKelas);
     }
 
-    // GET berdasarkan guru (semua data)
+   
     @GetMapping("/guru/{idGuru}")
     public List<KelasGuru> getByGuru(@PathVariable Long idGuru) {
         return kelasGuruRepository.findByIdGuru(idGuru);
     }
 
-    // GET kelas guru yang aktif
+   
     @GetMapping("/guru/{idGuru}/aktif")
     public List<KelasGuru> getKelasGuru(@PathVariable Long idGuru){
     return kelasGuruRepository.getKelasGuruAktif(idGuru);
@@ -46,7 +46,6 @@ public class KelasGuruController {
     }
 
 
-    // POST tambah wali kelas
     @PostMapping
         public KelasGuru create(@RequestBody KelasGuru kelasGuru) {
 
@@ -63,7 +62,6 @@ public class KelasGuruController {
     return kelasGuruRepository.save(kelasGuru);
     }
 
-    // PUT update
     @PutMapping("/{id}")
     public KelasGuru update(
             @PathVariable Long id,
@@ -78,7 +76,6 @@ public class KelasGuruController {
         return kelasGuruRepository.save(existing);
     }
 
-    // DELETE
     @DeleteMapping("/by-kelas")
     public void deleteByKelas(
         @RequestParam String idKelas,

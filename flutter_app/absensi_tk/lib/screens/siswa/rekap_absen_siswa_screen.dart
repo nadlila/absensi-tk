@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:pdf/pdf.dart'; // Import ini untuk PdfColors
+import 'package:pdf/pdf.dart'; 
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
@@ -36,7 +36,6 @@ class _RekapAbsenSiswaScreenState
     fetchRekap();
   }
 
-  // ================= FETCH REKAP =================
   Future<void> fetchRekap() async {
     setState(() {
       isLoading = true;
@@ -74,7 +73,6 @@ class _RekapAbsenSiswaScreenState
     );
   }
 
-  // ================= EXPORT PDF (SATU KELAS) =================
   Future<void> exportPDF() async {
     final pdf = pw.Document();
 
@@ -133,7 +131,6 @@ class _RekapAbsenSiswaScreenState
     );
   }
 
-  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(

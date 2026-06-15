@@ -71,7 +71,6 @@ class _AbsenSiswaScreenState extends State<AbsenSiswaScreen> {
     }
   }
 
-  // Mapping status ke id sesuai database
   int getStatusId(String status) {
     switch (status) {
       case "hadir":

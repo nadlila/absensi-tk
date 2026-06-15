@@ -36,7 +36,6 @@ public class SiswaDetailDTO {
         this.semester = semester;
     }
 
-    // GETTER
     public Long getIdSiswa() { return idSiswa; }
     public String getNamaSiswa() { return namaSiswa; }
     public String getNisn() { return nisn; }

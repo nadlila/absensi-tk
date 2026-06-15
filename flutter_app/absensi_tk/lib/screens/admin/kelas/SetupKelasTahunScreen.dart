@@ -14,7 +14,7 @@ class _SetupKelasTahunScreenState extends State<SetupKelasTahunScreen> {
   List kelasList = [];
   List guruList = [];
 
-  Map<String, int?> selectedGuru = {}; // idKelas -> idGuru
+  Map<String, int?> selectedGuru = {}; 
 
   int? idTahunAjaran;
 

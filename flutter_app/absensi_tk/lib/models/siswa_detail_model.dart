@@ -2,7 +2,7 @@ class SiswaDetail {
   final int idSiswa;
   final String namaSiswa;
 
-  final String? nisn;          // 🔥 ubah jadi nullable
+  final String? nisn;          
   final String? tempatLahir;
   final String? tanggalLahir;
   final String? alamat;

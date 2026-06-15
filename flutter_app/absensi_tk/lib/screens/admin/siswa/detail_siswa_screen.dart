@@ -61,7 +61,6 @@ class DetailSiswaScreen extends StatelessWidget {
     );
   }
 
-  // 🔥 KONFIRMASI HAPUS
   void confirmHapus(BuildContext context) {
     showDialog(
       context: context,
@@ -88,7 +87,6 @@ class DetailSiswaScreen extends StatelessWidget {
     );
   }
 
-  // 🔥 HAPUS SISWA
   Future<void> hapusSiswa(BuildContext context) async {
     try {
       final response = await http.delete(
@@ -170,7 +168,6 @@ class DetailSiswaScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 25),
-            // Action Buttons
             Row(
               children: [
                 // 🔵 EDIT
@@ -199,7 +196,7 @@ class DetailSiswaScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // 🟠 MUTASI
+         
                 Expanded(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
@@ -225,7 +222,7 @@ class DetailSiswaScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                // 🔴 HAPUS
+                
                 Expanded(
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(

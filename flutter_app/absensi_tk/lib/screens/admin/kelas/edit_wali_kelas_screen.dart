@@ -39,7 +39,7 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
 
       setState(() {
         listGuru = data.map((e) => Guru.fromJson(e)).toList();
-        // ✅ default wali kelas sekarang
+       
         selectedGuru = widget.kelas.idGuru;
         isLoading = false;
       });
@@ -53,7 +53,7 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
       body: jsonEncode({
         "idKelas": widget.kelas.idKelas,
         "idGuru": selectedGuru,
-        "idTahunAjaran": widget.kelas.idTahunAjaran // Menggunakan id dari data kelas
+        "idTahunAjaran": widget.kelas.idTahunAjaran 
       }),
     );
 
@@ -62,7 +62,7 @@ class _EditWaliKelasScreenState extends State<EditWaliKelasScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Wali kelas berhasil diubah")),
         );
-        Navigator.pop(context, true); // 🔥 kirim signal refresh
+        Navigator.pop(context, true); 
       }
     }
   }

@@ -45,7 +45,6 @@ public class TahunAjaranController {
     @PutMapping("/aktif/{id}")
     public void aktifkan(@PathVariable Long id){
 
-        // nonaktifkan semua
         List<TahunAjaran> list = tahunAjaranRepository.findAll();
 
         for(TahunAjaran t : list){
@@ -53,7 +52,6 @@ public class TahunAjaranController {
             tahunAjaranRepository.save(t);
         }
 
-        // aktifkan yang dipilih
         TahunAjaran aktif = tahunAjaranRepository.findById(id).orElseThrow();
         aktif.setStatus("aktif");
 

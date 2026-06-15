@@ -55,9 +55,8 @@ public class AbsensiGuruController {
         LocalTime jamSekarang = LocalTime.now();
         String namaStatus = status.getNamaStatus().toLowerCase();
         
-        // Logika khusus untuk status "Hadir"
         if (namaStatus.equals("hadir")) {
-            // Batasan Jam Absen
+        
             if (jamSekarang.isBefore(LocalTime.of(7, 0))) {
                 throw new RuntimeException("Absen belum dibuka, silakan kembali pukul 07:00");
             }
@@ -65,14 +64,14 @@ public class AbsensiGuruController {
                 throw new RuntimeException("Batas waktu absen telah berakhir (8:30)");
             }
 
-            // Logika Keterangan Terlambat
+    
             if (jamSekarang.isAfter(LocalTime.of(7, 30))) {
                 request.setKeterangan("Terlambat");
             } else {
                 request.setKeterangan("Tepat Waktu");
             }
         } else {
-            // Jika Izin/Sakit, keterangan dikosongkan (alasan sudah ada di kolom 'alasan')
+           
             request.setKeterangan("-");
         }
 

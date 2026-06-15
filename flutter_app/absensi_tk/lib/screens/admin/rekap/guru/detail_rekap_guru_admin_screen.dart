@@ -31,14 +31,14 @@ class _DetailRekapGuruAdminScreenState extends State<DetailRekapGuruAdminScreen>
 
   Future<void> fetchDetailRekap() async {
     try {
-      // Kita panggil endpoint per guru
+      
       final res = await http.get(
         Uri.parse("${ApiConfig.baseUrl}/absensi-guru/guru/${widget.idGuru}"),
       );
 
       if (res.statusCode == 200) {
         List allData = jsonDecode(res.body);
-        // Filter di sisi client berdasarkan idTahun agar akurat sesuai pilihan admin
+        
         setState(() {
           data = allData.where((item) => item["tahunAjaran"]["idTahunAjaran"] == widget.idTahun).toList();
           isLoading = false;
@@ -67,8 +67,7 @@ class _DetailRekapGuruAdminScreenState extends State<DetailRekapGuruAdminScreen>
                     final d = data[i];
                     final status = d["status"]["namaStatus"];
                     final jam = d["jam"] ?? "--:--";
-                    
-                    // LOGIKA: Ambil 'alasan' jika 'keterangan' berisi '-' (karena dipaksa backend)
+  
                     String displayKet = d["keterangan"] ?? "";
                     String alasanUser = d["alasan"] ?? "";
                     

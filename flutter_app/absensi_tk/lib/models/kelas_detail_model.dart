@@ -7,7 +7,7 @@ class KelasDetail {
   final String tahun;
   final String semester;
   final int idGuru;
-  final int idTahunAjaran; // 🔥 penting
+  final int idTahunAjaran; 
 
   KelasDetail({
     required this.id,

@@ -21,9 +21,9 @@ public class AbsensiGuru {
 
     private LocalTime jam;
 
-    private String keterangan; // Untuk "Tepat Waktu" / "Terlambat"
+    private String keterangan; 
     
-    private String alasan; // Kolom baru untuk alasan Izin / Sakit
+    private String alasan; 
 
     @ManyToOne
     @JoinColumn(name = "id_status")

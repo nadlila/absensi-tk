@@ -114,7 +114,6 @@ class _DataGuruScreenState extends State<DataGuruScreen> {
             context,
             AppRoutes.tambahGuru,
           ).then((_) {
-            // refresh setelah tambah guru
             fetchGuru();
           });
         },

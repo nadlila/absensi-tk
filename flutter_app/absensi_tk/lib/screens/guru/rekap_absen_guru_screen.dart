@@ -77,8 +77,7 @@ class _RekapAbsensiGuruScreenState extends State<RekapAbsensiGuruScreen> {
             final d = data[i];
             final status = d["status"]["namaStatus"];
             final jam = d["jam"] ?? "--:--";
-            
-            // LOGIKA BARU: Ambil 'alasan' jika 'keterangan' kosong atau '-'
+
             String displayKet = d["keterangan"] ?? "";
             String alasanUser = d["alasan"] ?? "";
             

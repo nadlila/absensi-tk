@@ -43,13 +43,11 @@ class _DashboardScreenState
 
     final idUser = prefs.getInt("idUser");
 
-    // ===== AMBIL DARI LOCAL =====
     namaGuru = prefs.getString("namaGuru") ??
         prefs.getString("username");
 
     nuptk = prefs.getString("nuptk");
 
-    // ===== FETCH API =====
     if (idUser != null) {
       try {
         final res = await http.get(
@@ -68,7 +66,6 @@ class _DashboardScreenState
               data["nuptk"]?.toString() ??
                   nuptk;
 
-          // update storage
           await prefs.setString(
             "namaGuru",
             namaGuru ?? "",
@@ -126,14 +123,14 @@ class _DashboardScreenState
       body: SafeArea(
         child: Stack(
           children: [
-            // ===== LOGO BACKGROUND TRANSPARAN =====
+
             Positioned(
-              top: 210, // Memposisikan logo dimulai dari area kartu absen
+              top: 210, 
               left: 10,
               right: 10,
               bottom: 60,
               child: Opacity(
-                opacity: 0.08, // Tingkat transparansi (0.0 - 1.0)
+                opacity: 0.08,
                 child: Image.asset(
                   'assets/logo.png',
                   fit: BoxFit.contain,
@@ -141,11 +138,9 @@ class _DashboardScreenState
               ),
             ),
 
-            // ===== KONTEN UTAMA =====
             Column(
               children: [
 
-                // ===== TOP BAR =====
                 if (isProfileLoaded)
                   CustomTopBar(
                     nama: namaGuru ?? "",
@@ -164,7 +159,6 @@ class _DashboardScreenState
 
                 const SizedBox(height: 20),
 
-                // ===== BANNER =====
                 Padding(
                   padding:
                   const EdgeInsets.symmetric(
@@ -184,7 +178,6 @@ class _DashboardScreenState
 
                 const SizedBox(height: 18),
 
-                // ===== MENU =====
                 Padding(
                   padding:
                   const EdgeInsets.symmetric(

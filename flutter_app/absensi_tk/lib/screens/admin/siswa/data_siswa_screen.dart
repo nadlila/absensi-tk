@@ -31,7 +31,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
     loadData();
   }
 
-  // 🔥 LOAD SEMUA DATA
   Future<void> loadData() async {
 
     setState(() {
@@ -68,7 +67,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
 
       listKelas = data.map((e) => Kelas.fromJson(e)).toList();
 
-      // 🔥 SORT KELAS A-Z
       listKelas.sort((a, b) => a.namaKelas.compareTo(b.namaKelas));
 
       if(listKelas.isNotEmpty){
@@ -97,7 +95,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
 
         listSiswa = data.map((e) => SiswaDetail.fromJson(e)).toList();
 
-        // 🔥 OPTIONAL: SORT NAMA SISWA
         listSiswa.sort((a, b) => a.namaSiswa.compareTo(b.namaSiswa));
 
         isLoading = false;
@@ -112,7 +109,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
 
   }
 
-  // 🔥 REFRESH (pull & auto)
   Future<void> refreshData() async {
     await loadData();
   }
@@ -232,7 +228,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
                                       arguments: siswa,
                                     );
 
-                                    // 🔥 AUTO REFRESH setelah balik
                                     if(result == true){
                                       refreshData();
                                     }
@@ -263,7 +258,6 @@ class _DataSiswaScreenState extends State<DataSiswaScreen> {
             AppRoutes.tambahSiswa,
           );
 
-          // 🔥 AUTO REFRESH setelah tambah
           if(result == true){
             refreshData();
           }

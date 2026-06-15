@@ -26,7 +26,6 @@ public class RekapAbsensiDTO {
         this.alfa = alfa;
     }
 
-    // getter
     public Long getIdSiswa() { return idSiswa; }
     public String getNamaSiswa() { return namaSiswa; }
     public Long getHadir() { return hadir; }

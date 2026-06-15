@@ -42,7 +42,7 @@ class AppRoutes {
   // ADMIN - HARI LIBUR
   static const String hariLibur = "/admin/hari-libur";
 
-  // ADMIN LAPORAN
+  // ADMIN - LAPORAN
   static const String laporanBelumAbsen = "/admin/laporan-belum-absen";
 
   // ================= GURU =================
@@ -50,17 +50,16 @@ class AppRoutes {
    static const String menuGuru = "/guru/menu";
   static const String rekapAbsenGuru = "/guru/rekap";
 
-  // ================= SISWA (GURU VIEW) =================
+  // ================= SISWA =================
   static const String menuSiswa = "/siswa/menu";
   static const String absenSiswa = "/siswa/absen";
   static const String rekapSiswa = "/siswa/rekap";
 
-  static const String dataSiswaGuru = "/siswa/data";          // list
-  static const String detailDataSiswa = "/siswa/detail";      // biodata
-  static const String detailAbsensiSiswa = "/siswa/histori";  // histori
+  static const String dataSiswaGuru = "/siswa/data";        
+  static const String detailDataSiswa = "/siswa/detail";      
+  static const String detailAbsensiSiswa = "/siswa/histori";  
   static const String detailRekapSiswa = "/siswa/rekap/detail";
 
-  // ================= UMUM =================
   static const String profil = "/profil";
   static const String notifikasi = "/notifikasi";
 }

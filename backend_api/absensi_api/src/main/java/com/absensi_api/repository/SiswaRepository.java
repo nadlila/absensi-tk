@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface SiswaRepository extends JpaRepository<Siswa, Long> {
-    // List<Siswa> findByIdKelas(String idKelas);
+    
     void deleteByIdSiswa(Long idSiswa);
 
   @Query("""

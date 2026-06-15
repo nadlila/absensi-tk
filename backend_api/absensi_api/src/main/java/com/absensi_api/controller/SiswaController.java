@@ -53,10 +53,8 @@ public class SiswaController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
 
-    // 🔥 hapus relasi dulu
     siswaKelasRepository.deleteByIdSiswa(id);
 
-    // 🔥 baru hapus siswa
     siswaRepository.deleteById(id);
 }
 @GetMapping("/kelas/{idKelas}")

@@ -9,9 +9,8 @@ public class KelasDetailDTO {
     private String tahun;
     private String semester;
     private Long idGuru;
-    private Long idTahunAjaran; // 🔥 WAJIB
+    private Long idTahunAjaran; 
 
-    // 🔥 CONSTRUCTOR HARUS SESUAI QUERY
     public KelasDetailDTO(
             Long id,
             String idKelas,

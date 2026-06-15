@@ -42,11 +42,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
     }
   }
 
-  // Fungsi untuk mengambil gambar dari galeri
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50, // Kompres gambar agar tidak terlalu besar
+      imageQuality: 50, 
     );
 
     if (image != null) {
@@ -56,14 +55,12 @@ class _ProfilScreenState extends State<ProfilScreen> {
     }
   }
 
-  // Fungsi untuk upload foto ke backend
   Future<void> _updateFoto(String base64String) async {
     if (guru == null) return;
 
     setState(() => isLoading = true);
 
     try {
-      // Kita kirim seluruh data guru yang sudah ada + foto baru
       final body = Map<String, dynamic>.from(guru!);
       body['foto'] = base64String;
 
@@ -95,7 +92,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: Colors.red));
   }
 
-  // Fungsi untuk memunculkan dialog konfirmasi logout
   void _confirmLogout() {
     showDialog(
       context: context,
@@ -110,8 +106,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Tutup dialog
-                _logout(); // Jalankan fungsi logout
+                Navigator.pop(context); 
+                _logout();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFF58220),
@@ -125,7 +121,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
     );
   }
 
-  // Fungsi untuk membersihkan sesi dan kembali ke login
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -141,7 +136,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Mengecek apakah data foto tersedia
     final bool hasPhoto = guru != null && 
                           guru!["foto"] != null && 
                           guru!["foto"].toString().isNotEmpty;
@@ -194,7 +188,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                       const SizedBox(height: 40),
                       Center(
                         child: ElevatedButton(
-                          onPressed: _confirmLogout, // Ganti ke fungsi konfirmasi
+                          onPressed: _confirmLogout, 
                           style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFF58220),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -219,12 +213,12 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
                   child: CircleAvatar(
                     radius: 45,
-                    backgroundColor: Colors.grey[200], // Latar belakang abu-abu terang
+                    backgroundColor: Colors.grey[200], 
                     backgroundImage: hasPhoto 
                         ? MemoryImage(base64Decode(guru!["foto"])) 
                         : null,
                     child: !hasPhoto 
-                        ? Icon(Icons.person_3, size: 55, color: Colors.grey[500]) // Ikon wanita abu-abu
+                        ? Icon(Icons.person_3, size: 55, color: Colors.grey[500]) 
                         : null,
                   ),
                 ),

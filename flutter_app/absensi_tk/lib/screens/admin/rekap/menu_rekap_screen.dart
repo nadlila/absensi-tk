@@ -73,7 +73,6 @@ class MenuRekapScreen extends StatelessWidget {
 
           children: [
 
-            // ================= REKAP GURU =================
             buildMenuCard(
               context: context,
               title: "Rekap Guru",
@@ -88,7 +87,6 @@ class MenuRekapScreen extends StatelessWidget {
               },
             ),
 
-            // ================= REKAP SISWA =================
             buildMenuCard(
               context: context,
               title: "Rekap Siswa",

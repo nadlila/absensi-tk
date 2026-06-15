@@ -29,7 +29,6 @@ public interface SiswaKelasRepository extends JpaRepository<SiswaKelas, Long> {
     @Query("DELETE FROM SiswaKelas sk WHERE sk.idSiswa = :id")
     void deleteByIdSiswa(@Param("id") Long id);
 
-    // 🔥 DTO
     @Query("""
     SELECT new com.absensi_api.dto.SiswaDetailDTO(
     s.idSiswa,

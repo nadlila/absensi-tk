@@ -30,7 +30,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
     fetchTahunAjaran();
   }
 
-  // ================= GET KELAS =================
   Future fetchKelas() async {
 
     final res = await http.get(
@@ -49,7 +48,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
   }
 
-  // ================= GET TAHUN AJARAN =================
   Future fetchTahunAjaran() async {
 
     final res = await http.get(
@@ -68,7 +66,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
   }
 
-  // ================= GET REKAP =================
   Future fetchRekap() async {
 
     if (selectedKelas == null || selectedTahun == null) {
@@ -104,7 +101,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
   }
 
-  // ================= UI =================
   @override
   Widget build(BuildContext context) {
 
@@ -120,7 +116,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
         child: Column(
           children: [
 
-            // ================= DROPDOWN KELAS =================
             DropdownButtonFormField(
 
               value: selectedKelas,
@@ -154,7 +149,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
             const SizedBox(height: 16),
 
-            // ================= DROPDOWN TAHUN =================
             DropdownButtonFormField(
 
               value: selectedTahun,
@@ -188,7 +182,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
 
             const SizedBox(height: 20),
 
-            // ================= LOADING =================
             if (isLoading)
 
               const Expanded(
@@ -197,7 +190,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
                 ),
               )
 
-            // ================= EMPTY =================
             else if (rekapList.isEmpty)
 
               const Expanded(
@@ -208,7 +200,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
                 ),
               )
 
-            // ================= LIST DATA =================
             else
 
               Expanded(
@@ -291,7 +282,6 @@ class _RekapSiswaScreenState extends State<RekapSiswaScreen> {
     );
   }
 
-  // ================= ITEM =================
   Widget buildItem(
     String title,
     String value,

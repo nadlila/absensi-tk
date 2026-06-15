@@ -15,13 +15,11 @@ public class SiswaKelasController {
     @Autowired
     private SiswaKelasRepository siswaKelasRepository;
 
-    // 🔥 TAMBAH (dipakai saat tambah siswa)
     @PostMapping
     public SiswaKelas create(@RequestBody SiswaKelas data){
         return siswaKelasRepository.save(data);
     }
 
-    // 🔥 MUTASI (FIX BUG DOBEL)
     @PutMapping("/mutasi")
     public SiswaKelas mutasi(@RequestBody Map<String, Object> payload){
 
@@ -43,7 +41,6 @@ public class SiswaKelasController {
     return siswaKelasRepository.save(sk);
 }
 
-    // 🔥 FILTER (dipakai Flutter kamu)
     @GetMapping("/filter")
     public List<?> filter(
             @RequestParam String idKelas,
@@ -52,7 +49,6 @@ public class SiswaKelasController {
         return siswaKelasRepository.getByKelasDanTahun(idKelas, idTahun);
     }
 
-//     // 🔥 NAIK KELAS MASSAL
 @PostMapping("/naik-kelas-massal")
 public String naikKelasMassal(@RequestBody Map<String, Object> payload) {
     String idKelasAsal = payload.get("idKelasAsal").toString();
@@ -61,12 +57,10 @@ public String naikKelasMassal(@RequestBody Map<String, Object> payload) {
     String idKelasBaru = payload.get("idKelasBaru").toString();
     Long idTahunBaru = Long.valueOf(payload.get("idTahunBaru").toString());
 
-    // 1. Ambil semua siswa dari kelas lama & tahun lama
     List<SiswaKelas> listSiswaLama = siswaKelasRepository.findByIdKelasAndIdTahunAjaran(idKelasAsal, idTahunLama);
 
     int count = 0;
     for (SiswaKelas sk : listSiswaLama) {
-        // 2. Cek apakah siswa sudah terdaftar di tahun baru (biar tidak dobel)
         boolean exists = siswaKelasRepository.findByIdSiswaAndIdTahunAjaran(sk.getIdSiswa(), idTahunBaru).isPresent();
 
         if (!exists) {
@@ -89,7 +83,6 @@ public String naikKelasPerSiswa(@RequestBody Map<String, Object> payload){
     String idKelasBaru = payload.get("idKelas").toString();
     Long idTahunBaru = Long.valueOf(payload.get("idTahunAjaran").toString());
 
-    // 🔥 CEK BIAR GAK DOBEL
     boolean sudahAda =
             siswaKelasRepository
             .findByIdSiswaAndIdTahunAjaran(idSiswa, idTahunBaru)

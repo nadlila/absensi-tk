@@ -8,7 +8,6 @@ class DetailRekapSiswaScreen extends StatefulWidget {
   final int siswaId;
   final String namaSiswa;
 
-  // 🔥 sekarang pakai tahun ajaran
   final int idTahun;
 
   const DetailRekapSiswaScreen({
@@ -36,7 +35,6 @@ class _DetailRekapSiswaScreenState
     fetchDetail();
   }
 
-  // ================= FETCH DETAIL =================
   Future<void> fetchDetail() async {
 
     setState(() {
@@ -97,7 +95,6 @@ class _DetailRekapSiswaScreenState
 
   }
 
-  // ================= UI =================
   @override
   Widget build(BuildContext context) {
     return Scaffold(

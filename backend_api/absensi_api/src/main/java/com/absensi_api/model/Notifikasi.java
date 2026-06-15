@@ -8,13 +8,12 @@ public class Notifikasi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long idUser; // Ke siapa notif ini ditujukan (null jika untuk semua/admin)
+    private Long idUser;
     private String judul;
     private String isi;
     private LocalDateTime waktu;
     private boolean dibaca = false;
 
-    // Getter dan Setter...
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Long getIdUser() { return idUser; }

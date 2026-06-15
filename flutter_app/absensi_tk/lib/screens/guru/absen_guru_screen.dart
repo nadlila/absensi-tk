@@ -18,7 +18,6 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
   Map<String, dynamic>? selectedStatus;
   int? idTahunAjaran;
 
-  // Controller untuk input alasan izin/sakit
   final TextEditingController _alasanController = TextEditingController();
 
   @override
@@ -33,11 +32,9 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
     super.dispose();
   }
 
-  // ===== INIT DATA (DIOPTIMALKAN) =====
   Future<void> initData() async {
-    await getUser(); // Ambil ID User dari SharedPreferences
+    await getUser(); 
     
-    // Jalankan pengambilan data secara paralel agar lebih cepat
     try {
       await Future.wait([
         fetchGuruLogin(),
@@ -149,13 +146,14 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
     final now = DateTime.now();
     final currentTime = now.hour + (now.minute / 60.0);
 
-    if (statusNama == "hadir") {
+    if (currentTime > 8.5) {
+      _showError("Batas waktu absensi sudah berakhir (jam 08:30).");
+      return;
+    }
+
+   if (statusNama == "hadir") {
       if (currentTime < 7.0) {
         _showError("Absensi belum dibuka. Silakan kembali pukul 07:00.");
-        return;
-      }
-      if (currentTime > 8.5) {
-        _showError("Batas waktu absensi sudah berakhir (jam 08:30).");
         return;
       }
     }
@@ -169,7 +167,7 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
           "tanggal": DateTime.now().toIso8601String().substring(0, 10),
           "status": {"idStatus": selectedStatus!["idStatus"]},
           "idTahunAjaran": idTahunAjaran,
-          "alasan": _alasanController.text.trim(), // PERBAIKAN: Ganti 'keterangan' menjadi 'alasan' agar tidak ditimpa server
+          "alasan": _alasanController.text.trim(), 
         }),
       );
 

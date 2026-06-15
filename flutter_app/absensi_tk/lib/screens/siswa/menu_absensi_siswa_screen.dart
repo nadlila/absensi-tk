@@ -24,8 +24,6 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
     fetchRekapSiswa();
   }
 
-  // Ubah fungsi fetchRekapSiswa di menu_absensi_siswa_screen.dart
-
   Future<void> fetchRekapSiswa() async {
     try {
       final String today = DateTime.now().toIso8601String().substring(0, 10);
@@ -64,7 +62,7 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // ===== CARD GRAFIK PIE =====
+
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -80,7 +78,6 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      // Lingkaran Grafik
                       SizedBox(
                         width: 150,
                         height: 150,
@@ -94,7 +91,6 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
                         ),
                       ),
                       const SizedBox(width: 30),
-                      // Legend / Keterangan
                       Expanded(
                         child: Column(
                           children: [
@@ -113,7 +109,6 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
 
             const SizedBox(height: 25),
 
-            // ===== MENU BUTTONS =====
             _buildActionCard(
               "Isi kehadiran siswa hari ini.",
               "Absen Siswa",
@@ -134,7 +129,7 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
               Icons.people_outline,
                   () => Navigator.pushNamed(context, AppRoutes.dataSiswaGuru, arguments: widget.kelas),
             ),
-            const SizedBox(height: 100), // Spasi agar tidak tertutup navbar
+            const SizedBox(height: 100), 
           ],
         ),
       ),
@@ -187,7 +182,6 @@ class _MenuAbsensiSiswaScreenState extends State<MenuAbsensiSiswaScreen> {
   }
 }
 
-// 🔥 PAINTER UNTUK GRAFIK PIE
 class PieChartPainter extends CustomPainter {
   final double hadir, izin, sakit, alpha;
   PieChartPainter({required this.hadir, required this.izin, required this.sakit, required this.alpha});
@@ -195,26 +189,22 @@ class PieChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     double total = hadir + izin + sakit + alpha;
-    if (total == 0) total = 1; // Mencegah pembagian nol
+    if (total == 0) total = 1; 
 
     final paint = Paint()..style = PaintingStyle.fill;
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
 
     double startAngle = -pi / 2;
 
-    // Hadir
     _drawArc(canvas, rect, startAngle, (hadir / total) * 2 * pi, const Color(0xFF66BB6A), paint);
     startAngle += (hadir / total) * 2 * pi;
 
-    // Izin
     _drawArc(canvas, rect, startAngle, (izin / total) * 2 * pi, const Color(0xFFF6F329), paint);
     startAngle += (izin / total) * 2 * pi;
 
-    // Sakit
     _drawArc(canvas, rect, startAngle, (sakit / total) * 2 * pi, const Color(0xFFEF50AF), paint);
     startAngle += (sakit / total) * 2 * pi;
 
-    // Alpha
     _drawArc(canvas, rect, startAngle, (alpha / total) * 2 * pi, const Color(0xFFEF5350), paint);
   }
 
