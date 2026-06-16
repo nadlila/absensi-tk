@@ -18,6 +18,10 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
   Map<String, dynamic>? selectedStatus;
   int? idTahunAjaran;
 
+  // Tambahkan variabel state untuk loading dan error
+  bool isLoading = true;
+  String? errorMessage;
+
   final TextEditingController _alasanController = TextEditingController();
 
   @override
@@ -33,73 +37,91 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
   }
 
   Future<void> initData() async {
-    await getUser(); 
-    
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
     try {
+      await getUser();
+
+      if (idUser == null) {
+        setState(() {
+          errorMessage = "Sesi login tidak ditemukan. Silakan login ulang.";
+          isLoading = false;
+        });
+        return;
+      }
+
+      // Menjalankan semua fetch secara paralel
       await Future.wait([
         fetchGuruLogin(),
         fetchStatus(),
         fetchTahunAjaranAktif(),
       ]);
+
+      // Validasi hasil setelah fetch selesai
+      if (guruLogin == null) {
+        errorMessage = "Data Guru tidak ditemukan untuk akun ini. Pastikan data Guru sudah terhubung dengan User.";
+      } else if (statusList.isEmpty) {
+        errorMessage = "Daftar status absensi tidak ditemukan di server.";
+      }
     } catch (e) {
       print("Error initData: $e");
+      errorMessage = "Gagal memuat data. Periksa koneksi internet atau server anda.\n$e";
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> getUser() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      idUser = prefs.getInt("idUser");
-    });
+    idUser = prefs.getInt("idUser");
+    print("DEBUG: idUser dari prefs = $idUser");
   }
 
   Future<void> fetchGuruLogin() async {
     if (idUser == null) return;
-    try {
-      final res = await http.get(
-        Uri.parse("${ApiConfig.baseUrl}/guru/user/$idUser"),
-      );
-      if (res.statusCode == 200) {
-        setState(() {
-          guruLogin = jsonDecode(res.body);
-        });
-      }
-    } catch (e) {
-      print("Error fetchGuruLogin: $e");
+    final res = await http.get(
+      Uri.parse("${ApiConfig.baseUrl}/guru/user/$idUser"),
+    );
+    print("DEBUG: Fetch Guru Status = ${res.statusCode}");
+    if (res.statusCode == 200) {
+      setState(() {
+        guruLogin = jsonDecode(res.body);
+      });
+      print("DEBUG: Data Guru = $guruLogin");
     }
   }
 
   Future<void> fetchStatus() async {
-    try {
-      final res = await http.get(
-        Uri.parse("${ApiConfig.baseUrl}/status-absensi"),
-      );
-      if (res.statusCode == 200) {
-        List allStatus = jsonDecode(res.body);
-        setState(() {
-          statusList = allStatus
-              .where((s) => s["namaStatus"].toString().toLowerCase() != "alpa")
-              .toList();
-        });
-      }
-    } catch (e) {
-      print("Error fetchStatus: $e");
+    final res = await http.get(
+      Uri.parse("${ApiConfig.baseUrl}/status-absensi"),
+    );
+    print("DEBUG: Fetch Status Absensi = ${res.statusCode}");
+    if (res.statusCode == 200) {
+      List allStatus = jsonDecode(res.body);
+      setState(() {
+        statusList = allStatus
+            .where((s) => s["namaStatus"].toString().toLowerCase() != "alpa")
+            .toList();
+      });
     }
   }
 
   Future<void> fetchTahunAjaranAktif() async {
-    try {
-      final res = await http.get(
-        Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
-      );
-      if (res.statusCode == 200 && res.body.isNotEmpty) {
-        final data = jsonDecode(res.body);
-        setState(() {
-          idTahunAjaran = data['idTahunAjaran'];
-        });
-      }
-    } catch (e) {
-      print("Error ambil tahun ajaran: $e");
+    final res = await http.get(
+      Uri.parse("${ApiConfig.baseUrl}/tahun-ajaran/aktif"),
+    );
+    if (res.statusCode == 200 && res.body.isNotEmpty) {
+      final data = jsonDecode(res.body);
+      setState(() {
+        idTahunAjaran = data['idTahunAjaran'];
+      });
     }
   }
 
@@ -146,12 +168,13 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
     final now = DateTime.now();
     final currentTime = now.hour + (now.minute / 60.0);
 
+    // Untuk debugging/testing, kamu bisa komen bagian waktu ini jika sedang mencoba di malam hari
     if (currentTime > 8.5) {
       _showError("Batas waktu absensi sudah berakhir (jam 08:30).");
       return;
     }
 
-   if (statusNama == "hadir") {
+    if (statusNama == "hadir") {
       if (currentTime < 7.0) {
         _showError("Absensi belum dibuka. Silakan kembali pukul 07:00.");
         return;
@@ -167,7 +190,7 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
           "tanggal": DateTime.now().toIso8601String().substring(0, 10),
           "status": {"idStatus": selectedStatus!["idStatus"]},
           "idTahunAjaran": idTahunAjaran,
-          "alasan": _alasanController.text.trim(), 
+          "alasan": _alasanController.text.trim(),
         }),
       );
 
@@ -208,8 +231,27 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
         ),
       ),
       body: SafeArea(
-        child: (guruLogin == null || statusList.isEmpty)
+        child: isLoading
             ? const Center(child: CircularProgressIndicator())
+            : errorMessage != null
+            ? Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                const SizedBox(height: 10),
+                Text(errorMessage!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: initData,
+                  child: const Text("Coba Lagi"),
+                )
+              ],
+            ),
+          ),
+        )
             : SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -284,6 +326,7 @@ class _AbsensiGuruScreenState extends State<AbsensiGuruScreen> {
     );
   }
 
+  // ... (Widget helper tetap sama: _buildTimeCard, _inputDecoration, _buildWarningInfo)
   Widget _buildTimeCard(String label, String time) {
     return Column(
       crossAxisAlignment: label == "Jam Masuk" ? CrossAxisAlignment.start : CrossAxisAlignment.end,
